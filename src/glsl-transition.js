@@ -205,6 +205,7 @@
       }
 
       function startRender (transitionDuration, transitionEasing) {
+        // FIXME: there is no error case handle yet! we have to stop when something goes wrong (context lost, exception in draw,...)
         var transitionStart = Date.now();
         var d = Q.defer();
         drawing = true;
@@ -265,8 +266,6 @@
 
         if (!gl) return Q.reject(new Error("WebGL is unsupported"));
         if (drawing) return Q.reject(new Error("another transition is already running."));
-        // TODO: is the program used? affect it if not and delete the (maybe) old one.
-      
         return startRender(duration, easing);
       };
     };

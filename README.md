@@ -25,14 +25,14 @@ var GlslTransition = window.GlslTransition;
 ## The API
 
 ```javascript
-GlslTransition(canvas)(glslSource, options)(uniforms, duration, easing)
+GlslTransition(canvas)(glslSource, options)(uniforms, duration, easing) // => Promise
 ```
 
 The choice of making 3 level of functions call is both for optimization purpose and usability.
 
-* The first call creates a Transitions context from a Canvas.
-* The second call creates a GLSL Transition for this context.
-* Finally, the third call performs this transition.
+* The *first call* **creates a Transitions context from a Canvas**.
+* The *second call* **creates a GLSL Transition for this context**.
+* Finally, the third call **performs this transition**. The returned value of this transition is a Promise resolved when transition has succeed or rejected when it has failed (rare cases like webgl context lost).
 
 Obviously, compiling a GLSL program can takes time and it would be terrible to create it each time you do a transition.
 
