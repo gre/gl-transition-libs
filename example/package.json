@@ -1,0 +1,27 @@
+{
+  "name": "glsl-transition-example",
+  "version": "0.0.0",
+  "homepage": "https://greweb.me/glsl-transition",
+  "author": "Gaëtan Renaudeau <renaudeau.gaetan@gmail.com>",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gre/glsl-transition.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "server": "./node_modules/http-server/bin/http-server",
+    "build": "./node_modules/browserify/bin/cmd.js ./main.js -t glslifyify -o ./bundle.js"
+  },
+  "dependencies": {
+    "glsl-transition": "x.x.x",
+    "q": "0.9.x",
+    "qimage": "1.0.x",
+    "bezier-easing": "0.2.x"
+  },
+  "devDependencies": {
+    "browserify": "3.14.0",
+    "glslifyify": "0.1.1",
+    "http-server": "0.6.x"
+  }
+}
