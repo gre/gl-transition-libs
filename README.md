@@ -2,6 +2,8 @@
 
 > Makes complex transitions with GLSL (e.g. from one image to another).
 
+[Open the example](https://gre.github.com/glsl-transition/).
+
 # Getting Started
 
 ![npm install glsl-transition](https://nodei.co/npm/glsl-transition.png?mini=true)
@@ -28,7 +30,7 @@ var GlslTransition = window.GlslTransition;
 GlslTransition(canvas)(glslSource, options)(uniforms, duration, easing) // => Promise
 ```
 
-The decision of making 3 level of functions call is both for optimization purpose and usability.
+It is important to have these 3-level function calls, both for **optimization** and **usability** purposes.
 
 * The *first call* **creates a Transitions context from a Canvas**.
 * The *second call* **creates a GLSL Transition for this context**.
