@@ -2,16 +2,39 @@
 
 > Makes complex transitions with GLSL (e.g. from one image to another).
 
-# How to use
+# Getting Started
+
+![npm install glsl-transition](https://nodei.co/npm/glsl-transition.png?mini=true)
+```javascript
+// Using Browserify
+var GlslTransition = require("glsl-transition");
+
+// Using requirejs
+require(["glsl-transition"], function (GlslTransition) {});
+```
+
+or the bundle way:
+
+[Download glsl-transition.js](https://github.com/gre/glsl-transition/blob/master/src/glsl-transition.js)
+
+```javascript
+// Using bundle version
+var GlslTransition = window.GlslTransition;
+```
 
 ## The API
 
 ```javascript
-GlslTransition(canvas)(glslSource)(uniforms, duration, easing)
+GlslTransition(canvas)(glslSource, options)(uniforms, duration, easing)
 ```
 
-The choice of making 3 level of functions call is for optimization purpose.
-Compiling a GLSL program can takes time and it would be terrible to create it each time you do a transition.
+The choice of making 3 level of functions call is both for optimization purpose and usability.
+
+* The first call creates a Transitions context from a Canvas.
+* The second call creates a GLSL Transition for this context.
+* Finally, the third call performs this transition.
+
+Obviously, compiling a GLSL program can takes time and it would be terrible to create it each time you do a transition.
 
 Here is an example:
 
@@ -32,8 +55,12 @@ awesomeTransition1({ from: img1, to: img2 }, 500, linear)
   ...;
 ```
 
+See also [Our Example](https://github.com/gre/glsl-transition/tree/master/example).
+
+**As a summary:**
+
 - `var Transition = GlslTransition(canvas)` creates a GlslTransition context on a canvas.
-- `var transition = Transition(glslSourceCode)` creates a new GLSL transition on a GlslTransition context `T`.
+- `var transition = Transition(glslSource, opts)` creates a new GLSL transition on a GlslTransition context `Transition`.
 - `transition(uniforms, duration, easing)` starts a new transition with GLSL `uniforms` during `duration` and with an (optional) easing function `easing`.
 
 ### The Params object and GLSL conventions
@@ -43,7 +70,7 @@ the `uniforms` first argument of the transition call is an object statically giv
 The library will map JavaScript types to your GLSL fragment.
 However, there is some conventions for the GLSL to be compatible with this library.
 
-The only requirement is that you need a "progress" float uniform which will be changed over the duration time from 0.0 to 1.0.
+The only requirement is that you need a **"progress" float uniform** which will be changed over the duration time from 0.0 to 1.0.
 You can customize the name of that parameter by giving a `{ progress: "customname" }` option object in second argument of the Transition definition.
 
 Most of the library you will define is about moving from an image to another. For that need, the convention we are taking is to name your `uniform sample2D` variables: `from` and `to`.
