@@ -1,4 +1,4 @@
-var GlslTransition = require("..");
+var GlslTransition = require("glsl-transition");
 var Q = require("q");
 var Qimage = require("qimage");
 var BezierEasing = require("bezier-easing");
