@@ -13,8 +13,23 @@ module.exports = function (grunt) {
         files: '<%= jshint.src %>',
         tasks: ['jshint']
       }
+    },
+    'gh-pages': {
+      options: {
+        base: 'example'
+      },
+      src: ['**']
+    },
+    shell: {
+      buildExample: {
+        options: {
+          execOptions: { cwd: "example" }
+        },
+        command: "npm install && npm run build"
+      }
     }
   });
 
   grunt.registerTask('default', ['jshint', 'watch']);
+  grunt.registerTask('publish', ['shell:buildExample', 'gh-pages']);
 };
