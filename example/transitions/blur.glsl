@@ -34,3 +34,4 @@ void main()
   float pinv = 1.-progress;
   gl_FragColor = pinv*blur(from, texCoord, progress*size) + progress*blur(to, texCoord, pinv*size);
 }
+

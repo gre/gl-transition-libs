@@ -54,6 +54,7 @@
 
     var gl = getWebGLContext(canvas);
     var transitions = [];
+    var currentTransition;
     var drawing = false;
 
     canvas.addEventListener("webglcontextlost", function (e) {
@@ -86,9 +87,9 @@
       var w = canvas.width, h = canvas.height;
       gl.viewport(0, 0, w, h);
 
-      transitions.forEach(function (transition) {
-        syncUniformResolution(transition.program, w, h);
-      });
+      if (currentTransition) {
+        syncUniformResolution(currentTransition.program, w, h);
+      }
       /*
       var img = images[sandbox.opt("slide")];
       if (img) h = Math.floor(w * img.height / img.width);
@@ -123,6 +124,19 @@
       return program;
     }
 
+    function createTexture (image) {
+      var texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      // FIXME: the following line throw an error for cross domain images...
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.bindTexture(gl.TEXTURE_2D, null);
+      return texture;
+    }
+
     function bindUniforms (program, uniforms) {
       for (var k in uniforms) {
         var value = uniforms[k];
@@ -145,7 +159,7 @@
         loadShader(VERTEX_SHADER, gl.VERTEX_SHADER),
         loadShader(glslCode, gl.FRAGMENT_SHADER)
       ]);
-      gl.useProgram(program);
+      gl.useProgram(program); // FIXME Can we afford to do that on need???
 
 
       // buffer
@@ -166,7 +180,6 @@
       gl.enableVertexAttribArray(positionLocation);
       gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-      syncViewport();
       return program;
     }
     
@@ -174,23 +187,21 @@
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
 
-    return function Transition (glsl, options) {
+    return function createTransition (glsl, options) {
       var progressParameter = options && options.progress || "progress";
       var defaultUniforms = options && options.uniforms || {};
       if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string" || typeof progressParameter !== "string")
         throw new Error("Bad arguments. usage: T(glsl [, options])");
 
-      var program = loadTransitionProgram(glsl);
-      var locations = {};
-      var transitionObject = {
-        program: program,
-        locations: locations
+      var t = {
+        program: loadTransitionProgram(glsl),
+        locations: {}
       };
-      transitions.push(transitionObject);
+      transitions.push(t);
 
       function setProgress (p) {
-        if(!locations.progress) locations.progress = gl.getUniformLocation(program, "progress");
-        gl.uniform1f(locations.progress, p);
+        if(!(progressParameter in t.locations)) t.locations[progressParameter] = gl.getUniformLocation(t.program, progressParameter);
+        gl.uniform1f(t.locations[progressParameter], p);
       }
 
       function startRender (transitionDuration, transitionEasing) {
@@ -222,24 +233,40 @@
         if (arguments.length < 2 || arguments.length > 3 || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
           throw new Error("Bad arguments. usage: t(imageFrom, imageTo, duration/*number>0*/ [, easing])");
 
+        if (currentTransition !== t) {
+          if (currentTransition) {
+            // FIXME Does deleteProgram means program is now invalid?
+            gl.deleteProgram(currentTransition.program);
+            currentTransition.program = null;
+            currentTransition.locations = {};
+          }
+          t.program = loadTransitionProgram(glsl);
+        }
+
+        currentTransition = t;
         var allUniforms = extend({}, defaultUniforms, uniforms);
 
-        bindUniforms(program, allUniforms);
+        // FIXME: this is for now static in the code...
+        var fromTexture = createTexture(uniforms.from),
+            toTexture = createTexture(uniforms.to);
+        if(!t.locations.from) t.locations.from = gl.getUniformLocation(t.program, "from");
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, fromTexture);
+        gl.uniform1i(t.locations.from, 0);
+
+        if(!t.locations.to) t.locations.to = gl.getUniformLocation(t.program, "to");
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, toTexture);
+        gl.uniform1i(t.locations.to, 1);
+
+        bindUniforms(t.program, allUniforms);
+        syncViewport();
         setProgress(0);
 
         if (!gl) return Q.reject(new Error("WebGL is unsupported"));
         if (drawing) return Q.reject(new Error("another transition is already running."));
         // TODO: is the program used? affect it if not and delete the (maybe) old one.
       
-      // Clean old program
-      /*
-      if (program) {
-        gl.deleteProgram(program);
-        program = null;
-        locations = {};
-      }
-      */
-
         return startRender(duration, easing);
       };
     };
