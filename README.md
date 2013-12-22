@@ -62,7 +62,7 @@ See also [Our Example](https://github.com/gre/glsl-transition/tree/master/exampl
 **As a summary:**
 
 - `var Transition = GlslTransition(canvas)` creates a GlslTransition context on a canvas.
-- `var transition = Transition(glslSource, opts)` creates a new GLSL transition on a GlslTransition context `Transition`.
+- `var transition = Transition(glslSource, options)` creates a new GLSL transition with a `Transition` context and with the `glslSource` GLSL code and optional extra `options`.
 - `transition(uniforms, duration, easing)` starts a new transition with GLSL `uniforms` during `duration` and with an (optional) easing function `easing`.
 
 ### `uniforms` object and GLSL conventions
