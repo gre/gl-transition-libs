@@ -6,7 +6,7 @@
 
 # Getting Started
 
-![npm install glsl-transition](https://nodei.co/npm/glsl-transition.png?mini=true)
+[![npm install glsl-transition](https://nodei.co/npm/glsl-transition.png?mini=true)](http://npmjs.org/package/glsl-transition)
 ```javascript
 // Using Browserify
 var GlslTransition = require("glsl-transition");
