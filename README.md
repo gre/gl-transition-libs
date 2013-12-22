@@ -65,7 +65,7 @@ See also [Our Example](https://github.com/gre/glsl-transition/tree/master/exampl
 - `var transition = Transition(glslSource, opts)` creates a new GLSL transition on a GlslTransition context `Transition`.
 - `transition(uniforms, duration, easing)` starts a new transition with GLSL `uniforms` during `duration` and with an (optional) easing function `easing`.
 
-### The Params object and GLSL conventions
+### `uniforms` object and GLSL conventions
 
 the `uniforms` first argument of the transition call is an object statically given to the GLSL fragment.
 
@@ -77,6 +77,18 @@ You can customize the name of that parameter by giving a `{ progress: "customnam
 
 Most of the library you will define is about moving from an image to another. For that need, the convention we are taking is to name your `uniform sample2D` variables: `from` and `to`.
 
+### `duration` number
+
+duration is the time of the transition in milliseconds.
+
+### `easing` function
+
+The easing function parameter is optional, by default a linear function is used.
+This function takes a `t` value in parameter which goes linearly from 0.0 to 1.0 and must returns your easing value.
+
+Don't reinvent the wheel, there is plenty of easing functions library.
+Here is mine: [https://github.com/gre/bezier-easing](https://github.com/gre/bezier-easing).
+
 ## Error handling
 
 There is two kind of errors detected by the library: "static" errors and "runtime" errors (generally browser-related error).
@@ -85,7 +97,7 @@ What I mean by "static" errors are bad usage of the library we can detect when c
  - **Missing or bad arguments**.
  - **The glsl source code has compilation errors**.
 
-"runtime" errors are errors we can detect until running the application, and are generally browser-related.
+I mean by "runtime" errors, errors we can only detect when running the application, and are generally browser-related.
 For instance, if **the WebGL is not supported**.
 
 In this library, "static" errors will be thrown by the library whereas "runtime" errors will be wrapped in failure promises so there are safe to use and recover on need.

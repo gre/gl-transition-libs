@@ -218,7 +218,7 @@
             draw();
           }
           else {
-            setProgress(1);
+            setProgress(transitionEasing(1));
             draw();
             drawing = false;
             d.resolve();
