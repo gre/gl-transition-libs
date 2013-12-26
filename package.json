@@ -1,6 +1,6 @@
 {
   "name": "glsl-transition",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Makes complex transitions with GLSL (e.g. from one image to another)",
   "keywords": ["glsl", "webgl", "transition", "transitions"],
   "homepage": "https://github.com/gre/glsl-transition",
