@@ -10,16 +10,16 @@
 ```javascript
 // Using Browserify
 var GlslTransition = require("glsl-transition");
-
-// Using requirejs
-require(["glsl-transition"], function (GlslTransition) {});
 ```
 
 or the bundle way:
 
-[Download glsl-transition.js](https://github.com/gre/glsl-transition/blob/master/src/glsl-transition.js)
+[Download glsl-transition.js](https://github.com/gre/glsl-transition/blob/master/dist/glsl-transition.js)
 
 ```javascript
+// Using requirejs
+require(["glsl-transition"], function (GlslTransition) {});
+
 // Using bundle version
 var GlslTransition = window.GlslTransition;
 ```

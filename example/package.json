@@ -10,8 +10,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "server": "./node_modules/http-server/bin/http-server",
-    "build": "./node_modules/browserify/bin/cmd.js ./main.js -t glslifyify -o ./bundle.js"
+    "server": "http-server",
+    "build": "browserify ./main.js -t glslifyify -o ./bundle.js"
   },
   "dependencies": {
     "glsl-transition": "x.x.x",
