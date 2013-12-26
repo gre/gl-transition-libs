@@ -1,6 +1,6 @@
 /*jslint newcap: true */
 var Q = require("q");
-var glslExports = require("glsl-exports");
+var createShader = require("gl-shader");
 
 var VERTEX_SHADER = 'attribute vec2 position;attribute vec2 texCoord_in;uniform vec2 resolution;varying vec2 texCoord;void main() {vec2 zeroToOne = position / resolution;vec2 zeroToTwo = zeroToOne * 2.0;vec2 clipSpace = zeroToTwo - 1.0;gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);texCoord = texCoord_in;}';
 var CONTEXTS = ["webgl", "experimental-webgl"];
@@ -79,40 +79,13 @@ function GlslTransition (canvas) {
     gl.viewport(0, 0, w, h);
 
     if (currentTransition) {
-      syncUniformResolution(currentTransition, w, h);
+      syncUniformResolution(currentTransition.program, w, h);
     }
     /*
     var img = images[sandbox.opt("slide")];
     if (img) h = Math.floor(w * img.height / img.width);
     */
     setRectangle(0, 0, w, h);
-  }
-  
-  function loadShader (shaderSource, shaderType) {
-    var shader = gl.createShader(shaderType);
-    gl.shaderSource(shader, shaderSource);
-    gl.compileShader(shader);
-    var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (!compiled) {
-      var lastError = gl.getShaderInfoLog(shader);
-      gl.deleteShader(shader);
-      throw new Error(shader + "':" + lastError);
-    }
-    return shader;
-  }
-
-  function loadProgram (shaders) {
-    var program = gl.createProgram();
-    shaders.forEach(function (shader) {
-      gl.attachShader(program, shader);
-    });
-    gl.linkProgram(program);
-
-    var linked = gl.getProgramParameter(program, gl.LINK_STATUS);
-    if (!linked) {
-      throw new Error("Linking error:" + gl.getProgramInfoLog(program));
-    }
-    return program;
   }
 
   function createTexture (image) {
@@ -127,29 +100,8 @@ function GlslTransition (canvas) {
     gl.bindTexture(gl.TEXTURE_2D, null);
     return texture;
   }
-
-  function bindUniforms (program, uniforms) {
-    for (var k in uniforms) {
-      var value = uniforms[k];
-      var loc = gl.getUniformLocation(program, k);
-      if (value instanceof Array) {
-        if (typeof value[0] === "number") {
-          var fname = "uniform"+value.length+"f";
-          if (fname in gl) gl[fname].apply(this, [loc].concat(value));
-        }
-      }
-      else if (typeof value === "number") {
-        gl.uniform1f(loc, value);
-      }
-    }
-  }
-
-  function loadTransitionProgram (glslCode) {
-    // Create new program
-    var program = loadProgram([
-      loadShader(VERTEX_SHADER, gl.VERTEX_SHADER),
-      loadShader(glslCode, gl.FRAGMENT_SHADER)
-    ]);
+  function loadTransitionShader (glsl) {
+    var shader = createShader(gl, VERTEX_SHADER, glsl);
 
     // buffer
     var texCoordBuffer = gl.createBuffer();
@@ -157,19 +109,18 @@ function GlslTransition (canvas) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0]), gl.STATIC_DRAW);
 
     // texCoord
-    var texCoordLocation = gl.getAttribLocation(program, "texCoord_in");
+    var texCoordLocation = gl.getAttribLocation(shader.program, "texCoord_in");
     gl.enableVertexAttribArray(texCoordLocation);
     gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
-
 
     // position
     var buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    var positionLocation = gl.getAttribLocation(program, "position");
+    var positionLocation = gl.getAttribLocation(shader.program, "position");
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-    return program;
+    return shader;
   }
   
   function draw () {
@@ -182,12 +133,11 @@ function GlslTransition (canvas) {
     if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string" || typeof progressParameter !== "string")
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
-    var program = loadTransitionProgram(glsl);
-    var globals = glslExports(glsl);
+    var shader = loadTransitionShader(glsl);
     var locations = {};
 
     function setProgress (p) {
-      if(!(progressParameter in locations)) locations[progressParameter] = gl.getUniformLocation(program, progressParameter);
+      if(!(progressParameter in locations)) locations[progressParameter] = gl.getUniformLocation(shader.program, progressParameter);
       gl.uniform1f(locations[progressParameter], p);
     }
 
@@ -221,35 +171,33 @@ function GlslTransition (canvas) {
       if (arguments.length < 2 || arguments.length > 3 || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
         throw new Error("Bad arguments. usage: t(imageFrom, imageTo, duration/*number>0*/ [, easing])");
 
-      if (currentTransition !== program) {
+      if (currentTransition !== shader) {
         if (currentTransition) {
-          // FIXME Does deleteProgram means program is now invalid?
-          //gl.deleteProgram(currentTransition);
           currentTransition = null;
         }
-        gl.useProgram(program);
+        gl.useProgram(shader.program);
       }
-      currentTransition = program;
-
-      locations = {};
-      for (var uniform in globals.uniforms) {
-        locations[uniform] = gl.getUniformLocation(program, uniform);
-      }
+      currentTransition = shader;
 
       var allUniforms = extend({}, defaultUniforms, uniforms);
+
+      for (var name in allUniforms) {
+        var value = allUniforms[value];
+        // FIXME: if value is sampler, need to allocate texture
+        shader.uniforms[name] = value;
+      }
 
       // FIXME: this is for now static in the code...
       var fromTexture = createTexture(uniforms.from),
           toTexture = createTexture(uniforms.to);
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, fromTexture);
-      gl.uniform1i(locations.from, 0);
+      shader.uniforms.from = 0;
 
       gl.activeTexture(gl.TEXTURE1);
       gl.bindTexture(gl.TEXTURE_2D, toTexture);
-      gl.uniform1i(locations.to, 1);
+      shader.uniforms.to = 1;
 
-      bindUniforms(program, allUniforms);
       syncViewport();
       setProgress(0);
 

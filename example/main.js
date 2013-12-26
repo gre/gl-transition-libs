@@ -4,6 +4,11 @@ var Qimage = require("qimage");
 var BezierEasing = require("bezier-easing");
 var ease = BezierEasing.css.ease;
 
+var $duration = document.getElementById("duration");
+var $delay = document.getElementById("delay");
+var $durationValue = document.getElementById("durationValue");
+var $delayValue = document.getElementById("delayValue");
+
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 var transitions = [
@@ -14,14 +19,20 @@ var transitions = [
 ];
 
 var transitionDuration, stayTime;
-if (window.location.search === "?hardcore") {
-  transitionDuration = 300;
-  stayTime = 0;
+
+function syncDuration () {
+  $durationValue.innerHTML = $duration.value;
+  transitionDuration = parseInt($duration.value, 10);
 }
-else {
-  transitionDuration = 2000;
-  stayTime = 1000;
+function syncDelay () {
+  $delayValue.innerHTML = $delay.value;
+  stayTime = parseInt($delay.value, 10);
 }
+
+syncDuration();
+syncDelay();
+$duration.addEventListener("change", syncDuration, false);
+$delay.addEventListener("change", syncDelay, false);
 
 function rotateForever (images) {
   function recRotate (i) {
