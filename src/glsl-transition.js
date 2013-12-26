@@ -1,8 +1,8 @@
-/*jslint newcap: true */
 var Q = require("q");
 var createShader = require("gl-shader");
 
-var VERTEX_SHADER = 'attribute vec2 position;attribute vec2 texCoord_in;uniform vec2 resolution;varying vec2 texCoord;void main() {vec2 zeroToOne = position / resolution;vec2 zeroToTwo = zeroToOne * 2.0;vec2 clipSpace = zeroToTwo - 1.0;gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);texCoord = texCoord_in;}';
+var VERTEX_SHADER = 'attribute vec2 position; void main() { gl_Position = vec4(2.0*position-1.0, 0.0, 1.0);}';
+
 var CONTEXTS = ["webgl", "experimental-webgl"];
 function getWebGLContext (canvas) {
   if (!canvas.getContext) return;
@@ -54,11 +54,18 @@ function GlslTransition (canvas) {
   });
   canvas.addEventListener("webglcontextrestored", function () {
     gl = getWebGLContext(canvas);
-    // TODO trigger
+    // TODO trigger some internal events to being able to recompute all programs...
   });
 
-  function setRectangle (x, y, width, height) {
-    var x1 = x, x2 = x + width, y1 = y, y2 = y + height;
+  function syncViewport () {
+    var w = canvas.width, h = canvas.height;
+    gl.viewport(0, 0, w, h);
+
+    if (currentTransition) {
+      currentTransition.uniforms.resolution = [ w, h ];
+    }
+
+    var x1 = 0, x2 = w, y1 = 0, y2 = h;
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
       x1, y1,
       x2, y1,
@@ -67,31 +74,13 @@ function GlslTransition (canvas) {
       x2, y1,
       x2, y2
     ]), gl.STATIC_DRAW);
-  }
 
-  function syncUniformResolution (program, w, h) {
-    var resolutionLocation = gl.getUniformLocation(program, "resolution");
-    gl.uniform2f(resolutionLocation, w, h);
-  }
-
-  function syncViewport () {
-    var w = canvas.width, h = canvas.height;
-    gl.viewport(0, 0, w, h);
-
-    if (currentTransition) {
-      syncUniformResolution(currentTransition.program, w, h);
-    }
-    /*
-    var img = images[sandbox.opt("slide")];
-    if (img) h = Math.floor(w * img.height / img.width);
-    */
-    setRectangle(0, 0, w, h);
   }
 
   function createTexture (image) {
     var texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    // FIXME: the following line throw an error for cross domain images...
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -102,24 +91,9 @@ function GlslTransition (canvas) {
   }
   function loadTransitionShader (glsl) {
     var shader = createShader(gl, VERTEX_SHADER, glsl);
-
-    // buffer
-    var texCoordBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0]), gl.STATIC_DRAW);
-
-    // texCoord
-    var texCoordLocation = gl.getAttribLocation(shader.program, "texCoord_in");
-    gl.enableVertexAttribArray(texCoordLocation);
-    gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
-
-    // position
-    var buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    var positionLocation = gl.getAttribLocation(shader.program, "position");
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    shader.attributes.position.pointer();
+    shader.attributes.position.enable();
     return shader;
   }
   
@@ -134,15 +108,14 @@ function GlslTransition (canvas) {
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
     var shader = loadTransitionShader(glsl);
-    var locations = {};
+    // TODO on webglcontextrestored, recompute the shader..
 
     function setProgress (p) {
-      if(!(progressParameter in locations)) locations[progressParameter] = gl.getUniformLocation(shader.program, progressParameter);
-      gl.uniform1f(locations[progressParameter], p);
+      shader.uniforms[progressParameter] = p;
     }
 
     function startRender (transitionDuration, transitionEasing) {
-      // FIXME: there is no error case handle yet! we have to stop when something goes wrong (context lost, exception in draw,...)
+      // TODO: there is no error case handle yet! we have to stop when something goes wrong (context lost, exception in draw,...)
       var transitionStart = Date.now();
       var d = Q.defer();
       drawing = true;
@@ -164,8 +137,6 @@ function GlslTransition (canvas) {
       return d.promise;
     }
 
-    // TODO bind webglcontextrestored and recompute stuff..
-
     return function transition (uniforms, duration, easing) {
       if (!easing) easing = identity;
       if (arguments.length < 2 || arguments.length > 3 || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
@@ -175,19 +146,21 @@ function GlslTransition (canvas) {
         if (currentTransition) {
           currentTransition = null;
         }
-        gl.useProgram(shader.program);
+        shader.bind();
       }
       currentTransition = shader;
 
       var allUniforms = extend({}, defaultUniforms, uniforms);
 
       for (var name in allUniforms) {
-        var value = allUniforms[value];
-        // FIXME: if value is sampler, need to allocate texture
-        shader.uniforms[name] = value;
+        var value = allUniforms[name];
+        if (typeof value === "number") {
+          shader.uniforms[name] = value;
+        }
+        // FIXME TODO: if value is sampler, need to allocate texture and remove the following static code...
       }
 
-      // FIXME: this is for now static in the code...
+      // FIXME ->
       var fromTexture = createTexture(uniforms.from),
           toTexture = createTexture(uniforms.to);
       gl.activeTexture(gl.TEXTURE0);
@@ -197,6 +170,7 @@ function GlslTransition (canvas) {
       gl.activeTexture(gl.TEXTURE1);
       gl.bindTexture(gl.TEXTURE_2D, toTexture);
       shader.uniforms.to = 1;
+      // <- FIXME
 
       syncViewport();
       setProgress(0);

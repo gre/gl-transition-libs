@@ -1,7 +1,4 @@
-glsl-transition-example
-===
-
-Simple example using [glsl-transition](https://npmjs.org/package/glsl-transition).
+Simple slideshow example using [glsl-transition](https://npmjs.org/package/glsl-transition).
 
 Running the exemple
 ---

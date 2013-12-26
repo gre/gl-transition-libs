@@ -8,10 +8,19 @@ module.exports = function (grunt) {
       options: grunt.file.readJSON('.jshintrc'),
       src: ['src/*.js']
     },
+    browserify: {
+      lib: {
+        src: 'src/glsl-transition.js',
+        dest: 'dist/glsl-transition.js',
+        options: {
+          standalone: "GlslTransition"
+        }
+      }
+    },
     watch: {
       lib: {
         files: '<%= jshint.src %>',
-        tasks: ['jshint']
+        tasks: ['jshint', 'browserify']
       }
     },
     'gh-pages': {
@@ -30,6 +39,6 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['jshint', 'watch']);
+  grunt.registerTask('default', ['jshint', 'browserify', 'watch']);
   grunt.registerTask('publish', ['shell:buildExample', 'gh-pages']);
 };

@@ -6,7 +6,6 @@ precision highp float;
 uniform sampler2D from;
 uniform sampler2D to;
 uniform float progress;
-varying vec2 texCoord;
 uniform vec2 resolution;
 
 // Custom parameters
@@ -17,9 +16,10 @@ float rand(vec2 co){
 }
 
 void main() {
-  float pTo = progress*(1.0+2.0*size) - size;
-  float r = size * rand(vec2(0, texCoord.y));
-  pTo = clamp(1.-(texCoord.x-pTo-r)/size, 0., 1.);
-  float pFrom = 1.0 - pTo;
-  gl_FragColor = pTo*texture2D(to,texCoord) + pFrom*texture2D(from,texCoord);
+  vec2 p = gl_FragCoord.xy / resolution.xy;
+  float xTo = progress*(1.0+2.0*size) - size;
+  float r = size * rand(vec2(0, p.y));
+  xTo = clamp(1.-(p.x-xTo-r)/size, 0., 1.);
+  float xFrom = 1.0 - xTo;
+  gl_FragColor = xTo*texture2D(to, p) + xFrom*texture2D(from, p);
 }

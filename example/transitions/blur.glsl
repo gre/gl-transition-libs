@@ -6,7 +6,6 @@ precision highp float;
 uniform sampler2D from;
 uniform sampler2D to;
 uniform float progress;
-varying vec2 texCoord;
 uniform vec2 resolution;
 
 // Custom parameters
@@ -31,7 +30,8 @@ vec4 blur(sampler2D t, vec2 c, float b) {
 
 void main()
 {
-  float pinv = 1.-progress;
-  gl_FragColor = pinv*blur(from, texCoord, progress*size) + progress*blur(to, texCoord, pinv*size);
+  vec2 p = gl_FragCoord.xy / resolution.xy;
+  float inv = 1.-progress;
+  gl_FragColor = inv*blur(from, p, progress*size) + progress*blur(to, p, inv*size);
 }
 
