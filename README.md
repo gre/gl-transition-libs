@@ -72,8 +72,9 @@ the `uniforms` first argument of the transition call is an object statically giv
 The library will map JavaScript types to your GLSL fragment.
 However, there is some conventions for the GLSL to be compatible with this library.
 
-The only requirement is that you need a **"progress" float uniform** which will be changed over the duration time from 0.0 to 1.0.
-You can customize the name of that parameter by giving a `{ progress: "customname" }` option object in second argument of the Transition definition.
+The only 2 requirements is that you need a **"progress" float uniform** and a **"resolution" vec2 uniform**. The `progress` uniform will be changed over the duration time from 0.0 to 1.0. The `resolution` uniform contains the canvas size.
+
+You may customize the name of the `progress` parameter by giving a `{ progress: "customname" }` option object in second argument of the Transition definition. Same for `resolution`.
 
 Most of the library you will define is about moving from an image to another. For that need, the convention we are taking is to name your `uniform sample2D` variables: `from` and `to`.
 

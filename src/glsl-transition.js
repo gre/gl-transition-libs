@@ -1,5 +1,6 @@
 var Q = require("q");
 var createShader = require("gl-shader");
+var glslExports = require("glsl-exports"); // FIXME: temporary required because gl-shader does not expose types
 
 var VERTEX_SHADER = 'attribute vec2 position; void main() { gl_Position = vec4(2.0*position-1.0, 0.0, 1.0);}';
 
@@ -27,18 +28,7 @@ var requestAnimationFrame = (function(){
           };
 })();
 
-function extend (obj) {
-  for(var a=1; a<arguments.length; ++a) {
-    var source = arguments[a];
-    for (var prop in source)
-      if (source[prop] !== void 0) obj[prop] = source[prop];
-  }
-  return obj;
-}
-
-function identity (x) {
-  return x;
-}
+function identity (x) { return x; }
 
 function GlslTransition (canvas) {
   if (arguments.length !== 1 || !("getContext" in canvas))
@@ -56,26 +46,6 @@ function GlslTransition (canvas) {
     gl = getWebGLContext(canvas);
     // TODO trigger some internal events to being able to recompute all programs...
   });
-
-  function syncViewport () {
-    var w = canvas.width, h = canvas.height;
-    gl.viewport(0, 0, w, h);
-
-    if (currentTransition) {
-      currentTransition.uniforms.resolution = [ w, h ];
-    }
-
-    var x1 = 0, x2 = w, y1 = 0, y2 = h;
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-      x1, y1,
-      x2, y1,
-      x1, y2,
-      x1, y2,
-      x2, y1,
-      x2, y2
-    ]), gl.STATIC_DRAW);
-
-  }
 
   function createTexture (image) {
     var texture = gl.createTexture();
@@ -103,15 +73,58 @@ function GlslTransition (canvas) {
 
   return function createTransition (glsl, options) {
     var progressParameter = options && options.progress || "progress";
+    var resolutionParameter = options && options.resolution || "resolution";
     var defaultUniforms = options && options.uniforms || {};
     if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string" || typeof progressParameter !== "string")
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
-    var shader = loadTransitionShader(glsl);
-    // TODO on webglcontextrestored, recompute the shader..
+    var shader, textureUnits;
+
+    function load () {
+      shader = loadTransitionShader(glsl);
+      textureUnits = {};
+      var types = glslExports(glsl); // FIXME: we can remove the glslExports call when gl-shader gives access to those types
+      var i = 0;
+      for (var name in types.uniforms) {
+        var t = types.uniforms[name];
+        if (t === "sampler2D") {
+          textureUnits[name] = i++;
+        }
+      }
+    }
+
+    function syncViewport () {
+      var w = canvas.width, h = canvas.height;
+      gl.viewport(0, 0, w, h);
+      if (currentTransition) {
+        currentTransition.uniforms[resolutionParameter] = [ w, h ];
+      }
+      var x1 = 0, x2 = w, y1 = 0, y2 = h;
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        x1, y1,
+        x2, y1,
+        x1, y2,
+        x1, y2,
+        x2, y1,
+        x2, y2
+      ]), gl.STATIC_DRAW);
+    }
 
     function setProgress (p) {
       shader.uniforms[progressParameter] = p;
+    }
+
+    function setUniform (name, value) {
+      if (name in textureUnits) {
+        var i = textureUnits[name];
+        gl.activeTexture(gl.TEXTURE0 + i);
+        var texture = createTexture(value); // FIXME TODO: we may me able to create it once!
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        shader.uniforms[name] = i;
+      }
+      else if (typeof value === "number") {
+        shader.uniforms[name] = value;
+      }
     }
 
     function startRender (transitionDuration, transitionEasing) {
@@ -137,46 +150,37 @@ function GlslTransition (canvas) {
       return d.promise;
     }
 
+    load();
+    // TODO on webglcontextrestored, recompute the shader..
+
     return function transition (uniforms, duration, easing) {
       if (!easing) easing = identity;
       if (arguments.length < 2 || arguments.length > 3 || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
-        throw new Error("Bad arguments. usage: t(imageFrom, imageTo, duration/*number>0*/ [, easing])");
+        throw new Error("Bad arguments. usage: t(imageFrom, imageTo, duration, easing) -- duration must be an integer > 0 and easing is optional.");
+
+      if (!gl) return Q.reject(new Error("WebGL context is null."));
+      if (drawing) return Q.reject(new Error("another transition is already running."));
 
       if (currentTransition !== shader) {
-        if (currentTransition) {
-          currentTransition = null;
-        }
+        currentTransition = shader;
         shader.bind();
       }
-      currentTransition = shader;
 
-      var allUniforms = extend({}, defaultUniforms, uniforms);
-
-      for (var name in allUniforms) {
-        var value = allUniforms[name];
-        if (typeof value === "number") {
-          shader.uniforms[name] = value;
+      for (var name in shader.uniforms) {
+        if (name === progressParameter || name === resolutionParameter) continue;
+        if (name in defaultUniforms) {
+          setUniform(name, defaultUniforms[name]);
         }
-        // FIXME TODO: if value is sampler, need to allocate texture and remove the following static code...
+        else if (name in uniforms) {
+          setUniform(name, uniforms[name]);
+        }
+        else {
+          throw new Error("You must provide a value for uniform '"+name+"'.");
+        }
       }
-
-      // FIXME ->
-      var fromTexture = createTexture(uniforms.from),
-          toTexture = createTexture(uniforms.to);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, fromTexture);
-      shader.uniforms.from = 0;
-
-      gl.activeTexture(gl.TEXTURE1);
-      gl.bindTexture(gl.TEXTURE_2D, toTexture);
-      shader.uniforms.to = 1;
-      // <- FIXME
-
       syncViewport();
       setProgress(0);
 
-      if (!gl) return Q.reject(new Error("WebGL is unsupported"));
-      if (drawing) return Q.reject(new Error("another transition is already running."));
       return startRender(duration, easing);
     };
   };

@@ -1655,7 +1655,7 @@ function through (write, end) {
 }
 
 
-},{"__browserify_process":16,"stream":21}],8:[function(require,module,exports){
+},{"__browserify_process":27,"stream":32}],8:[function(require,module,exports){
 module.exports = tokenize
 
 var through = require('through')
@@ -2388,7 +2388,7 @@ function through (write, end, opts) {
 }
 
 
-},{"__browserify_process":16,"stream":21}],13:[function(require,module,exports){
+},{"__browserify_process":27,"stream":32}],13:[function(require,module,exports){
 "use strict"
 
 function unique_pred(list, compare) {
@@ -2447,6 +2447,28 @@ function unique(list, compare, sorted) {
 
 module.exports = unique
 },{}],14:[function(require,module,exports){
+arguments[4][2][0].apply(exports,arguments)
+},{"glsl-parser":15,"glsl-tokenizer":20,"through":24}],15:[function(require,module,exports){
+arguments[4][3][0].apply(exports,arguments)
+},{"./lib/index":17}],16:[function(require,module,exports){
+module.exports=require(4)
+},{}],17:[function(require,module,exports){
+module.exports=require(5)
+},{"./expr":16,"./scope":18,"through":19}],18:[function(require,module,exports){
+module.exports=require(6)
+},{}],19:[function(require,module,exports){
+module.exports=require(7)
+},{"__browserify_process":27,"stream":32}],20:[function(require,module,exports){
+module.exports=require(8)
+},{"./lib/builtins":21,"./lib/literals":22,"./lib/operators":23,"through":24}],21:[function(require,module,exports){
+module.exports=require(9)
+},{}],22:[function(require,module,exports){
+module.exports=require(10)
+},{}],23:[function(require,module,exports){
+module.exports=require(11)
+},{}],24:[function(require,module,exports){
+module.exports=require(12)
+},{"__browserify_process":27,"stream":32}],25:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2748,7 +2770,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2773,7 +2795,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],16:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2827,7 +2849,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],17:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var base64 = require('base64-js')
 var TA = require('typedarray')
 
@@ -3981,7 +4003,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":18,"typedarray":19}],18:[function(require,module,exports){
+},{"base64-js":29,"typedarray":30}],29:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -4067,7 +4089,7 @@ function assert (test, message) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],19:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var undefined = (void 0); // Paranoia
 
 // Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
@@ -4699,7 +4721,7 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 
 }());
 
-},{}],20:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4773,7 +4795,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":24,"./writable.js":26,"inherits":15,"process/browser.js":22}],21:[function(require,module,exports){
+},{"./readable.js":35,"./writable.js":37,"inherits":26,"process/browser.js":33}],32:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4902,9 +4924,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":20,"./passthrough.js":23,"./readable.js":24,"./transform.js":25,"./writable.js":26,"events":14,"inherits":15}],22:[function(require,module,exports){
-module.exports=require(16)
-},{}],23:[function(require,module,exports){
+},{"./duplex.js":31,"./passthrough.js":34,"./readable.js":35,"./transform.js":36,"./writable.js":37,"events":25,"inherits":26}],33:[function(require,module,exports){
+module.exports=require(27)
+},{}],34:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4947,7 +4969,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":25,"inherits":15}],24:[function(require,module,exports){
+},{"./transform.js":36,"inherits":26}],35:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5882,7 +5904,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":21,"__browserify_process":16,"buffer":17,"events":14,"inherits":15,"process/browser.js":22,"string_decoder":27}],25:[function(require,module,exports){
+},{"./index.js":32,"__browserify_process":27,"buffer":28,"events":25,"inherits":26,"process/browser.js":33,"string_decoder":38}],36:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6088,7 +6110,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":20,"inherits":15}],26:[function(require,module,exports){
+},{"./duplex.js":31,"inherits":26}],37:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6476,7 +6498,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":21,"buffer":17,"inherits":15,"process/browser.js":22}],27:[function(require,module,exports){
+},{"./index.js":32,"buffer":28,"inherits":26,"process/browser.js":33}],38:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6669,7 +6691,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":17}],28:[function(require,module,exports){
+},{"buffer":28}],39:[function(require,module,exports){
 var process=require("__browserify_process");// vim:ts=4:sts=4:sw=4:
 /*!
  *
@@ -8608,9 +8630,10 @@ return Q;
 
 });
 
-},{"__browserify_process":16}],29:[function(require,module,exports){
+},{"__browserify_process":27}],40:[function(require,module,exports){
 var Q = require("q");
 var createShader = require("gl-shader");
+var glslExports = require("glsl-exports"); // FIXME: temporary required because gl-shader does not expose types
 
 var VERTEX_SHADER = 'attribute vec2 position; void main() { gl_Position = vec4(2.0*position-1.0, 0.0, 1.0);}';
 
@@ -8638,18 +8661,7 @@ var requestAnimationFrame = (function(){
           };
 })();
 
-function extend (obj) {
-  for(var a=1; a<arguments.length; ++a) {
-    var source = arguments[a];
-    for (var prop in source)
-      if (source[prop] !== void 0) obj[prop] = source[prop];
-  }
-  return obj;
-}
-
-function identity (x) {
-  return x;
-}
+function identity (x) { return x; }
 
 function GlslTransition (canvas) {
   if (arguments.length !== 1 || !("getContext" in canvas))
@@ -8667,26 +8679,6 @@ function GlslTransition (canvas) {
     gl = getWebGLContext(canvas);
     // TODO trigger some internal events to being able to recompute all programs...
   });
-
-  function syncViewport () {
-    var w = canvas.width, h = canvas.height;
-    gl.viewport(0, 0, w, h);
-
-    if (currentTransition) {
-      currentTransition.uniforms.resolution = [ w, h ];
-    }
-
-    var x1 = 0, x2 = w, y1 = 0, y2 = h;
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-      x1, y1,
-      x2, y1,
-      x1, y2,
-      x1, y2,
-      x2, y1,
-      x2, y2
-    ]), gl.STATIC_DRAW);
-
-  }
 
   function createTexture (image) {
     var texture = gl.createTexture();
@@ -8714,15 +8706,58 @@ function GlslTransition (canvas) {
 
   return function createTransition (glsl, options) {
     var progressParameter = options && options.progress || "progress";
+    var resolutionParameter = options && options.resolution || "resolution";
     var defaultUniforms = options && options.uniforms || {};
     if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string" || typeof progressParameter !== "string")
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
-    var shader = loadTransitionShader(glsl);
-    // TODO on webglcontextrestored, recompute the shader..
+    var shader, textureUnits;
+
+    function load () {
+      shader = loadTransitionShader(glsl);
+      textureUnits = {};
+      var types = glslExports(glsl); // FIXME: we can remove the glslExports call when gl-shader gives access to those types
+      var i = 0;
+      for (var name in types.uniforms) {
+        var t = types.uniforms[name];
+        if (t === "sampler2D") {
+          textureUnits[name] = i++;
+        }
+      }
+    }
+
+    function syncViewport () {
+      var w = canvas.width, h = canvas.height;
+      gl.viewport(0, 0, w, h);
+      if (currentTransition) {
+        currentTransition.uniforms[resolutionParameter] = [ w, h ];
+      }
+      var x1 = 0, x2 = w, y1 = 0, y2 = h;
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+        x1, y1,
+        x2, y1,
+        x1, y2,
+        x1, y2,
+        x2, y1,
+        x2, y2
+      ]), gl.STATIC_DRAW);
+    }
 
     function setProgress (p) {
       shader.uniforms[progressParameter] = p;
+    }
+
+    function setUniform (name, value) {
+      if (name in textureUnits) {
+        var i = textureUnits[name];
+        gl.activeTexture(gl.TEXTURE0 + i);
+        var texture = createTexture(value); // FIXME TODO: we may me able to create it once!
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        shader.uniforms[name] = i;
+      }
+      else if (typeof value === "number") {
+        shader.uniforms[name] = value;
+      }
     }
 
     function startRender (transitionDuration, transitionEasing) {
@@ -8748,46 +8783,37 @@ function GlslTransition (canvas) {
       return d.promise;
     }
 
+    load();
+    // TODO on webglcontextrestored, recompute the shader..
+
     return function transition (uniforms, duration, easing) {
       if (!easing) easing = identity;
       if (arguments.length < 2 || arguments.length > 3 || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
-        throw new Error("Bad arguments. usage: t(imageFrom, imageTo, duration/*number>0*/ [, easing])");
+        throw new Error("Bad arguments. usage: t(imageFrom, imageTo, duration, easing) -- duration must be an integer > 0 and easing is optional.");
+
+      if (!gl) return Q.reject(new Error("WebGL context is null."));
+      if (drawing) return Q.reject(new Error("another transition is already running."));
 
       if (currentTransition !== shader) {
-        if (currentTransition) {
-          currentTransition = null;
-        }
+        currentTransition = shader;
         shader.bind();
       }
-      currentTransition = shader;
 
-      var allUniforms = extend({}, defaultUniforms, uniforms);
-
-      for (var name in allUniforms) {
-        var value = allUniforms[name];
-        if (typeof value === "number") {
-          shader.uniforms[name] = value;
+      for (var name in shader.uniforms) {
+        if (name === progressParameter || name === resolutionParameter) continue;
+        if (name in defaultUniforms) {
+          setUniform(name, defaultUniforms[name]);
         }
-        // FIXME TODO: if value is sampler, need to allocate texture and remove the following static code...
+        else if (name in uniforms) {
+          setUniform(name, uniforms[name]);
+        }
+        else {
+          throw new Error("You must provide a value for uniform '"+name+"'.");
+        }
       }
-
-      // FIXME ->
-      var fromTexture = createTexture(uniforms.from),
-          toTexture = createTexture(uniforms.to);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, fromTexture);
-      shader.uniforms.from = 0;
-
-      gl.activeTexture(gl.TEXTURE1);
-      gl.bindTexture(gl.TEXTURE_2D, toTexture);
-      shader.uniforms.to = 1;
-      // <- FIXME
-
       syncViewport();
       setProgress(0);
 
-      if (!gl) return Q.reject(new Error("WebGL is unsupported"));
-      if (drawing) return Q.reject(new Error("another transition is already running."));
       return startRender(duration, easing);
     };
   };
@@ -8800,6 +8826,6 @@ GlslTransition.isSupported = function () {
 
 module.exports = GlslTransition;
 
-},{"gl-shader":1,"q":28}]},{},[29])
-(29)
+},{"gl-shader":1,"glsl-exports":14,"q":39}]},{},[40])
+(40)
 });
