@@ -1,8 +1,8 @@
 {
   "name": "glsl-transition",
   "version": "0.1.0",
-  "description": "Makes complex transitions with GLSL (e.g. from one image to another)",
-  "keywords": ["glsl", "webgl", "transition", "transitions"],
+  "description": "Make Transitions Effects with the power of WebGL Shaders (GLSL)",
+  "keywords": ["glsl", "webgl", "transition", "transitions", "shaders", "animation"],
   "homepage": "https://github.com/gre/glsl-transition",
   "author": "Gaëtan Renaudeau <renaudeau.gaetan@gmail.com>",
   "contributors": [],

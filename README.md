@@ -35,6 +35,7 @@ It is important to have these 3-level function calls, both for **optimization** 
 * The *first call* **creates a Transitions context with a Canvas**.
 * The *second call* **creates a GLSL Transition for this context**.
 * Finally, the *third call* **performs this transition**. The returned value of this transition is a Promise resolved when transition has succeed or rejected when it has failed (rare cases like webgl context lost).
+* The result of a successful Promise is a metadata object containing: `{ startAt, endAt, elapsedTime, frames }`.
 
 Obviously, compiling a GLSL program can takes time and it would be terrible to create it each time you do a transition.
 
@@ -76,7 +77,7 @@ The only 2 requirements is that you need a **"progress" float uniform** and a **
 
 You may customize the name of the `progress` parameter by giving a `{ progress: "customname" }` option object in second argument of the Transition definition. Same for `resolution`.
 
-Most of the library you will define is about moving from an image to another. For that need, the convention we are taking is to name your `uniform sample2D` variables: `from` and `to`.
+Most of the transition you may define is about moving from an image to another. For that need, the convention we are taking is to name your `uniform sample2D` image variables: **`from` and `to`**.
 
 ### `duration` number
 
@@ -105,6 +106,9 @@ In this library, "static" errors will be thrown by the library whereas "runtime"
 
 That library doesn't solve for you any fallback, the idea is that the end user choose how to fallback it.
 You can test with `GlslTransition.isSupported` if a transition is likely to be supported.
-Another more functional way to do it is also to recover the promise resulting of a transition with the code you want (e.g. you could recover with a [Zanimo](http://npmjs.org/package/zanimo) transition).
+Another more functional way to do it is also to recover the promise resulting of a transition with the code you want.
+## See also
 
+This library took its inspiration from [Zanimo](http://npmjs.org/package/zanimo) transition, which is a CSS Transitions + Promise library.
 
+You could easily make an abstraction of GLSL and CSS transitions out of **glsl-transition**, [Zanimo](http://npmjs.org/package/zanimo) and [https://github.com/gre/bezier-easing](https://github.com/gre/bezier-easing) !

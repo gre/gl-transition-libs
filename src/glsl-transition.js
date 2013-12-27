@@ -196,7 +196,7 @@ function GlslTransition (canvas) {
           else {
             setProgress(transitionEasing(1));
             draw();
-            d.resolve({ startAt: transitionStart, endAt: now, frames: frames }); // Resolve some meta-data of the successful transition.
+            d.resolve({ startAt: transitionStart, endAt: now, elapsedTime: now-transitionStart, frames: frames }); // Resolve some meta-data of the successful transition.
             currentAnimationD = null;
           }
         }
