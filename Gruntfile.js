@@ -24,10 +24,12 @@ module.exports = function (grunt) {
       }
     },
     'gh-pages': {
-      options: {
-        base: 'example'
-      },
-      src: ['**']
+      example: {
+        options: {
+          base: 'example'
+        },
+        src: ['bundle.js', 'index.html']
+      }
     },
     shell: {
       buildExample: {

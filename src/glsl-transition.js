@@ -30,22 +30,48 @@ var requestAnimationFrame = (function(){
 
 function identity (x) { return x; }
 
+/**
+ * API:
+ * GlslTransition(canvas)(glslSource, options)(uniforms, duration, easing) // => Promise
+ */
+
+/**
+ * ~~~ First Call in the API
+ * GlslTransition(canvas)
+ * Creates a Transitions context with a canvas.
+ */
 function GlslTransition (canvas) {
   if (arguments.length !== 1 || !("getContext" in canvas))
     throw new Error("Bad arguments. usage: GlslTransition(canvas)");
 
-  var gl = getWebGLContext(canvas);
-  var currentTransition;
-  var drawing = false;
+  // First level variables
+  var gl, currentShader, currentAnimationD, transitions;
 
-  canvas.addEventListener("webglcontextlost", function (e) {
+  function init () {
+    transitions = [];
+    gl = getWebGLContext(canvas);
+    canvas.addEventListener("webglcontextlost", onContextLost, false);
+    canvas.addEventListener("webglcontextrestored", onContextRestored, false);
+  }
+
+  function onContextLost (e) {
     e.preventDefault();
     gl = null;
-  });
-  canvas.addEventListener("webglcontextrestored", function () {
+    if (currentAnimationD) {
+      currentAnimationD.reject(e);
+      currentAnimationD = null;
+    }
+    for (var i=0; i<transitions.length; ++i) {
+      transitions[i].onContextLost(e);
+    }
+  }
+
+  function onContextRestored (e) {
     gl = getWebGLContext(canvas);
-    // TODO trigger some internal events to being able to recompute all programs...
-  });
+    for (var i=0; i<transitions.length; ++i) {
+      transitions[i].onContextRestored(e);
+    }
+  }
 
   function createTexture (image) {
     var texture = gl.createTexture();
@@ -71,19 +97,26 @@ function GlslTransition (canvas) {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
-  return function createTransition (glsl, options) {
+  /**
+   * ~~~ Second Call in the API
+   * createTransition(glslSource, [options])
+   * Creates a GLSL Transition for the current canvas context.
+   */
+  function createTransition (glsl, options) {
     var progressParameter = options && options.progress || "progress";
     var resolutionParameter = options && options.resolution || "resolution";
     var defaultUniforms = options && options.uniforms || {};
     if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string" || typeof progressParameter !== "string")
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
-    var shader, textureUnits;
+    // Second level variables
+    var shader, textureUnits, currentAnimationD;
 
+    var types = glslExports(glsl); // FIXME: we can remove the glslExports call when gl-shader gives access to those types
     function load () {
+      if (!gl) return;
       shader = loadTransitionShader(glsl);
       textureUnits = {};
-      var types = glslExports(glsl); // FIXME: we can remove the glslExports call when gl-shader gives access to those types
       var i = 0;
       for (var name in types.uniforms) {
         var t = types.uniforms[name];
@@ -93,11 +126,19 @@ function GlslTransition (canvas) {
       }
     }
 
+    function onContextLost () {
+      shader = null;
+    }
+
+    function onContextRestored () {
+      load();
+    }
+
     function syncViewport () {
       var w = canvas.width, h = canvas.height;
       gl.viewport(0, 0, w, h);
-      if (currentTransition) {
-        currentTransition.uniforms[resolutionParameter] = [ w, h ];
+      if (currentShader) {
+        currentShader.uniforms[resolutionParameter] = [ w, h ];
       }
       var x1 = 0, x2 = w, y1 = 0, y2 = h;
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -127,45 +168,62 @@ function GlslTransition (canvas) {
       }
     }
 
-    function startRender (transitionDuration, transitionEasing) {
-      // TODO: there is no error case handle yet! we have to stop when something goes wrong (context lost, exception in draw,...)
+    function animate (transitionDuration, transitionEasing) {
       var transitionStart = Date.now();
-      var d = Q.defer();
-      drawing = true;
+      currentAnimationD = Q.defer();
       (function render () {
+        if (!currentAnimationD) return;
         var now = Date.now();
         var p = (now-transitionStart)/transitionDuration;
-        if (p<1) {
-          requestAnimationFrame(render, canvas);
-          setProgress(transitionEasing(p));
-          draw();
+        try {
+          if (p<1) {
+            requestAnimationFrame(render, canvas);
+            setProgress(transitionEasing(p));
+            draw();
+          }
+          else {
+            setProgress(transitionEasing(1));
+            draw();
+            currentAnimationD.resolve(); // FIXME: what to resolve?
+            currentAnimationD = null;
+          }
         }
-        else {
-          setProgress(transitionEasing(1));
-          draw();
-          drawing = false;
-          d.resolve();
+        catch (e) {
+          currentAnimationD.reject(e);
+          currentAnimationD = null;
         }
       }());
-      return d.promise;
+      return currentAnimationD.promise;
     }
 
-    load();
-    // TODO on webglcontextrestored, recompute the shader..
-
-    return function transition (uniforms, duration, easing) {
+    /**
+     * ~~~ Third Call in the API
+     * transition(uniforms, duration, [easing])
+     * Perform a transition animation with uniforms paremeters to give in the GLSL, for a given duration and a custom easing function (default is linear).
+     */
+    function transition (uniforms, duration, easing) {
       if (!easing) easing = identity;
-      if (arguments.length < 2 || arguments.length > 3 || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
-        throw new Error("Bad arguments. usage: t(imageFrom, imageTo, duration, easing) -- duration must be an integer > 0 and easing is optional.");
+      // Validate Bad Arguments static errors
+      if (arguments.length < 2 || arguments.length > 3 || typeof uniforms !== "object" || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
+        throw new Error("Bad arguments. usage: t(uniforms, duration, easing) -- uniforms is an Object, duration an integer > 0, easing an optional function.");
 
+      // Validate Runtime errors
       if (!gl) return Q.reject(new Error("WebGL context is null."));
-      if (drawing) return Q.reject(new Error("another transition is already running."));
+      if (currentAnimationD) return Q.reject(new Error("another transition is already running."));
+      try {
+        if (!shader) load(); // Possibly shader was not loaded before because of no gl available.
+      }
+      catch (e) {
+        return Q.reject(e);
+      }
 
-      if (currentTransition !== shader) {
-        currentTransition = shader;
+      // If shader has changed, we need to bind it
+      if (currentShader !== shader) {
+        currentShader = shader;
         shader.bind();
       }
 
+      // Set all uniforms
       for (var name in shader.uniforms) {
         if (name === progressParameter || name === resolutionParameter) continue;
         if (name in defaultUniforms) {
@@ -181,9 +239,24 @@ function GlslTransition (canvas) {
       syncViewport();
       setProgress(0);
 
-      return startRender(duration, easing);
-    };
-  };
+      // Perform the transition
+      return animate(duration, easing);
+    }
+
+    transition.onContextLost = onContextLost;
+    transition.onContextRestored = onContextRestored;
+
+    // Finally load the transition and put it in the transitions array
+    load();
+    transitions.push(transition);
+
+    return transition;
+  }
+
+  // Finally init the GlslTransition context
+  init();
+
+  return createTransition;
 }
 
 GlslTransition.isSupported = function () {

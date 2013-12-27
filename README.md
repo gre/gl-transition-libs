@@ -32,7 +32,7 @@ GlslTransition(canvas)(glslSource, options)(uniforms, duration, easing) // => Pr
 
 It is important to have these 3-level function calls, both for **optimization** and **usability** purposes.
 
-* The *first call* **creates a Transitions context from a Canvas**.
+* The *first call* **creates a Transitions context with a Canvas**.
 * The *second call* **creates a GLSL Transition for this context**.
 * Finally, the *third call* **performs this transition**. The returned value of this transition is a Promise resolved when transition has succeed or rejected when it has failed (rare cases like webgl context lost).
 
