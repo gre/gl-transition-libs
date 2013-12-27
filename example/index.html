@@ -20,8 +20,15 @@
       display: inline-block;
       min-width: 200px;
     }
-    p input[type=range] {
-      min-width: 200px;
+    p input[type=range], p .readonly {
+      width: 250px;
+    }
+    p .readonly {
+      display: inline-block;
+      text-align: left;
+      padding: 2px 5px;
+      background: #333;
+      color: #ccc;
     }
     p .value {
       display: inline-block;
@@ -31,25 +38,61 @@
     canvas {
       background: #222;
     }
+
+    #wrapper {
+      margin: 0 auto;
+      width: 1250px
+    }
+    #viewport {
+      float: left;
+    }
+    #props {
+      width: 600px;
+      float: left;
+    }
+    @media (max-width: 1250px) {
+      #wrapper {
+        width: 600px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>GLSL-Transition</h1>
-  <canvas id="viewport" width="640" height="450"></canvas>
-  <p>
-    <label for="duration">Transition Duration:</label>
-    <input type="range" id="duration" value=1000 min=1 max=3000 />
-    <span class="value">
-      <span id="durationValue"></span>ms
-    </span>
-  </p>
-  <p>
-    <label for="delay">Delay:</label>
-    <input type="range" id="delay" value=500 min=0 max=3000 />
-    <span class="value">
-      <span id="delayValue"></span>ms
-    </span>
-  </p>
+  <div id="wrapper">
+    <h1>GLSL-Transition</h1>
+    <canvas id="viewport" width="640" height="450"></canvas>
+    <div id="props">
+      <p>
+        <label for="transitionname">Transition name:</label>
+        <span id="transitionname" class="readonly">&nbsp;</span>
+        <span class="value"></span>
+      </p>
+      <p>
+        <label for="duration">Transition Duration:</label>
+        <input type="range" id="duration" value=1000 min=1 max=3000 />
+        <span class="value">
+          <span id="durationValue"></span>ms
+        </span>
+      </p>
+      <p>
+        <label for="delay">Delay:</label>
+        <input type="range" id="delay" value=500 min=0 max=3000 />
+        <span class="value">
+          <span id="delayValue"></span>ms
+        </span>
+      </p>
+      <p>
+        <label for="easingtext">Easing:</label>
+        <span id="easingtext" class="readonly">&nbsp;</span>
+        <span class="value"></span>
+      </p>
+      <p>
+        <label>&nbsp;</label>
+        <canvas width="260" height="260" id="easing"></canvas>
+        <span class="value"></span>
+      </p>
+    </div>
+  </div>
   <script src="bundle.js"></script>
 </body>
 </html>
