@@ -73,18 +73,22 @@ function GlslTransition (canvas) {
     }
   }
 
-  function createTexture (image) {
+  function createTexture () {
     var texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.bindTexture(gl.TEXTURE_2D, null);
     return texture;
   }
+
+  function syncTexture (texture, image) {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  }
+
   function loadTransitionShader (glsl) {
     var shader = createShader(gl, VERTEX_SHADER, glsl);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
@@ -110,18 +114,22 @@ function GlslTransition (canvas) {
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
     // Second level variables
-    var shader, textureUnits, currentAnimationD;
+    var shader, textureUnits, textures, currentAnimationD;
 
     var types = glslExports(glsl); // FIXME: we can remove the glslExports call when gl-shader gives access to those types
     function load () {
       if (!gl) return;
       shader = loadTransitionShader(glsl);
       textureUnits = {};
+      textures = {};
       var i = 0;
       for (var name in types.uniforms) {
         var t = types.uniforms[name];
         if (t === "sampler2D") {
-          textureUnits[name] = i++;
+          gl.activeTexture(gl.TEXTURE0 + i);
+          textureUnits[name] = i;
+          textures[name] = createTexture();
+          i ++;
         }
       }
     }
@@ -158,9 +166,10 @@ function GlslTransition (canvas) {
     function setUniform (name, value) {
       if (name in textureUnits) {
         var i = textureUnits[name];
+        var texture = textures[name];
         gl.activeTexture(gl.TEXTURE0 + i);
-        var texture = createTexture(value); // FIXME TODO: we may me able to create it once!
         gl.bindTexture(gl.TEXTURE_2D, texture);
+        syncTexture(texture, value);
         shader.uniforms[name] = i;
       }
       else if (typeof value === "number") {
@@ -170,7 +179,8 @@ function GlslTransition (canvas) {
 
     function animate (transitionDuration, transitionEasing) {
       var transitionStart = Date.now();
-      currentAnimationD = Q.defer();
+      var d = Q.defer();
+      currentAnimationD = d;
       (function render () {
         if (!currentAnimationD) return;
         var now = Date.now();
@@ -184,16 +194,16 @@ function GlslTransition (canvas) {
           else {
             setProgress(transitionEasing(1));
             draw();
-            currentAnimationD.resolve(); // FIXME: what to resolve?
+            d.resolve(); // FIXME: what to resolve?
             currentAnimationD = null;
           }
         }
         catch (e) {
-          currentAnimationD.reject(e);
+          d.reject(e);
           currentAnimationD = null;
         }
       }());
-      return currentAnimationD.promise;
+      return d.promise;
     }
 
     /**
