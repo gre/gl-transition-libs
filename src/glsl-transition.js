@@ -179,10 +179,12 @@ function GlslTransition (canvas) {
 
     function animate (transitionDuration, transitionEasing) {
       var transitionStart = Date.now();
+      var frames = 0;
       var d = Q.defer();
       currentAnimationD = d;
       (function render () {
         if (!currentAnimationD) return;
+        ++ frames;
         var now = Date.now();
         var p = (now-transitionStart)/transitionDuration;
         try {
@@ -194,7 +196,7 @@ function GlslTransition (canvas) {
           else {
             setProgress(transitionEasing(1));
             draw();
-            d.resolve(); // FIXME: what to resolve?
+            d.resolve({ startAt: transitionStart, endAt: now, frames: frames }); // Resolve some meta-data of the successful transition.
             currentAnimationD = null;
           }
         }
