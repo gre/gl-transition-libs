@@ -50,7 +50,7 @@ function BezierEasingEditor (canvas) {
 
   function positionWithE (e) {
     var o = cumulativeOffset(canvas);
-    return { x: relativeX(e.clientX-o.left), y: relativeY(e.clientY-o.top) };
+    return { x: relativeX(e.clientX+window.scrollX-o.left), y: relativeY(e.clientY+window.scrollY-o.top) };
   }
 
   function setup() {
