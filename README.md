@@ -75,8 +75,6 @@ However, there is some conventions for the GLSL to be compatible with this libra
 
 The only 2 requirements is that you need a **"progress" float uniform** and a **"resolution" vec2 uniform**. The `progress` uniform will be changed over the duration time from 0.0 to 1.0. The `resolution` uniform contains the canvas size.
 
-You may customize the name of the `progress` parameter by giving a `{ progress: "customname" }` option object in second argument of the Transition definition. Same for `resolution`.
-
 Most of the transition you may define is about moving from an image to another. For that need, the convention we are taking is to name your `uniform sample2D` image variables: **`from` and `to`**.
 
 ### `duration` number
