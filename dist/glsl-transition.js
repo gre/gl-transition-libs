@@ -1,164 +1,188 @@
-!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.GlslTransition=e():"undefined"!=typeof global?global.GlslTransition=e():"undefined"!=typeof self&&(self.GlslTransition=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var n;"undefined"!=typeof window?n=window:"undefined"!=typeof global?n=global:"undefined"!=typeof self&&(n=self),n.GlslTransition=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict"
 
-var glslExports = require("glsl-exports")
-var uniq = require("uniq")
+module.exports = coallesceUniforms
 
-function Shader(gl, prog, uniforms, attributes) {
-  this.gl = gl
-  this.program = prog
-  this.uniforms = uniforms
-  this.attributes = attributes
-}
-
-Shader.prototype.bind = function() {
-  this.gl.useProgram(this.program)
-}
-
-function kvPairs(obj) {
-  return Object.keys(obj).map(function(x) { return [x, obj[x]] })
-}
-
-function makeVectorUniform(gl, prog, location, obj, type, d, name) {
-  if(d > 1) {
-    type += "v"
-  }
-  var setter = new Function("gl", "prog", "v", "gl.uniform" + d + type + "(gl.getUniformLocation(prog,'"+name+"'), v)")
-  var getter = new Function("gl", "prog", "return gl.getUniform(prog, gl.getUniformLocation(prog,'"+name+"'))")
-  Object.defineProperty(obj, name, {
-    set: setter.bind(undefined, gl, prog),
-    get: getter.bind(undefined, gl, prog),
-    enumerable: true
-  })
-}
-
-function makeMatrixUniform(gl, prog, location, obj, d, name) {
-  var setter = new Function("gl", "prog", "v", "gl.uniformMatrix" + d + "fv(gl.getUniformLocation(prog,'"+name+"'), false, v)")
-  var getter = new Function("gl", "prog", "return gl.getUniform(prog, gl.getUniformLocation(prog,'"+name+"'))")
-  Object.defineProperty(obj, name, {
-    set: setter.bind(undefined, gl, prog),
-    get: getter.bind(undefined, gl, prog),
-    enumerable: true
-  })
-}
-
-function makeVectorAttrib(gl, prog, location, obj, d, name) {
-  var out = {}
-  out.pointer = function attribPointer(type, normalized, stride, offset) {
-    gl.vertexAttribPointer(location, d, type||gl.FLOAT, normalized?gl.TRUE:gl.FALSE, stride||0, offset||0)
-  }
-  out.enable = function enableAttrib() {
-    gl.enableVertexAttribArray(location)
-  }
-  out.disable = function disableAttrib() {
-    gl.disableVertexAttribArray(location)
-  }
-  Object.defineProperty(out, "location", {
-    get: function() {
-      return location
-    },
-    set: function(v) {
-      if(v !== location) {
-        location = v
-        gl.bindAttribLocation(prog, v, name)
-        gl.linkProgram(prog)
+function coallesceUniforms(uniforms) {
+  var obj = {}
+  for(var i=0; i<uniforms.length; ++i) {
+    var n = uniforms[i].name
+    var parts = n.split(".")
+    var o = obj
+    for(var j=0; j<parts.length; ++j) {
+      var x = parts[j].split("[")
+      if(x.length > 1) {
+        if(!(x[0] in o)) {
+          o[x[0]] = []
+        }
+        o = o[x[0]]
+        for(var k=1; k<x.length; ++k) {
+          var y = parseInt(x[k])
+          if(k<x.length-1 || j<parts.length-1) {
+            if(!(y in o)) {
+              if(k < x.length-1) {
+                o[y] = []
+              } else {
+                o[y] = {}
+              }
+            }
+            o = o[y]
+          } else {
+            o[y] = i
+          }
+        }
+      } else if(j < parts.length-1) {
+        if(!(x[0] in o)) {
+          o[x[0]] = {}
+        }
+        o = o[x[0]]
+      } else {
+        o[x[0]] = i
       }
-      return v
     }
-  })
+  }
+  return obj
+}
+},{}],2:[function(require,module,exports){
+"use strict"
+
+module.exports = createAttributeWrapper
+
+//Shader attribute class
+function ShaderAttribute(gl, program, location, dimension, name, constFunc, relink) {
+  this._gl = gl
+  this._program = program
+  this._location = location
+  this._dimension = dimension
+  this._name = name
+  this._constFunc = constFunc
+  this._relink = relink
+}
+
+var proto = ShaderAttribute.prototype
+
+proto.pointer = function setAttribPointer(type, normalized, stride, offset) {
+  var gl = this._gl
+  gl.vertexAttribPointer(this._location, this._dimension, type||gl.FLOAT, normalized?gl.TRUE:gl.FALSE, stride||0, offset||0)
+}
+
+proto.enable = function enableAttrib() {
+  this._gl.enableVertexAttribArray(this._location)
+}
+
+proto.disable = function disableAttrib() {
+  this._gl.disableVertexAttribArray(this._location)
+}
+
+proto.set = function setAttribConstant(x, y, z, w) {
+  this._constFunc(this._gl, this._location, x, y, z, w)
+}
+
+Object.defineProperty(proto, "location", {
+  get: function() {
+    return this._location
+  }
+  , set: function(v) {
+    if(v !== this.location) {
+      this._location = v
+      this.gl.bindAttribLocation(this._program, v, this._name)
+      this.gl.linkProgram(this._program)
+      this.relink()
+    }
+  }
+})
+
+
+//Adds a vector attribute to obj
+function addVectorAttribute(gl, program, location, dimension, obj, name, doLink) {
   var constFuncArgs = [ "gl", "v" ]
-  var var_names = []
-  for(var i=0; i<d; ++i) {
+  var varNames = []
+  for(var i=0; i<dimension; ++i) {
     constFuncArgs.push("x"+i)
-    var_names.push("x"+i)
+    varNames.push("x"+i)
   }
   constFuncArgs.push([
-    "if(x0.length === undefined) {",
-      "return gl.vertexAttrib"+d+"f(v," + var_names.join(",") + ")",
-    "} else {",
-      "return gl.vertexAttrib" + d + "fv(v,x0)",
-    "}"
-  ].join("\n"))
+    "if(x0.length===undefined){return gl.vertexAttrib", dimension, "f(v,", varNames.join(","), ")}else{return gl.vertexAttrib", dimension, "fv(v,x0)}"
+  ].join(""))
   var constFunc = Function.apply(undefined, constFuncArgs)
-  out.set = function setAttrib(x, y, z, w) {
-    return constFunc(gl, location, x, y, z, w)
-  }
+  var attr = new ShaderAttribute(gl, program, location, dimension, name, constFunc, doLink)
   Object.defineProperty(obj, name, {
     set: function(x) {
-      out.isArray = false
-      constFunc(gl, location, x)
+      constFunc(gl, attr._location, x)
       return x
-    },
-    get: function() {
-      return out
-    },
-    enumerable: true
+    }
+    , get: function() {
+      return attr
+    }
+    , enumerable: true
   })
 }
 
-function makeShader(gl, vert_source, frag_source) {
-  var vert_shader = gl.createShader(gl.VERTEX_SHADER)
-  gl.shaderSource(vert_shader, vert_source)
-  gl.compileShader(vert_shader)
-  if(!gl.getShaderParameter(vert_shader, gl.COMPILE_STATUS)) {
-    throw new Error("Error compiling vertex shader: " + gl.getShaderInfoLog(vert_shader))
-  }
-  
-  var frag_shader = gl.createShader(gl.FRAGMENT_SHADER)
-  gl.shaderSource(frag_shader, frag_source)
-  gl.compileShader(frag_shader)
-  if(!gl.getShaderParameter(frag_shader, gl.COMPILE_STATUS)) {
-    throw new Error("Error compiling fragment shader: " + gl.getShaderInfoLog(frag_shader))
-  }
-  
-  var program = gl.createProgram()
-  gl.attachShader(program, frag_shader)
-  gl.attachShader(program, vert_shader)
-  gl.linkProgram(program)
-  if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    throw new Error("Error linking shader program: " + gl.getProgramInfoLog (program))
-  }
-  
-  var frag_exports = glslExports(frag_source)
-  var vert_exports = glslExports(vert_source)
-  
-  //Bind uniforms
-  var uniforms = uniq(
-      kvPairs(frag_exports.uniforms)
-        .concat(kvPairs(vert_exports.uniforms)),
-      function compare(a,b) {
-        return a[0] < b[0] ? -1 : (a[0] === b[0] ? 0 : 1)
-      })
-  var uniform_fields = {}
-  for(var i=0; i<uniforms.length; ++i) {
-    var u = uniforms[i]
-    var name = u[0]
-    var type = u[1]
-    var x = gl.getUniformLocation(program, name)
+//Create shims for attributes
+function createAttributeWrapper(gl, program, attributes, doLink) {
+  var obj = {}
+  for(var i=0, n=attributes.length; i<n; ++i) {
+    var a = attributes[i]
+    var name = a.name
+    var type = a.type
+    var location = gl.getAttribLocation(program, name)
     
-    if(!x) {
-      Object.defineProperty(uniform_fields, name, {
-        get: function() { },
-        set: function() { }
-      })
-      continue
+    switch(type) {
+      case "bool":
+      case "int":
+      case "float":
+        addVectorAttribute(gl, program, location, 1, obj, name, doLink)
+      break
+      
+      default:
+        if(type.indexOf("vec") >= 0) {
+          var d = type.charCodeAt(type.length-1) - 48
+          if(d < 2 || d > 4) {
+            throw new Error("Invalid data type for attribute " + name + ": " + type)
+          }
+          addVectorAttribute(gl, program, location, d, obj, name, doLink)
+        } else {
+          throw new Error("Unknown data type for attribute " + name + ": " + type)
+        }
+      break
     }
-    
+  }
+  return obj
+}
+},{}],3:[function(require,module,exports){
+"use strict"
+
+var dup = require("dup")
+var coallesceUniforms = require("./coallesce-uniforms.js")
+
+module.exports = createUniformWrapper
+
+//Binds a function and returns a value
+function identity(x) {
+  var c = new Function("y", "return function(){return y}")
+  return c(x)
+}
+
+//Create shims for uniforms
+function createUniformWrapper(gl, program, uniforms, locations) {
+
+  function makeGetter(index) {
+    var proc = new Function("gl", "prog", "locations", 
+      "return function(){return gl.getUniform(prog,locations[" + index + "])}") 
+    return proc(gl, program, locations)
+  }
+
+  function makePropSetter(path, index, type) {
     switch(type) {
       case "bool":
       case "int":
       case "sampler2D":
       case "samplerCube":
-        makeVectorUniform(gl, program, x, uniform_fields, "i", 1, name)
-      break
-      
+        return "gl.uniform1i(locations[" + index + "],obj" + path + ")"
       case "float":
-        makeVectorUniform(gl, program, x, uniform_fields, "f", 1, name)
-      break
-      
+        return "gl.uniform1f(locations[" + index + "],obj" + path + ")"
       default:
-      
-        if(type.indexOf("vec") >= 0) {
+        if(type.indexOf("vec") >= 0 && type.length <= 5) {
           var d = type.charCodeAt(type.length-1) - 48
           if(d < 2 || d > 4) {
             throw new Error("Invalid data type")
@@ -166,65 +190,329 @@ function makeShader(gl, vert_source, frag_source) {
           switch(type.charAt(0)) {
             case "b":
             case "i":
-              makeVectorUniform(gl, program, x, uniform_fields, "i", d, name)
-            break
-            
+              return "gl.uniform" + d + "iv(locations[" + index + "],obj" + path + ")"
             case "v":
-              makeVectorUniform(gl, program, x, uniform_fields, "f", d, name)
-            break
-            
+              return "gl.uniform" + d + "fv(locations[" + index + "],obj" + path + ")"            
             default:
-              throw new Error("Unrecognized data type")
+              throw new Error("Unrecognized data type for vector " + name + ": " + type)
           }
-        } else if(type.charAt(0) === "m") {
+        } else if(type.charAt(0) === "m" && type.length === 5) {
           var d = type.charCodeAt(type.length-1) - 48
           if(d < 2 || d > 4) {
-            throw new Error("Invalid data type")
+            throw new Error("Invalid uniform dimension type for matrix " + name + ": " + type)
           }
-          makeMatrixUniform(gl, program, x, uniform_fields, d, name)
+          return "gl.uniformMatrix" + d + "fv(locations[" + index + "],false,obj" + path + ")"
         } else {
-          throw new Error("Invalid data type")
+          throw new Error("Unknown uniform data type for " + name + ": " + type)
         }
       break
     }
   }
-  
-  //Bind attributes
-  var attributes = kvPairs(vert_exports.attributes)
-  var attribute_fields = {}
-  for(var i=0; i<attributes.length; ++i) {
-    var u = attributes[i]
-    var name = u[0]
-    var type = u[1]
-    var x = gl.getAttribLocation(program, name)
-    
+
+  function enumerateIndices(prefix, type) {
+    if(typeof type !== "object") {
+      return [ [prefix, type] ]
+    }
+    var indices = []
+    for(var id in type) {
+      var prop = type[id]
+      var tprefix = prefix
+      if(parseInt(id) + "" === id) {
+        tprefix += "[" + id + "]"
+      } else {
+        tprefix += "." + id
+      }
+      if(typeof prop === "object") {
+        indices.push.apply(indices, enumerateIndices(tprefix, prop))
+      } else {
+        indices.push([tprefix, prop])
+      }
+    }
+    return indices
+  }
+
+  function makeSetter(type) {
+    var code = [ "return function updateProperty(obj){" ]
+    var indices = enumerateIndices("", type)
+    for(var i=0; i<indices.length; ++i) {
+      var item = indices[i]
+      var path = item[0]
+      var idx  = item[1]
+      if(locations[idx]) {
+        code.push(makePropSetter(path, idx, uniforms[idx].type))
+      }
+    }
+    code.push("return obj}")
+    var proc = new Function("gl", "prog", "locations", code.join("\n"))
+    return proc(gl, program, locations)
+  }
+
+  function defaultValue(type) {
     switch(type) {
       case "bool":
+        return false
       case "int":
+      case "sampler2D":
+      case "samplerCube":
+        return 0
       case "float":
-        makeVectorAttrib(gl, program, x, attribute_fields, 1, name)
-      break
-      
+        return 0.0
       default:
-        if(type.indexOf("vec") >= 0) {
+        if(type.indexOf("vec") >= 0 && type.length <= 5) {
           var d = type.charCodeAt(type.length-1) - 48
           if(d < 2 || d > 4) {
             throw new Error("Invalid data type")
           }
-          makeVectorAttrib(gl, program, x, attribute_fields, d, name)
+          if(type.charAt(0) === "b") {
+            return dup(d, false)
+          }
+          return dup(d)
+        } else if(type.charAt(0) === "m" && type.length <= 5) {
+          var d = type.charCodeAt(type.length-1) - 48
+          if(d < 2 || d > 4) {
+            throw new Error("Invalid uniform dimension type for matrix " + name + ": " + type)
+          }
+          return dup([d,d])
         } else {
-          throw new Error("Invalid data type")
+          throw new Error("Unknown uniform data type for " + name + ": " + type)
         }
       break
     }
   }
-  
-  return new Shader(gl, program, uniform_fields, attribute_fields)
+
+  function storeProperty(obj, prop, type) {
+    if(typeof type === "object") {
+      var child = processObject(type)
+      Object.defineProperty(obj, prop, {
+        get: identity(child),
+        set: makeSetter(type),
+        enumerable: true,
+        configurable: false
+      })
+    } else {
+      if(locations[type]) {
+        Object.defineProperty(obj, prop, {
+          get: makeGetter(type),
+          set: makeSetter(type),
+          enumerable: true,
+          configurable: false
+        })
+      } else {
+        obj[prop] = defaultValue(uniforms[type].type)
+      }
+    }
+  }
+
+  function processObject(obj) {
+    var result
+    if(Array.isArray(obj)) {
+      result = new Array(obj.length)
+      for(var i=0; i<obj.length; ++i) {
+        storeProperty(result, i, obj[i])
+      }
+    } else {
+      result = {}
+      for(var id in obj) {
+        storeProperty(result, id, obj[id])
+      }
+    }
+    return result
+  }
+
+  //Return data
+  var coallesced = coallesceUniforms(uniforms)
+  return {
+    get: identity(processObject(coallesced)),
+    set: makeSetter(coallesced),
+    enumerable: true,
+    configurable: false
+  }
 }
 
-module.exports = makeShader
+},{"./coallesce-uniforms.js":1,"dup":5}],4:[function(require,module,exports){
+"use strict"
 
-},{"glsl-exports":2,"uniq":13}],2:[function(require,module,exports){
+module.exports = makeReflectTypes
+
+function makeReflectTypes(uniforms) {
+  var obj = {}
+  for(var i=0; i<uniforms.length; ++i) {
+    var n = uniforms[i].name
+    var parts = n.split(".")
+    var o = obj
+    for(var j=0; j<parts.length; ++j) {
+      var x = parts[j].split("[")
+      if(x.length > 1) {
+        if(!(x[0] in o)) {
+          o[x[0]] = []
+        }
+        o = o[x[0]]
+        for(var k=1; k<x.length; ++k) {
+          var y = parseInt(x[k])
+          if(k<x.length-1 || j<parts.length-1) {
+            if(!(y in o)) {
+              if(k < x.length-1) {
+                o[y] = []
+              } else {
+                o[y] = {}
+              }
+            }
+            o = o[y]
+          } else {
+            o[y] = uniforms[i].type
+          }
+        }
+      } else if(j < parts.length-1) {
+        if(!(x[0] in o)) {
+          o[x[0]] = {}
+        }
+        o = o[x[0]]
+      } else {
+        o[x[0]] = uniforms[i].type
+      }
+    }
+  }
+  return obj
+}
+},{}],5:[function(require,module,exports){
+"use strict"
+
+function dupe_array(count, value, i) {
+  var c = count[i]|0
+  if(c <= 0) {
+    return []
+  }
+  var result = new Array(c), j
+  if(i === count.length-1) {
+    for(j=0; j<c; ++j) {
+      result[j] = value
+    }
+  } else {
+    for(j=0; j<c; ++j) {
+      result[j] = dupe_array(count, value, i+1)
+    }
+  }
+  return result
+}
+
+function dupe_number(count, value) {
+  var result, i
+  result = new Array(count)
+  for(i=0; i<count; ++i) {
+    result[i] = value
+  }
+  return result
+}
+
+function dupe(count, value) {
+  if(typeof value === "undefined") {
+    value = 0
+  }
+  switch(typeof count) {
+    case "number":
+      if(count > 0) {
+        return dupe_number(count|0, value)
+      }
+    break
+    case "object":
+      if(typeof (count.length) === "number") {
+        return dupe_array(count, value, 0)
+      }
+    break
+  }
+  return []
+}
+
+module.exports = dupe
+},{}],6:[function(require,module,exports){
+"use strict"
+
+var createUniformWrapper = require("./lib/create-uniforms.js")
+var createAttributeWrapper = require("./lib/create-attributes.js")
+var makeReflect = require("./lib/reflect.js")
+
+//Shader object
+function Shader(gl, prog, attributes, typeInfo) {
+  this.gl = gl
+  this.program = prog
+  this.attributes = attributes
+  this.types = typeInfo
+}
+
+//Binds the shader
+Shader.prototype.bind = function() {
+  this.gl.useProgram(this.program)
+}
+
+//Relinks all uniforms
+function relinkUniforms(gl, program, locations, uniforms) {
+  for(var i=0; i<uniforms.length; ++i) {
+    locations[i] = gl.getUniformLocation(program, uniforms[i].name)
+  }
+}
+
+//Compiles and links a shader program with the given attribute and vertex list
+function createShader(
+    gl
+  , vertSource
+  , fragSource
+  , uniforms
+  , attributes) {
+  
+  //Compile vertex shader
+  var vertShader = gl.createShader(gl.VERTEX_SHADER)
+  gl.shaderSource(vertShader, vertSource)
+  gl.compileShader(vertShader)
+  if(!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+    throw new Error("Error compiling vertex shader: " + gl.getShaderInfoLog(vertShader))
+  }
+  
+  //Compile fragment shader
+  var fragShader = gl.createShader(gl.FRAGMENT_SHADER)
+  gl.shaderSource(fragShader, fragSource)
+  gl.compileShader(fragShader)
+  if(!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+    throw new Error("Error compiling fragment shader: " + gl.getShaderInfoLog(fragShader))
+  }
+  
+  //Link program
+  var program = gl.createProgram()
+  gl.attachShader(program, fragShader)
+  gl.attachShader(program, vertShader)
+  gl.linkProgram(program)
+  if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    throw new Error("Error linking shader program: " + gl.getProgramInfoLog (program))
+  }
+  
+  //Create location vector
+  var locations = new Array(uniforms.length)
+  var doLink = relinkUniforms.bind(undefined, gl, program, locations, uniforms)
+  doLink()
+
+  //Return final linked shader object
+  var shader = new Shader(
+    gl, 
+    program,
+    createAttributeWrapper(
+      gl, 
+      program, 
+      attributes, 
+      doLink), { 
+        uniforms: makeReflect(uniforms), 
+        attributes: makeReflect(attributes)
+    })
+  Object.defineProperty(shader, "uniforms", createUniformWrapper(
+    gl, 
+    program, 
+    uniforms, 
+    locations
+  ))
+  return shader
+}
+
+module.exports = createShader
+
+},{"./lib/create-attributes.js":2,"./lib/create-uniforms.js":3,"./lib/reflect.js":4}],7:[function(require,module,exports){
 "use strict"
 
 var glslTokenizer = require("glsl-tokenizer")
@@ -285,10 +573,10 @@ function glslGlobals(src) {
 }
 
 module.exports = glslGlobals
-},{"glsl-parser":3,"glsl-tokenizer":8,"through":12}],3:[function(require,module,exports){
+},{"glsl-parser":8,"glsl-tokenizer":13,"through":17}],8:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":5}],4:[function(require,module,exports){
+},{"./lib/index":10}],9:[function(require,module,exports){
 var state
   , token
   , tokens
@@ -555,7 +843,7 @@ function fail(message) {
   return function() { return state.unexpected(message) }
 }
 
-},{}],5:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = parser
 
 var through = require('through')
@@ -1515,7 +1803,7 @@ function is_precision(token) {
          token.data === 'lowp'
 }
 
-},{"./expr":4,"./scope":6,"through":7}],6:[function(require,module,exports){
+},{"./expr":9,"./scope":11,"through":12}],11:[function(require,module,exports){
 module.exports = scope
 
 function scope(state) {
@@ -1555,7 +1843,7 @@ proto.find = function(name, fail) {
   return null
 }
 
-},{}],7:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var process=require("__browserify_process");var Stream = require('stream')
 
 // through
@@ -1655,7 +1943,7 @@ function through (write, end) {
 }
 
 
-},{"__browserify_process":27,"stream":32}],8:[function(require,module,exports){
+},{"__browserify_process":20,"stream":25}],13:[function(require,module,exports){
 module.exports = tokenize
 
 var through = require('through')
@@ -1989,7 +2277,7 @@ function tokenize() {
   }
 }
 
-},{"./lib/builtins":9,"./lib/literals":10,"./lib/operators":11,"through":12}],9:[function(require,module,exports){
+},{"./lib/builtins":14,"./lib/literals":15,"./lib/operators":16,"through":17}],14:[function(require,module,exports){
 module.exports = [
     'gl_Position'
   , 'gl_PointSize'
@@ -2135,7 +2423,7 @@ module.exports = [
   , 'textureCubeLod'
 ]
 
-},{}],10:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = [
   // current
     'precision'
@@ -2230,7 +2518,7 @@ module.exports = [
   , 'using'
 ]
 
-},{}],11:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = [
     '<<='
   , '>>='
@@ -2278,7 +2566,7 @@ module.exports = [
   , '}'
 ]
 
-},{}],12:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var process=require("__browserify_process");var Stream = require('stream')
 
 // through
@@ -2388,87 +2676,7 @@ function through (write, end, opts) {
 }
 
 
-},{"__browserify_process":27,"stream":32}],13:[function(require,module,exports){
-"use strict"
-
-function unique_pred(list, compare) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b=list[0]
-  for(var i=1; i<len; ++i) {
-    b = a
-    a = list[i]
-    if(compare(a, b)) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique_eq(list) {
-  var ptr = 1
-    , len = list.length
-    , a=list[0], b = list[0]
-  for(var i=1; i<len; ++i, b=a) {
-    b = a
-    a = list[i]
-    if(a !== b) {
-      if(i === ptr) {
-        ptr++
-        continue
-      }
-      list[ptr++] = a
-    }
-  }
-  list.length = ptr
-  return list
-}
-
-function unique(list, compare, sorted) {
-  if(list.length === 0) {
-    return []
-  }
-  if(compare) {
-    if(!sorted) {
-      list.sort(compare)
-    }
-    return unique_pred(list, compare)
-  }
-  if(!sorted) {
-    list.sort()
-  }
-  return unique_eq(list)
-}
-
-module.exports = unique
-},{}],14:[function(require,module,exports){
-arguments[4][2][0].apply(exports,arguments)
-},{"glsl-parser":15,"glsl-tokenizer":20,"through":24}],15:[function(require,module,exports){
-arguments[4][3][0].apply(exports,arguments)
-},{"./lib/index":17}],16:[function(require,module,exports){
-module.exports=require(4)
-},{}],17:[function(require,module,exports){
-module.exports=require(5)
-},{"./expr":16,"./scope":18,"through":19}],18:[function(require,module,exports){
-module.exports=require(6)
-},{}],19:[function(require,module,exports){
-module.exports=require(7)
-},{"__browserify_process":27,"stream":32}],20:[function(require,module,exports){
-module.exports=require(8)
-},{"./lib/builtins":21,"./lib/literals":22,"./lib/operators":23,"through":24}],21:[function(require,module,exports){
-module.exports=require(9)
-},{}],22:[function(require,module,exports){
-module.exports=require(10)
-},{}],23:[function(require,module,exports){
-module.exports=require(11)
-},{}],24:[function(require,module,exports){
-module.exports=require(12)
-},{"__browserify_process":27,"stream":32}],25:[function(require,module,exports){
+},{"__browserify_process":20,"stream":25}],18:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2770,7 +2978,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],26:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2795,7 +3003,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],27:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2849,9 +3057,9 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],28:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var base64 = require('base64-js')
-var TA = require('typedarray')
+var ieee754 = require('ieee754')
 
 exports.Buffer = Buffer
 exports.SlowBuffer = Buffer
@@ -2859,22 +3067,23 @@ exports.INSPECT_MAX_BYTES = 50
 Buffer.poolSize = 8192
 
 /**
- * Use a shim for browsers that lack Typed Array support (< IE 9, < FF 3.6,
- * < Chrome 6, < Safari 5, < Opera 11.5, < iOS 4.1).
- */
-var xDataView = typeof DataView === 'undefined'
-  ? TA.DataView : DataView
-var xArrayBuffer = typeof ArrayBuffer === 'undefined'
-  ? TA.ArrayBuffer : ArrayBuffer
-var xUint8Array = typeof Uint8Array === 'undefined'
-  ? TA.Uint8Array : Uint8Array
-
-/**
- * Check to see if the browser supports augmenting a `Uint8Array` instance.
+ * If `browserSupport`:
+ *   === true    Use Uint8Array implementation (fastest)
+ *   === false   Use Object implementation (compatible down to IE6)
  */
 var browserSupport = (function () {
+   // Detect if browser supports Typed Arrays. Supported browsers are IE 10+,
+   // Firefox 4+, Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+.
+   if (typeof Uint8Array === 'undefined' || typeof ArrayBuffer === 'undefined' ||
+        typeof DataView === 'undefined')
+      return false
+
+  // Does the browser support adding properties to `Uint8Array` instances? If
+  // not, then that's the same as no `Uint8Array` support. We need to be able to
+  // add all the node Buffer API methods.
+  // Relevant Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
   try {
-    var arr = new xUint8Array(0)
+    var arr = new Uint8Array(0)
     arr.foo = function () { return 42 }
     return 42 === arr.foo()
   } catch (e) {
@@ -2882,17 +3091,6 @@ var browserSupport = (function () {
   }
 })()
 
-/**
- * Also use the shim in Firefox 4-17 (even though they have native Uint8Array),
- * since they don't support Proxy. Without that, it is not possible to augment
- * native Uint8Array instances in Firefox.
- */
-if (xUint8Array !== TA.Uint8Array && !browserSupport) {
-  xDataView = TA.DataView
-  xArrayBuffer = TA.ArrayBuffer
-  xUint8Array = TA.Uint8Array
-  browserSupport = true
-}
 
 /**
  * Class: Buffer
@@ -2905,16 +3103,15 @@ if (xUint8Array !== TA.Uint8Array && !browserSupport) {
  *
  * By augmenting the instances, we can avoid modifying the `Uint8Array`
  * prototype.
- *
- * Firefox is a special case because it doesn't allow augmenting "native" object
- * instances. See `ProxyBuffer` below for more details.
  */
-function Buffer (subject, encoding) {
+function Buffer (subject, encoding, noZero) {
+  if (!(this instanceof Buffer))
+    return new Buffer(subject, encoding, noZero)
+
   var type = typeof subject
 
-  // Work-around: node's base64 implementation
-  // allows for non-padded strings while base64-js
-  // does not..
+  // Workaround: node's base64 implementation allows for non-padded strings
+  // while base64-js does not.
   if (encoding === 'base64' && type === 'string') {
     subject = stringtrim(subject)
     while (subject.length % 4 !== 0) {
@@ -2933,13 +3130,23 @@ function Buffer (subject, encoding) {
   else
     throw new Error('First argument needs to be a number, array or string.')
 
-  var buf = augment(new xUint8Array(length))
+  var buf
+  if (browserSupport) {
+    // Preferred: Return an augmented `Uint8Array` instance for best performance
+    buf = augment(new Uint8Array(length))
+  } else {
+    // Fallback: Return this instance of Buffer
+    buf = this
+    buf.length = length
+  }
+
+  var i
   if (Buffer.isBuffer(subject)) {
     // Speed optimization -- use set if we're copying from a Uint8Array
     buf.set(subject)
-  } else if (isArrayIsh(subject)) {
-    // Treat array-ish objects as a byte array.
-    for (var i = 0; i < length; i++) {
+  } else if (isArrayish(subject)) {
+    // Treat array-ish objects as a byte array
+    for (i = 0; i < length; i++) {
       if (Buffer.isBuffer(subject))
         buf[i] = subject.readUInt8(i)
       else
@@ -2947,6 +3154,10 @@ function Buffer (subject, encoding) {
     }
   } else if (type === 'string') {
     buf.write(subject, 0, encoding)
+  } else if (type === 'number' && !browserSupport && !noZero) {
+    for (i = 0; i < length; i++) {
+      buf[i] = 0
+    }
   }
 
   return buf
@@ -2955,18 +3166,14 @@ function Buffer (subject, encoding) {
 // STATIC METHODS
 // ==============
 
-Buffer.isEncoding = function(encoding) {
-  switch ((encoding + '').toLowerCase()) {
+Buffer.isEncoding = function (encoding) {
+  switch (String(encoding).toLowerCase()) {
     case 'hex':
     case 'utf8':
     case 'utf-8':
     case 'ascii':
     case 'binary':
     case 'base64':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
     case 'raw':
       return true
 
@@ -3006,31 +3213,28 @@ Buffer.concat = function (list, totalLength) {
         'list should be an Array.')
   }
 
-  var i
-  var buf
-
   if (list.length === 0) {
     return new Buffer(0)
   } else if (list.length === 1) {
     return list[0]
   }
 
+  var i
   if (typeof totalLength !== 'number') {
     totalLength = 0
     for (i = 0; i < list.length; i++) {
-      buf = list[i]
-      totalLength += buf.length
+      totalLength += list[i].length
     }
   }
 
-  var buffer = new Buffer(totalLength)
+  var buf = new Buffer(totalLength)
   var pos = 0
   for (i = 0; i < list.length; i++) {
-    buf = list[i]
-    buf.copy(buffer, pos)
-    pos += buf.length
+    var item = list[i]
+    item.copy(buf, pos)
+    pos += item.length
   }
-  return buffer
+  return buf
 }
 
 // BUFFER INSTANCE METHODS
@@ -3084,7 +3288,7 @@ function _base64Write (buf, string, offset, length) {
   return Buffer._charsWritten = blitBuffer(base64ToBytes(string), buf, offset, length)
 }
 
-function BufferWrite (string, offset, length, encoding) {
+Buffer.prototype.write = function (string, offset, length, encoding) {
   // Support both (string, offset, length, encoding)
   // and the legacy (string, encoding, offset, length)
   if (isFinite(offset)) {
@@ -3133,10 +3337,8 @@ function BufferWrite (string, offset, length, encoding) {
   }
 }
 
-function BufferToString (encoding, start, end) {
-  var self = (this instanceof ProxyBuffer)
-    ? this._proxy
-    : this
+Buffer.prototype.toString = function (encoding, start, end) {
+  var self = this
 
   encoding = String(encoding || 'utf8').toLowerCase()
   start = Number(start) || 0
@@ -3170,7 +3372,7 @@ function BufferToString (encoding, start, end) {
   }
 }
 
-function BufferToJSON () {
+Buffer.prototype.toJSON = function () {
   return {
     type: 'Buffer',
     data: Array.prototype.slice.call(this._arr || this, 0)
@@ -3178,7 +3380,7 @@ function BufferToJSON () {
 }
 
 // copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-function BufferCopy (target, target_start, start, end) {
+Buffer.prototype.copy = function (target, target_start, start, end) {
   var source = this
 
   if (!start) start = 0
@@ -3211,8 +3413,11 @@ function BufferCopy (target, target_start, start, end) {
 }
 
 function _base64Slice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  return base64.fromByteArray(bytes)
+  if (start === 0 && end === buf.length) {
+    return base64.fromByteArray(buf)
+  } else {
+    return base64.fromByteArray(buf.slice(start, end))
+  }
 }
 
 function _utf8Slice (buf, start, end) {
@@ -3261,14 +3466,26 @@ function _hexSlice (buf, start, end) {
 // TODO: add test that modifying the new buffer slice will modify memory in the
 // original buffer! Use code from:
 // http://nodejs.org/api/buffer.html#buffer_buf_slice_start_end
-function BufferSlice (start, end) {
+Buffer.prototype.slice = function (start, end) {
   var len = this.length
   start = clamp(start, len, 0)
   end = clamp(end, len, len)
-  return augment(this.subarray(start, end)) // Uint8Array built-in method
+
+  if (browserSupport) {
+    return augment(this.subarray(start, end))
+  } else {
+    // TODO: slicing works, with limitations (no parent tracking/update)
+    // https://github.com/feross/native-buffer-browserify/issues/9
+    var sliceLen = end - start
+    var newBuf = new Buffer(sliceLen, undefined, true)
+    for (var i = 0; i < sliceLen; i++) {
+      newBuf[i] = this[i + start]
+    }
+    return newBuf
+  }
 }
 
-function BufferReadUInt8 (offset, noAssert) {
+Buffer.prototype.readUInt8 = function (offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(offset !== undefined && offset !== null, 'missing offset')
@@ -3283,63 +3500,99 @@ function BufferReadUInt8 (offset, noAssert) {
 
 function _readUInt16 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 1 === len) {
-    var dv = new xDataView(new xArrayBuffer(2))
-    dv.setUint8(0, buf[len - 1])
-    return dv.getUint16(0, littleEndian)
+
+  if (browserSupport) {
+    if (offset + 1 < len) {
+      return buf._dataview.getUint16(offset, littleEndian)
+    } else {
+      var dv = new DataView(new ArrayBuffer(2))
+      dv.setUint8(0, buf[len - 1])
+      return dv.getUint16(0, littleEndian)
+    }
   } else {
-    return buf._dataview.getUint16(offset, littleEndian)
+    var val
+    if (littleEndian) {
+      val = buf[offset]
+      if (offset + 1 < len)
+        val |= buf[offset + 1] << 8
+    } else {
+      val = buf[offset] << 8
+      if (offset + 1 < len)
+        val |= buf[offset + 1]
+    }
+    return val
   }
 }
 
-function BufferReadUInt16LE (offset, noAssert) {
+Buffer.prototype.readUInt16LE = function (offset, noAssert) {
   return _readUInt16(this, offset, true, noAssert)
 }
 
-function BufferReadUInt16BE (offset, noAssert) {
+Buffer.prototype.readUInt16BE = function (offset, noAssert) {
   return _readUInt16(this, offset, false, noAssert)
 }
 
 function _readUInt32 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 3 >= len) {
-    var dv = new xDataView(new xArrayBuffer(4))
-    for (var i = 0; i + offset < len; i++) {
-      dv.setUint8(i, buf[i + offset])
+
+  if (browserSupport) {
+    if (offset + 3 < len) {
+      return buf._dataview.getUint32(offset, littleEndian)
+    } else {
+      var dv = new DataView(new ArrayBuffer(4))
+      for (var i = 0; i + offset < len; i++) {
+        dv.setUint8(i, buf[i + offset])
+      }
+      return dv.getUint32(0, littleEndian)
     }
-    return dv.getUint32(0, littleEndian)
   } else {
-    return buf._dataview.getUint32(offset, littleEndian)
+    var val
+    if (littleEndian) {
+      if (offset + 2 < len)
+        val = buf[offset + 2] << 16
+      if (offset + 1 < len)
+        val |= buf[offset + 1] << 8
+      val |= buf[offset]
+      if (offset + 3 < len)
+        val = val + (buf[offset + 3] << 24 >>> 0)
+    } else {
+      if (offset + 1 < len)
+        val = buf[offset + 1] << 16
+      if (offset + 2 < len)
+        val |= buf[offset + 2] << 8
+      if (offset + 3 < len)
+        val |= buf[offset + 3]
+      val = val + (buf[offset] << 24 >>> 0)
+    }
+    return val
   }
 }
 
-function BufferReadUInt32LE (offset, noAssert) {
+Buffer.prototype.readUInt32LE = function (offset, noAssert) {
   return _readUInt32(this, offset, true, noAssert)
 }
 
-function BufferReadUInt32BE (offset, noAssert) {
+Buffer.prototype.readUInt32BE = function (offset, noAssert) {
   return _readUInt32(this, offset, false, noAssert)
 }
 
-function BufferReadInt8 (offset, noAssert) {
+Buffer.prototype.readInt8 = function (offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(offset !== undefined && offset !== null,
@@ -3350,105 +3603,136 @@ function BufferReadInt8 (offset, noAssert) {
   if (offset >= buf.length)
     return
 
-  return buf._dataview.getInt8(offset)
+  if (browserSupport) {
+    return buf._dataview.getInt8(offset)
+  } else {
+    var neg = buf[offset] & 0x80
+    if (neg)
+      return (0xff - buf[offset] + 1) * -1
+    else
+      return buf[offset]
+  }
 }
 
 function _readInt16 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
-    assert(offset !== undefined && offset !== null,
-        'missing offset')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
+    assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 1 === len) {
-    var dv = new xDataView(new xArrayBuffer(2))
-    dv.setUint8(0, buf[len - 1])
-    return dv.getInt16(0, littleEndian)
+
+  if (browserSupport) {
+    if (offset + 1 === len) {
+      var dv = new DataView(new ArrayBuffer(2))
+      dv.setUint8(0, buf[len - 1])
+      return dv.getInt16(0, littleEndian)
+    } else {
+      return buf._dataview.getInt16(offset, littleEndian)
+    }
   } else {
-    return buf._dataview.getInt16(offset, littleEndian)
+    var val = _readUInt16(buf, offset, littleEndian, true)
+    var neg = val & 0x8000
+    if (neg)
+      return (0xffff - val + 1) * -1
+    else
+      return val
   }
 }
 
-function BufferReadInt16LE (offset, noAssert) {
+Buffer.prototype.readInt16LE = function (offset, noAssert) {
   return _readInt16(this, offset, true, noAssert)
 }
 
-function BufferReadInt16BE (offset, noAssert) {
+Buffer.prototype.readInt16BE = function (offset, noAssert) {
   return _readInt16(this, offset, false, noAssert)
 }
 
 function _readInt32 (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 3 >= len) {
-    var dv = new xDataView(new xArrayBuffer(4))
-    for (var i = 0; i + offset < len; i++) {
-      dv.setUint8(i, buf[i + offset])
+
+  if (browserSupport) {
+    if (offset + 3 >= len) {
+      var dv = new DataView(new ArrayBuffer(4))
+      for (var i = 0; i + offset < len; i++) {
+        dv.setUint8(i, buf[i + offset])
+      }
+      return dv.getInt32(0, littleEndian)
+    } else {
+      return buf._dataview.getInt32(offset, littleEndian)
     }
-    return dv.getInt32(0, littleEndian)
   } else {
-    return buf._dataview.getInt32(offset, littleEndian)
+    var val = _readUInt32(buf, offset, littleEndian, true)
+    var neg = val & 0x80000000
+    if (neg)
+      return (0xffffffff - val + 1) * -1
+    else
+      return val
   }
 }
 
-function BufferReadInt32LE (offset, noAssert) {
+Buffer.prototype.readInt32LE = function (offset, noAssert) {
   return _readInt32(this, offset, true, noAssert)
 }
 
-function BufferReadInt32BE (offset, noAssert) {
+Buffer.prototype.readInt32BE = function (offset, noAssert) {
   return _readInt32(this, offset, false, noAssert)
 }
 
 function _readFloat (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
   }
 
-  return buf._dataview.getFloat32(offset, littleEndian)
+  if (browserSupport) {
+    return buf._dataview.getFloat32(offset, littleEndian)
+  } else {
+    return ieee754.read(buf, offset, littleEndian, 23, 4)
+  }
 }
 
-function BufferReadFloatLE (offset, noAssert) {
+Buffer.prototype.readFloatLE = function (offset, noAssert) {
   return _readFloat(this, offset, true, noAssert)
 }
 
-function BufferReadFloatBE (offset, noAssert) {
+Buffer.prototype.readFloatBE = function (offset, noAssert) {
   return _readFloat(this, offset, false, noAssert)
 }
 
 function _readDouble (buf, offset, littleEndian, noAssert) {
   if (!noAssert) {
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
   }
 
-  return buf._dataview.getFloat64(offset, littleEndian)
+  if (browserSupport) {
+    return buf._dataview.getFloat64(offset, littleEndian)
+  } else {
+    return ieee754.read(buf, offset, littleEndian, 52, 8)
+  }
 }
 
-function BufferReadDoubleLE (offset, noAssert) {
+Buffer.prototype.readDoubleLE = function (offset, noAssert) {
   return _readDouble(this, offset, true, noAssert)
 }
 
-function BufferReadDoubleBE (offset, noAssert) {
+Buffer.prototype.readDoubleBE = function (offset, noAssert) {
   return _readDouble(this, offset, false, noAssert)
 }
 
-function BufferWriteUInt8 (value, offset, noAssert) {
+Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
@@ -3465,66 +3749,82 @@ function BufferWriteUInt8 (value, offset, noAssert) {
 function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
     verifuint(value, 0xffff)
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 1 === len) {
-    var dv = new xDataView(new xArrayBuffer(2))
-    dv.setUint16(0, value, littleEndian)
-    buf[offset] = dv.getUint8(0)
+
+  if (browserSupport) {
+    if (offset + 1 === len) {
+      var dv = new DataView(new ArrayBuffer(2))
+      dv.setUint16(0, value, littleEndian)
+      buf[offset] = dv.getUint8(0)
+    } else {
+      buf._dataview.setUint16(offset, value, littleEndian)
+    }
   } else {
-    buf._dataview.setUint16(offset, value, littleEndian)
+    for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
+      buf[offset + i] =
+          (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+              (littleEndian ? i : 1 - i) * 8
+    }
   }
 }
 
-function BufferWriteUInt16LE (value, offset, noAssert) {
+Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
   _writeUInt16(this, value, offset, true, noAssert)
 }
 
-function BufferWriteUInt16BE (value, offset, noAssert) {
+Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
   _writeUInt16(this, value, offset, false, noAssert)
 }
 
 function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
     verifuint(value, 0xffffffff)
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 3 >= len) {
-    var dv = new xDataView(new xArrayBuffer(4))
-    dv.setUint32(0, value, littleEndian)
-    for (var i = 0; i + offset < len; i++) {
-      buf[i + offset] = dv.getUint8(i)
+
+  var i
+  if (browserSupport) {
+    if (offset + 3 >= len) {
+      var dv = new DataView(new ArrayBuffer(4))
+      dv.setUint32(0, value, littleEndian)
+      for (i = 0; i + offset < len; i++) {
+        buf[i + offset] = dv.getUint8(i)
+      }
+    } else {
+      buf._dataview.setUint32(offset, value, littleEndian)
     }
   } else {
-    buf._dataview.setUint32(offset, value, littleEndian)
+    for (i = 0, j = Math.min(len - offset, 4); i < j; i++) {
+      buf[offset + i] =
+          (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
+    }
   }
 }
 
-function BufferWriteUInt32LE (value, offset, noAssert) {
+Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
   _writeUInt32(this, value, offset, true, noAssert)
 }
 
-function BufferWriteUInt32BE (value, offset, noAssert) {
+Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
   _writeUInt32(this, value, offset, false, noAssert)
 }
 
-function BufferWriteInt8 (value, offset, noAssert) {
+Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
   var buf = this
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
@@ -3533,110 +3833,135 @@ function BufferWriteInt8 (value, offset, noAssert) {
     verifsint(value, 0x7f, -0x80)
   }
 
-  if (offset >= buf.length) return
+  if (offset >= buf.length)
+    return
 
-  buf._dataview.setInt8(offset, value)
+  if (browserSupport) {
+    buf._dataview.setInt8(offset, value)
+  } else {
+    if (value >= 0)
+      buf.writeUInt8(value, offset, noAssert)
+    else
+      buf.writeUInt8(0xff + value + 1, offset, noAssert)
+  }
 }
 
 function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
     verifsint(value, 0x7fff, -0x8000)
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 1 === len) {
-    var dv = new xDataView(new xArrayBuffer(2))
-    dv.setInt16(0, value, littleEndian)
-    buf[offset] = dv.getUint8(0)
+
+  if (browserSupport) {
+    if (offset + 1 === len) {
+      var dv = new DataView(new ArrayBuffer(2))
+      dv.setInt16(0, value, littleEndian)
+      buf[offset] = dv.getUint8(0)
+    } else {
+      buf._dataview.setInt16(offset, value, littleEndian)
+    }
   } else {
-    buf._dataview.setInt16(offset, value, littleEndian)
+    if (value >= 0)
+      _writeUInt16(buf, value, offset, littleEndian, noAssert)
+    else
+      _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
   }
 }
 
-function BufferWriteInt16LE (value, offset, noAssert) {
+Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
   _writeInt16(this, value, offset, true, noAssert)
 }
 
-function BufferWriteInt16BE (value, offset, noAssert) {
+Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
   _writeInt16(this, value, offset, false, noAssert)
 }
 
 function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
     verifsint(value, 0x7fffffff, -0x80000000)
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 3 >= len) {
-    var dv = new xDataView(new xArrayBuffer(4))
-    dv.setInt32(0, value, littleEndian)
-    for (var i = 0; i + offset < len; i++) {
-      buf[i + offset] = dv.getUint8(i)
+
+  if (browserSupport) {
+    if (offset + 3 >= len) {
+      var dv = new DataView(new ArrayBuffer(4))
+      dv.setInt32(0, value, littleEndian)
+      for (var i = 0; i + offset < len; i++) {
+        buf[i + offset] = dv.getUint8(i)
+      }
+    } else {
+      buf._dataview.setInt32(offset, value, littleEndian)
     }
   } else {
-    buf._dataview.setInt32(offset, value, littleEndian)
+    if (value >= 0)
+      _writeUInt32(buf, value, offset, littleEndian, noAssert)
+    else
+      _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
   }
 }
 
-function BufferWriteInt32LE (value, offset, noAssert) {
+Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
   _writeInt32(this, value, offset, true, noAssert)
 }
 
-function BufferWriteInt32BE (value, offset, noAssert) {
+Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
   _writeInt32(this, value, offset, false, noAssert)
 }
 
 function _writeFloat (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
     verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 3 >= len) {
-    var dv = new xDataView(new xArrayBuffer(4))
-    dv.setFloat32(0, value, littleEndian)
-    for (var i = 0; i + offset < len; i++) {
-      buf[i + offset] = dv.getUint8(i)
+
+  if (browserSupport) {
+    if (offset + 3 >= len) {
+      var dv = new DataView(new ArrayBuffer(4))
+      dv.setFloat32(0, value, littleEndian)
+      for (var i = 0; i + offset < len; i++) {
+        buf[i + offset] = dv.getUint8(i)
+      }
+    } else {
+      buf._dataview.setFloat32(offset, value, littleEndian)
     }
   } else {
-    buf._dataview.setFloat32(offset, value, littleEndian)
+    ieee754.write(buf, value, offset, littleEndian, 23, 4)
   }
 }
 
-function BufferWriteFloatLE (value, offset, noAssert) {
+Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
   _writeFloat(this, value, offset, true, noAssert)
 }
 
-function BufferWriteFloatBE (value, offset, noAssert) {
+Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
   _writeFloat(this, value, offset, false, noAssert)
 }
 
 function _writeDouble (buf, value, offset, littleEndian, noAssert) {
   if (!noAssert) {
     assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof (littleEndian) === 'boolean',
-        'missing or invalid endian')
+    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
     assert(offset !== undefined && offset !== null, 'missing offset')
     assert(offset + 7 < buf.length,
         'Trying to write beyond buffer length')
@@ -3644,29 +3969,34 @@ function _writeDouble (buf, value, offset, littleEndian, noAssert) {
   }
 
   var len = buf.length
-  if (offset >= len) {
+  if (offset >= len)
     return
-  } else if (offset + 7 >= len) {
-    var dv = new xDataView(new xArrayBuffer(8))
-    dv.setFloat64(0, value, littleEndian)
-    for (var i = 0; i + offset < len; i++) {
-      buf[i + offset] = dv.getUint8(i)
+
+  if (browserSupport) {
+    if (offset + 7 >= len) {
+      var dv = new DataView(new ArrayBuffer(8))
+      dv.setFloat64(0, value, littleEndian)
+      for (var i = 0; i + offset < len; i++) {
+        buf[i + offset] = dv.getUint8(i)
+      }
+    } else {
+      buf._dataview.setFloat64(offset, value, littleEndian)
     }
   } else {
-    buf._dataview.setFloat64(offset, value, littleEndian)
+    ieee754.write(buf, value, offset, littleEndian, 52, 8)
   }
 }
 
-function BufferWriteDoubleLE (value, offset, noAssert) {
+Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
   _writeDouble(this, value, offset, true, noAssert)
 }
 
-function BufferWriteDoubleBE (value, offset, noAssert) {
+Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
   _writeDouble(this, value, offset, false, noAssert)
 }
 
 // fill(value, start=0, end=buffer.length)
-function BufferFill (value, start, end) {
+Buffer.prototype.fill = function (value, start, end) {
   if (!value) value = 0
   if (!start) start = 0
   if (!end) end = this.length
@@ -3698,7 +4028,7 @@ function BufferFill (value, start, end) {
   }
 }
 
-function BufferInspect () {
+Buffer.prototype.inspect = function () {
   var out = []
   var len = this.length
   for (var i = 0; i < len; i++) {
@@ -3711,12 +4041,14 @@ function BufferInspect () {
   return '<Buffer ' + out.join(' ') + '>'
 }
 
-// Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
-// Added in Node 0.12.
+/**
+ * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
+ * Added in Node 0.12. Not added to Buffer.prototype since it should only
+ * be available in browsers that support ArrayBuffer.
+ */
 function BufferToArrayBuffer () {
   return (new Buffer(this)).buffer
 }
-
 
 // HELPER FUNCTIONS
 // ================
@@ -3726,160 +4058,54 @@ function stringtrim (str) {
   return str.replace(/^\s+|\s+$/g, '')
 }
 
-/**
- * Class: ProxyBuffer
- * ==================
- *
- * Only used in Firefox, since Firefox does not allow augmenting "native"
- * objects (like Uint8Array instances) with new properties for some unknown
- * (probably silly) reason. So we'll use an ES6 Proxy (supported since
- * Firefox 18) to wrap the Uint8Array instance without actually adding any
- * properties to it.
- *
- * Instances of this "fake" Buffer class are the "target" of the
- * ES6 Proxy (see `augment` function).
- *
- * We couldn't just use the `Uint8Array` as the target of the `Proxy` because
- * Proxies have an important limitation on trapping the `toString` method.
- * `Object.prototype.toString.call(proxy)` gets called whenever something is
- * implicitly cast to a String. Unfortunately, with a `Proxy` this
- * unconditionally returns `Object.prototype.toString.call(target)` which would
- * always return "[object Uint8Array]" if we used the `Uint8Array` instance as
- * the target. And, remember, in Firefox we cannot redefine the `Uint8Array`
- * instance's `toString` method.
- *
- * So, we use this `ProxyBuffer` class as the proxy's "target". Since this class
- * has its own custom `toString` method, it will get called whenever `toString`
- * gets called, implicitly or explicitly, on the `Proxy` instance.
- *
- * We also have to define the Uint8Array methods `subarray` and `set` on
- * `ProxyBuffer` because if we didn't then `proxy.subarray(0)` would have its
- * `this` set to `proxy` (a `Proxy` instance) which throws an exception in
- * Firefox which expects it to be a `TypedArray` instance.
- */
-function ProxyBuffer (arr) {
-  this._arr = arr
-
-  if (arr.byteLength !== 0)
-    this._dataview = new xDataView(arr.buffer, arr.byteOffset, arr.byteLength)
-}
-
-ProxyBuffer.prototype = {
-  _isBuffer: true,
-  write: BufferWrite,
-  toString: BufferToString,
-  toLocaleString: BufferToString,
-  toJSON: BufferToJSON,
-  copy: BufferCopy,
-  slice: BufferSlice,
-  readUInt8: BufferReadUInt8,
-  readUInt16LE: BufferReadUInt16LE,
-  readUInt16BE: BufferReadUInt16BE,
-  readUInt32LE: BufferReadUInt32LE,
-  readUInt32BE: BufferReadUInt32BE,
-  readInt8: BufferReadInt8,
-  readInt16LE: BufferReadInt16LE,
-  readInt16BE: BufferReadInt16BE,
-  readInt32LE: BufferReadInt32LE,
-  readInt32BE: BufferReadInt32BE,
-  readFloatLE: BufferReadFloatLE,
-  readFloatBE: BufferReadFloatBE,
-  readDoubleLE: BufferReadDoubleLE,
-  readDoubleBE: BufferReadDoubleBE,
-  writeUInt8: BufferWriteUInt8,
-  writeUInt16LE: BufferWriteUInt16LE,
-  writeUInt16BE: BufferWriteUInt16BE,
-  writeUInt32LE: BufferWriteUInt32LE,
-  writeUInt32BE: BufferWriteUInt32BE,
-  writeInt8: BufferWriteInt8,
-  writeInt16LE: BufferWriteInt16LE,
-  writeInt16BE: BufferWriteInt16BE,
-  writeInt32LE: BufferWriteInt32LE,
-  writeInt32BE: BufferWriteInt32BE,
-  writeFloatLE: BufferWriteFloatLE,
-  writeFloatBE: BufferWriteFloatBE,
-  writeDoubleLE: BufferWriteDoubleLE,
-  writeDoubleBE: BufferWriteDoubleBE,
-  fill: BufferFill,
-  inspect: BufferInspect,
-  toArrayBuffer: BufferToArrayBuffer,
-  subarray: function () {
-    return this._arr.subarray.apply(this._arr, arguments)
-  },
-  set: function () {
-    return this._arr.set.apply(this._arr, arguments)
-  }
-}
-
-var ProxyHandler = {
-  get: function (target, name) {
-    if (name in target) return target[name]
-    else return target._arr[name]
-  },
-  set: function (target, name, value) {
-    target._arr[name] = value
-  }
-}
+var BP = Buffer.prototype
 
 function augment (arr) {
-  if (browserSupport) {
-    arr._isBuffer = true
+  arr._isBuffer = true
 
-    // Augment the Uint8Array *instance* (not the class!) with Buffer methods
-    arr.write = BufferWrite
-    arr.toString = BufferToString
-    arr.toLocaleString = BufferToString
-    arr.toJSON = BufferToJSON
-    arr.copy = BufferCopy
-    arr.slice = BufferSlice
-    arr.readUInt8 = BufferReadUInt8
-    arr.readUInt16LE = BufferReadUInt16LE
-    arr.readUInt16BE = BufferReadUInt16BE
-    arr.readUInt32LE = BufferReadUInt32LE
-    arr.readUInt32BE = BufferReadUInt32BE
-    arr.readInt8 = BufferReadInt8
-    arr.readInt16LE = BufferReadInt16LE
-    arr.readInt16BE = BufferReadInt16BE
-    arr.readInt32LE = BufferReadInt32LE
-    arr.readInt32BE = BufferReadInt32BE
-    arr.readFloatLE = BufferReadFloatLE
-    arr.readFloatBE = BufferReadFloatBE
-    arr.readDoubleLE = BufferReadDoubleLE
-    arr.readDoubleBE = BufferReadDoubleBE
-    arr.writeUInt8 = BufferWriteUInt8
-    arr.writeUInt16LE = BufferWriteUInt16LE
-    arr.writeUInt16BE = BufferWriteUInt16BE
-    arr.writeUInt32LE = BufferWriteUInt32LE
-    arr.writeUInt32BE = BufferWriteUInt32BE
-    arr.writeInt8 = BufferWriteInt8
-    arr.writeInt16LE = BufferWriteInt16LE
-    arr.writeInt16BE = BufferWriteInt16BE
-    arr.writeInt32LE = BufferWriteInt32LE
-    arr.writeInt32BE = BufferWriteInt32BE
-    arr.writeFloatLE = BufferWriteFloatLE
-    arr.writeFloatBE = BufferWriteFloatBE
-    arr.writeDoubleLE = BufferWriteDoubleLE
-    arr.writeDoubleBE = BufferWriteDoubleBE
-    arr.fill = BufferFill
-    arr.inspect = BufferInspect
+  // Augment the Uint8Array *instance* (not the class!) with Buffer methods
+  arr.write = BP.write
+  arr.toString = BP.toString
+  arr.toLocaleString = BP.toString
+  arr.toJSON = BP.toJSON
+  arr.copy = BP.copy
+  arr.slice = BP.slice
+  arr.readUInt8 = BP.readUInt8
+  arr.readUInt16LE = BP.readUInt16LE
+  arr.readUInt16BE = BP.readUInt16BE
+  arr.readUInt32LE = BP.readUInt32LE
+  arr.readUInt32BE = BP.readUInt32BE
+  arr.readInt8 = BP.readInt8
+  arr.readInt16LE = BP.readInt16LE
+  arr.readInt16BE = BP.readInt16BE
+  arr.readInt32LE = BP.readInt32LE
+  arr.readInt32BE = BP.readInt32BE
+  arr.readFloatLE = BP.readFloatLE
+  arr.readFloatBE = BP.readFloatBE
+  arr.readDoubleLE = BP.readDoubleLE
+  arr.readDoubleBE = BP.readDoubleBE
+  arr.writeUInt8 = BP.writeUInt8
+  arr.writeUInt16LE = BP.writeUInt16LE
+  arr.writeUInt16BE = BP.writeUInt16BE
+  arr.writeUInt32LE = BP.writeUInt32LE
+  arr.writeUInt32BE = BP.writeUInt32BE
+  arr.writeInt8 = BP.writeInt8
+  arr.writeInt16LE = BP.writeInt16LE
+  arr.writeInt16BE = BP.writeInt16BE
+  arr.writeInt32LE = BP.writeInt32LE
+  arr.writeInt32BE = BP.writeInt32BE
+  arr.writeFloatLE = BP.writeFloatLE
+  arr.writeFloatBE = BP.writeFloatBE
+  arr.writeDoubleLE = BP.writeDoubleLE
+  arr.writeDoubleBE = BP.writeDoubleBE
+  arr.fill = BP.fill
+  arr.inspect = BP.inspect
+  arr.toArrayBuffer = BufferToArrayBuffer
 
-    // Only add `toArrayBuffer` if the browser supports ArrayBuffer natively
-    if (xUint8Array !== TA.Uint8Array)
-      arr.toArrayBuffer = BufferToArrayBuffer
+  if (arr.byteLength !== 0)
+    arr._dataview = new DataView(arr.buffer, arr.byteOffset, arr.byteLength)
 
-    if (arr.byteLength !== 0)
-      arr._dataview = new xDataView(arr.buffer, arr.byteOffset, arr.byteLength)
-
-    return arr
-
-  } else {
-    // This is a browser that doesn't support augmenting the `Uint8Array`
-    // instance (*ahem* Firefox) so use an ES6 `Proxy`.
-    var proxyBuffer = new ProxyBuffer(arr)
-    var proxy = new Proxy(proxyBuffer, ProxyHandler)
-    proxyBuffer._proxy = proxy
-    return proxy
-  }
+  return arr
 }
 
 // slice(start, end)
@@ -3907,7 +4133,7 @@ function isArray (subject) {
   })(subject)
 }
 
-function isArrayIsh (subject) {
+function isArrayish (subject) {
   return isArray(subject) || Buffer.isBuffer(subject) ||
       subject && typeof subject === 'object' &&
       typeof subject.length === 'number'
@@ -3928,7 +4154,6 @@ function utf8ToBytes (str) {
       for (var j = 0; j < h.length; j++)
         byteArray.push(parseInt(h[j], 16))
     }
-
   return byteArray
 }
 
@@ -3938,7 +4163,6 @@ function asciiToBytes (str) {
     // Node's code seems to be doing this and not & 0x7F..
     byteArray.push(str.charCodeAt(i) & 0xFF)
   }
-
   return byteArray
 }
 
@@ -3947,13 +4171,11 @@ function base64ToBytes (str) {
 }
 
 function blitBuffer (src, dst, offset, length) {
-  var pos, i = 0
-  while (i < length) {
+  var pos
+  for (var i = 0; i < length; i++) {
     if ((i + offset >= dst.length) || (i >= src.length))
       break
-
     dst[i + offset] = src[i]
-    i++
   }
   return i
 }
@@ -3970,31 +4192,24 @@ function decodeUtf8Char (str) {
  * We have to make sure that the value is a valid integer. This means that it
  * is non-negative. It has no fractional component and that it does not
  * exceed the maximum allowed value.
- *
- *      value           The number to check for validity
- *
- *      max             The maximum value
  */
 function verifuint (value, max) {
-  assert(typeof (value) == 'number', 'cannot write a non-number as a number')
+  assert(typeof value == 'number', 'cannot write a non-number as a number')
   assert(value >= 0,
       'specified a negative value for writing an unsigned value')
   assert(value <= max, 'value is larger than maximum value for type')
   assert(Math.floor(value) === value, 'value has a fractional component')
 }
 
-/*
- * A series of checks to make sure we actually have a signed 32-bit number
- */
 function verifsint(value, max, min) {
-  assert(typeof (value) == 'number', 'cannot write a non-number as a number')
+  assert(typeof value == 'number', 'cannot write a non-number as a number')
   assert(value <= max, 'value larger than maximum allowed value')
   assert(value >= min, 'value smaller than minimum allowed value')
   assert(Math.floor(value) === value, 'value has a fractional component')
 }
 
 function verifIEEE754(value, max, min) {
-  assert(typeof (value) == 'number', 'cannot write a non-number as a number')
+  assert(typeof value == 'number', 'cannot write a non-number as a number')
   assert(value <= max, 'value larger than maximum allowed value')
   assert(value >= min, 'value smaller than minimum allowed value')
 }
@@ -4003,7 +4218,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":29,"typedarray":30}],29:[function(require,module,exports){
+},{"base64-js":22,"ieee754":23}],22:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -4021,7 +4236,7 @@ function assert (test, message) {
 		// represent one byte
 		// if there is only one, then the three characters before it represent 2 bytes
 		// this is just a cheap hack to not do indexOf twice
-		placeHolders = b64.indexOf('=');
+		placeHolders = indexOf(b64, '=');
 		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
 
 		// base64 is 4/3 + up to two characters of the original data
@@ -4031,17 +4246,17 @@ function assert (test, message) {
 		l = placeHolders > 0 ? b64.length - 4 : b64.length;
 
 		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (lookup.indexOf(b64[i]) << 18) | (lookup.indexOf(b64[i + 1]) << 12) | (lookup.indexOf(b64[i + 2]) << 6) | lookup.indexOf(b64[i + 3]);
+			tmp = (indexOf(lookup, b64.charAt(i)) << 18) | (indexOf(lookup, b64.charAt(i + 1)) << 12) | (indexOf(lookup, b64.charAt(i + 2)) << 6) | indexOf(lookup, b64.charAt(i + 3));
 			arr.push((tmp & 0xFF0000) >> 16);
 			arr.push((tmp & 0xFF00) >> 8);
 			arr.push(tmp & 0xFF);
 		}
 
 		if (placeHolders === 2) {
-			tmp = (lookup.indexOf(b64[i]) << 2) | (lookup.indexOf(b64[i + 1]) >> 4);
+			tmp = (indexOf(lookup, b64.charAt(i)) << 2) | (indexOf(lookup, b64.charAt(i + 1)) >> 4);
 			arr.push(tmp & 0xFF);
 		} else if (placeHolders === 1) {
-			tmp = (lookup.indexOf(b64[i]) << 10) | (lookup.indexOf(b64[i + 1]) << 4) | (lookup.indexOf(b64[i + 2]) >> 2);
+			tmp = (indexOf(lookup, b64.charAt(i)) << 10) | (indexOf(lookup, b64.charAt(i + 1)) << 4) | (indexOf(lookup, b64.charAt(i + 2)) >> 2);
 			arr.push((tmp >> 8) & 0xFF);
 			arr.push(tmp & 0xFF);
 		}
@@ -4056,7 +4271,7 @@ function assert (test, message) {
 			temp, length;
 
 		function tripletToBase64 (num) {
-			return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F];
+			return lookup.charAt(num >> 18 & 0x3F) + lookup.charAt(num >> 12 & 0x3F) + lookup.charAt(num >> 6 & 0x3F) + lookup.charAt(num & 0x3F);
 		};
 
 		// go through the array every three bytes, we'll deal with trailing stuff later
@@ -4069,15 +4284,15 @@ function assert (test, message) {
 		switch (extraBytes) {
 			case 1:
 				temp = uint8[uint8.length - 1];
-				output += lookup[temp >> 2];
-				output += lookup[(temp << 4) & 0x3F];
+				output += lookup.charAt(temp >> 2);
+				output += lookup.charAt((temp << 4) & 0x3F);
 				output += '==';
 				break;
 			case 2:
 				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup[temp >> 10];
-				output += lookup[(temp >> 4) & 0x3F];
-				output += lookup[(temp << 2) & 0x3F];
+				output += lookup.charAt(temp >> 10);
+				output += lookup.charAt((temp >> 4) & 0x3F);
+				output += lookup.charAt((temp << 2) & 0x3F);
 				output += '=';
 				break;
 		}
@@ -4089,639 +4304,112 @@ function assert (test, message) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],30:[function(require,module,exports){
-var undefined = (void 0); // Paranoia
+function indexOf (arr, elt /*, from*/) {
+	var len = arr.length;
 
-// Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
-// create, and consume so much memory, that the browser appears frozen.
-var MAX_ARRAY_LENGTH = 1e5;
+	var from = Number(arguments[1]) || 0;
+	from = (from < 0)
+		? Math.ceil(from)
+		: Math.floor(from);
+	if (from < 0)
+		from += len;
 
-// Approximations of internal ECMAScript conversion functions
-var ECMAScript = (function() {
-  // Stash a copy in case other scripts modify these
-  var opts = Object.prototype.toString,
-      ophop = Object.prototype.hasOwnProperty;
-
-  return {
-    // Class returns internal [[Class]] property, used to avoid cross-frame instanceof issues:
-    Class: function(v) { return opts.call(v).replace(/^\[object *|\]$/g, ''); },
-    HasProperty: function(o, p) { return p in o; },
-    HasOwnProperty: function(o, p) { return ophop.call(o, p); },
-    IsCallable: function(o) { return typeof o === 'function'; },
-    ToInt32: function(v) { return v >> 0; },
-    ToUint32: function(v) { return v >>> 0; }
-  };
-}());
-
-// Snapshot intrinsics
-var LN2 = Math.LN2,
-    abs = Math.abs,
-    floor = Math.floor,
-    log = Math.log,
-    min = Math.min,
-    pow = Math.pow,
-    round = Math.round;
-
-// ES5: lock down object properties
-function configureProperties(obj) {
-  if (getOwnPropNames && defineProp) {
-    var props = getOwnPropNames(obj), i;
-    for (i = 0; i < props.length; i += 1) {
-      defineProp(obj, props[i], {
-        value: obj[props[i]],
-        writable: false,
-        enumerable: false,
-        configurable: false
-      });
-    }
-  }
+	for (; from < len; from++) {
+		if ((typeof arr === 'string' && arr.charAt(from) === elt) ||
+				(typeof arr !== 'string' && arr[from] === elt)) {
+			return from;
+		}
+	}
+	return -1;
 }
 
-// emulate ES5 getter/setter API using legacy APIs
-// http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx
-// (second clause tests for Object.defineProperty() in IE<9 that only supports extending DOM prototypes, but
-// note that IE<9 does not support __defineGetter__ or __defineSetter__ so it just renders the method harmless)
-var defineProp
-if (Object.defineProperty && (function() {
-      try {
-        Object.defineProperty({}, 'x', {});
-        return true;
-      } catch (e) {
-        return false;
-      }
-    })()) {
-  defineProp = Object.defineProperty;
-} else {
-  defineProp = function(o, p, desc) {
-    if (!o === Object(o)) throw new TypeError("Object.defineProperty called on non-object");
-    if (ECMAScript.HasProperty(desc, 'get') && Object.prototype.__defineGetter__) { Object.prototype.__defineGetter__.call(o, p, desc.get); }
-    if (ECMAScript.HasProperty(desc, 'set') && Object.prototype.__defineSetter__) { Object.prototype.__defineSetter__.call(o, p, desc.set); }
-    if (ECMAScript.HasProperty(desc, 'value')) { o[p] = desc.value; }
-    return o;
-  };
-}
+},{}],23:[function(require,module,exports){
+exports.read = function(buffer, offset, isLE, mLen, nBytes) {
+  var e, m,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      nBits = -7,
+      i = isLE ? (nBytes - 1) : 0,
+      d = isLE ? -1 : 1,
+      s = buffer[offset + i];
 
-var getOwnPropNames = Object.getOwnPropertyNames || function (o) {
-  if (o !== Object(o)) throw new TypeError("Object.getOwnPropertyNames called on non-object");
-  var props = [], p;
-  for (p in o) {
-    if (ECMAScript.HasOwnProperty(o, p)) {
-      props.push(p);
-    }
+  i += d;
+
+  e = s & ((1 << (-nBits)) - 1);
+  s >>= (-nBits);
+  nBits += eLen;
+  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  m = e & ((1 << (-nBits)) - 1);
+  e >>= (-nBits);
+  nBits += mLen;
+  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8);
+
+  if (e === 0) {
+    e = 1 - eBias;
+  } else if (e === eMax) {
+    return m ? NaN : ((s ? -1 : 1) * Infinity);
+  } else {
+    m = m + Math.pow(2, mLen);
+    e = e - eBias;
   }
-  return props;
+  return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
 };
 
-// ES5: Make obj[index] an alias for obj._getter(index)/obj._setter(index, value)
-// for index in 0 ... obj.length
-function makeArrayAccessors(obj) {
-  if (!defineProp) { return; }
+exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
+  var e, m, c,
+      eLen = nBytes * 8 - mLen - 1,
+      eMax = (1 << eLen) - 1,
+      eBias = eMax >> 1,
+      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+      i = isLE ? 0 : (nBytes - 1),
+      d = isLE ? 1 : -1,
+      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
 
-  if (obj.length > MAX_ARRAY_LENGTH) throw new RangeError("Array too large for polyfill");
+  value = Math.abs(value);
 
-  function makeArrayAccessor(index) {
-    defineProp(obj, index, {
-      'get': function() { return obj._getter(index); },
-      'set': function(v) { obj._setter(index, v); },
-      enumerable: true,
-      configurable: false
-    });
-  }
-
-  var i;
-  for (i = 0; i < obj.length; i += 1) {
-    makeArrayAccessor(i);
-  }
-}
-
-// Internal conversion functions:
-//    pack<Type>()   - take a number (interpreted as Type), output a byte array
-//    unpack<Type>() - take a byte array, output a Type-like number
-
-function as_signed(value, bits) { var s = 32 - bits; return (value << s) >> s; }
-function as_unsigned(value, bits) { var s = 32 - bits; return (value << s) >>> s; }
-
-function packI8(n) { return [n & 0xff]; }
-function unpackI8(bytes) { return as_signed(bytes[0], 8); }
-
-function packU8(n) { return [n & 0xff]; }
-function unpackU8(bytes) { return as_unsigned(bytes[0], 8); }
-
-function packU8Clamped(n) { n = round(Number(n)); return [n < 0 ? 0 : n > 0xff ? 0xff : n & 0xff]; }
-
-function packI16(n) { return [(n >> 8) & 0xff, n & 0xff]; }
-function unpackI16(bytes) { return as_signed(bytes[0] << 8 | bytes[1], 16); }
-
-function packU16(n) { return [(n >> 8) & 0xff, n & 0xff]; }
-function unpackU16(bytes) { return as_unsigned(bytes[0] << 8 | bytes[1], 16); }
-
-function packI32(n) { return [(n >> 24) & 0xff, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff]; }
-function unpackI32(bytes) { return as_signed(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3], 32); }
-
-function packU32(n) { return [(n >> 24) & 0xff, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff]; }
-function unpackU32(bytes) { return as_unsigned(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3], 32); }
-
-function packIEEE754(v, ebits, fbits) {
-
-  var bias = (1 << (ebits - 1)) - 1,
-      s, e, f, ln,
-      i, bits, str, bytes;
-
-  function roundToEven(n) {
-    var w = floor(n), f = n - w;
-    if (f < 0.5)
-      return w;
-    if (f > 0.5)
-      return w + 1;
-    return w % 2 ? w + 1 : w;
-  }
-
-  // Compute sign, exponent, fraction
-  if (v !== v) {
-    // NaN
-    // http://dev.w3.org/2006/webapi/WebIDL/#es-type-mapping
-    e = (1 << ebits) - 1; f = pow(2, fbits - 1); s = 0;
-  } else if (v === Infinity || v === -Infinity) {
-    e = (1 << ebits) - 1; f = 0; s = (v < 0) ? 1 : 0;
-  } else if (v === 0) {
-    e = 0; f = 0; s = (1 / v === -Infinity) ? 1 : 0;
+  if (isNaN(value) || value === Infinity) {
+    m = isNaN(value) ? 1 : 0;
+    e = eMax;
   } else {
-    s = v < 0;
-    v = abs(v);
-
-    if (v >= pow(2, 1 - bias)) {
-      e = min(floor(log(v) / LN2), 1023);
-      f = roundToEven(v / pow(2, e) * pow(2, fbits));
-      if (f / pow(2, fbits) >= 2) {
-        e = e + 1;
-        f = 1;
-      }
-      if (e > bias) {
-        // Overflow
-        e = (1 << ebits) - 1;
-        f = 0;
-      } else {
-        // Normalized
-        e = e + bias;
-        f = f - pow(2, fbits);
-      }
+    e = Math.floor(Math.log(value) / Math.LN2);
+    if (value * (c = Math.pow(2, -e)) < 1) {
+      e--;
+      c *= 2;
+    }
+    if (e + eBias >= 1) {
+      value += rt / c;
     } else {
-      // Denormalized
+      value += rt * Math.pow(2, 1 - eBias);
+    }
+    if (value * c >= 2) {
+      e++;
+      c /= 2;
+    }
+
+    if (e + eBias >= eMax) {
+      m = 0;
+      e = eMax;
+    } else if (e + eBias >= 1) {
+      m = (value * c - 1) * Math.pow(2, mLen);
+      e = e + eBias;
+    } else {
+      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
       e = 0;
-      f = roundToEven(v / pow(2, 1 - bias - fbits));
     }
   }
 
-  // Pack sign, exponent, fraction
-  bits = [];
-  for (i = fbits; i; i -= 1) { bits.push(f % 2 ? 1 : 0); f = floor(f / 2); }
-  for (i = ebits; i; i -= 1) { bits.push(e % 2 ? 1 : 0); e = floor(e / 2); }
-  bits.push(s ? 1 : 0);
-  bits.reverse();
-  str = bits.join('');
+  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8);
 
-  // Bits to bytes
-  bytes = [];
-  while (str.length) {
-    bytes.push(parseInt(str.substring(0, 8), 2));
-    str = str.substring(8);
-  }
-  return bytes;
-}
+  e = (e << mLen) | m;
+  eLen += mLen;
+  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8);
 
-function unpackIEEE754(bytes, ebits, fbits) {
+  buffer[offset + i - d] |= s * 128;
+};
 
-  // Bytes to bits
-  var bits = [], i, j, b, str,
-      bias, s, e, f;
-
-  for (i = bytes.length; i; i -= 1) {
-    b = bytes[i - 1];
-    for (j = 8; j; j -= 1) {
-      bits.push(b % 2 ? 1 : 0); b = b >> 1;
-    }
-  }
-  bits.reverse();
-  str = bits.join('');
-
-  // Unpack sign, exponent, fraction
-  bias = (1 << (ebits - 1)) - 1;
-  s = parseInt(str.substring(0, 1), 2) ? -1 : 1;
-  e = parseInt(str.substring(1, 1 + ebits), 2);
-  f = parseInt(str.substring(1 + ebits), 2);
-
-  // Produce number
-  if (e === (1 << ebits) - 1) {
-    return f !== 0 ? NaN : s * Infinity;
-  } else if (e > 0) {
-    // Normalized
-    return s * pow(2, e - bias) * (1 + f / pow(2, fbits));
-  } else if (f !== 0) {
-    // Denormalized
-    return s * pow(2, -(bias - 1)) * (f / pow(2, fbits));
-  } else {
-    return s < 0 ? -0 : 0;
-  }
-}
-
-function unpackF64(b) { return unpackIEEE754(b, 11, 52); }
-function packF64(v) { return packIEEE754(v, 11, 52); }
-function unpackF32(b) { return unpackIEEE754(b, 8, 23); }
-function packF32(v) { return packIEEE754(v, 8, 23); }
-
-
-//
-// 3 The ArrayBuffer Type
-//
-
-(function() {
-
-  /** @constructor */
-  var ArrayBuffer = function ArrayBuffer(length) {
-    length = ECMAScript.ToInt32(length);
-    if (length < 0) throw new RangeError('ArrayBuffer size is not a small enough positive integer');
-
-    this.byteLength = length;
-    this._bytes = [];
-    this._bytes.length = length;
-
-    var i;
-    for (i = 0; i < this.byteLength; i += 1) {
-      this._bytes[i] = 0;
-    }
-
-    configureProperties(this);
-  };
-
-  exports.ArrayBuffer = exports.ArrayBuffer || ArrayBuffer;
-
-  //
-  // 4 The ArrayBufferView Type
-  //
-
-  // NOTE: this constructor is not exported
-  /** @constructor */
-  var ArrayBufferView = function ArrayBufferView() {
-    //this.buffer = null;
-    //this.byteOffset = 0;
-    //this.byteLength = 0;
-  };
-
-  //
-  // 5 The Typed Array View Types
-  //
-
-  function makeConstructor(bytesPerElement, pack, unpack) {
-    // Each TypedArray type requires a distinct constructor instance with
-    // identical logic, which this produces.
-
-    var ctor;
-    ctor = function(buffer, byteOffset, length) {
-      var array, sequence, i, s;
-
-      if (!arguments.length || typeof arguments[0] === 'number') {
-        // Constructor(unsigned long length)
-        this.length = ECMAScript.ToInt32(arguments[0]);
-        if (length < 0) throw new RangeError('ArrayBufferView size is not a small enough positive integer');
-
-        this.byteLength = this.length * this.BYTES_PER_ELEMENT;
-        this.buffer = new ArrayBuffer(this.byteLength);
-        this.byteOffset = 0;
-      } else if (typeof arguments[0] === 'object' && arguments[0].constructor === ctor) {
-        // Constructor(TypedArray array)
-        array = arguments[0];
-
-        this.length = array.length;
-        this.byteLength = this.length * this.BYTES_PER_ELEMENT;
-        this.buffer = new ArrayBuffer(this.byteLength);
-        this.byteOffset = 0;
-
-        for (i = 0; i < this.length; i += 1) {
-          this._setter(i, array._getter(i));
-        }
-      } else if (typeof arguments[0] === 'object' &&
-                 !(arguments[0] instanceof ArrayBuffer || ECMAScript.Class(arguments[0]) === 'ArrayBuffer')) {
-        // Constructor(sequence<type> array)
-        sequence = arguments[0];
-
-        this.length = ECMAScript.ToUint32(sequence.length);
-        this.byteLength = this.length * this.BYTES_PER_ELEMENT;
-        this.buffer = new ArrayBuffer(this.byteLength);
-        this.byteOffset = 0;
-
-        for (i = 0; i < this.length; i += 1) {
-          s = sequence[i];
-          this._setter(i, Number(s));
-        }
-      } else if (typeof arguments[0] === 'object' &&
-                 (arguments[0] instanceof ArrayBuffer || ECMAScript.Class(arguments[0]) === 'ArrayBuffer')) {
-        // Constructor(ArrayBuffer buffer,
-        //             optional unsigned long byteOffset, optional unsigned long length)
-        this.buffer = buffer;
-
-        this.byteOffset = ECMAScript.ToUint32(byteOffset);
-        if (this.byteOffset > this.buffer.byteLength) {
-          throw new RangeError("byteOffset out of range");
-        }
-
-        if (this.byteOffset % this.BYTES_PER_ELEMENT) {
-          // The given byteOffset must be a multiple of the element
-          // size of the specific type, otherwise an exception is raised.
-          throw new RangeError("ArrayBuffer length minus the byteOffset is not a multiple of the element size.");
-        }
-
-        if (arguments.length < 3) {
-          this.byteLength = this.buffer.byteLength - this.byteOffset;
-
-          if (this.byteLength % this.BYTES_PER_ELEMENT) {
-            throw new RangeError("length of buffer minus byteOffset not a multiple of the element size");
-          }
-          this.length = this.byteLength / this.BYTES_PER_ELEMENT;
-        } else {
-          this.length = ECMAScript.ToUint32(length);
-          this.byteLength = this.length * this.BYTES_PER_ELEMENT;
-        }
-
-        if ((this.byteOffset + this.byteLength) > this.buffer.byteLength) {
-          throw new RangeError("byteOffset and length reference an area beyond the end of the buffer");
-        }
-      } else {
-        throw new TypeError("Unexpected argument type(s)");
-      }
-
-      this.constructor = ctor;
-
-      configureProperties(this);
-      makeArrayAccessors(this);
-    };
-
-    ctor.prototype = new ArrayBufferView();
-    ctor.prototype.BYTES_PER_ELEMENT = bytesPerElement;
-    ctor.prototype._pack = pack;
-    ctor.prototype._unpack = unpack;
-    ctor.BYTES_PER_ELEMENT = bytesPerElement;
-
-    // getter type (unsigned long index);
-    ctor.prototype._getter = function(index) {
-      if (arguments.length < 1) throw new SyntaxError("Not enough arguments");
-
-      index = ECMAScript.ToUint32(index);
-      if (index >= this.length) {
-        return undefined;
-      }
-
-      var bytes = [], i, o;
-      for (i = 0, o = this.byteOffset + index * this.BYTES_PER_ELEMENT;
-           i < this.BYTES_PER_ELEMENT;
-           i += 1, o += 1) {
-        bytes.push(this.buffer._bytes[o]);
-      }
-      return this._unpack(bytes);
-    };
-
-    // NONSTANDARD: convenience alias for getter: type get(unsigned long index);
-    ctor.prototype.get = ctor.prototype._getter;
-
-    // setter void (unsigned long index, type value);
-    ctor.prototype._setter = function(index, value) {
-      if (arguments.length < 2) throw new SyntaxError("Not enough arguments");
-
-      index = ECMAScript.ToUint32(index);
-      if (index >= this.length) {
-        return undefined;
-      }
-
-      var bytes = this._pack(value), i, o;
-      for (i = 0, o = this.byteOffset + index * this.BYTES_PER_ELEMENT;
-           i < this.BYTES_PER_ELEMENT;
-           i += 1, o += 1) {
-        this.buffer._bytes[o] = bytes[i];
-      }
-    };
-
-    // void set(TypedArray array, optional unsigned long offset);
-    // void set(sequence<type> array, optional unsigned long offset);
-    ctor.prototype.set = function(index, value) {
-      if (arguments.length < 1) throw new SyntaxError("Not enough arguments");
-      var array, sequence, offset, len,
-          i, s, d,
-          byteOffset, byteLength, tmp;
-
-      if (typeof arguments[0] === 'object' && arguments[0].constructor === this.constructor) {
-        // void set(TypedArray array, optional unsigned long offset);
-        array = arguments[0];
-        offset = ECMAScript.ToUint32(arguments[1]);
-
-        if (offset + array.length > this.length) {
-          throw new RangeError("Offset plus length of array is out of range");
-        }
-
-        byteOffset = this.byteOffset + offset * this.BYTES_PER_ELEMENT;
-        byteLength = array.length * this.BYTES_PER_ELEMENT;
-
-        if (array.buffer === this.buffer) {
-          tmp = [];
-          for (i = 0, s = array.byteOffset; i < byteLength; i += 1, s += 1) {
-            tmp[i] = array.buffer._bytes[s];
-          }
-          for (i = 0, d = byteOffset; i < byteLength; i += 1, d += 1) {
-            this.buffer._bytes[d] = tmp[i];
-          }
-        } else {
-          for (i = 0, s = array.byteOffset, d = byteOffset;
-               i < byteLength; i += 1, s += 1, d += 1) {
-            this.buffer._bytes[d] = array.buffer._bytes[s];
-          }
-        }
-      } else if (typeof arguments[0] === 'object' && typeof arguments[0].length !== 'undefined') {
-        // void set(sequence<type> array, optional unsigned long offset);
-        sequence = arguments[0];
-        len = ECMAScript.ToUint32(sequence.length);
-        offset = ECMAScript.ToUint32(arguments[1]);
-
-        if (offset + len > this.length) {
-          throw new RangeError("Offset plus length of array is out of range");
-        }
-
-        for (i = 0; i < len; i += 1) {
-          s = sequence[i];
-          this._setter(offset + i, Number(s));
-        }
-      } else {
-        throw new TypeError("Unexpected argument type(s)");
-      }
-    };
-
-    // TypedArray subarray(long begin, optional long end);
-    ctor.prototype.subarray = function(start, end) {
-      function clamp(v, min, max) { return v < min ? min : v > max ? max : v; }
-
-      start = ECMAScript.ToInt32(start);
-      end = ECMAScript.ToInt32(end);
-
-      if (arguments.length < 1) { start = 0; }
-      if (arguments.length < 2) { end = this.length; }
-
-      if (start < 0) { start = this.length + start; }
-      if (end < 0) { end = this.length + end; }
-
-      start = clamp(start, 0, this.length);
-      end = clamp(end, 0, this.length);
-
-      var len = end - start;
-      if (len < 0) {
-        len = 0;
-      }
-
-      return new this.constructor(
-        this.buffer, this.byteOffset + start * this.BYTES_PER_ELEMENT, len);
-    };
-
-    return ctor;
-  }
-
-  var Int8Array = makeConstructor(1, packI8, unpackI8);
-  var Uint8Array = makeConstructor(1, packU8, unpackU8);
-  var Uint8ClampedArray = makeConstructor(1, packU8Clamped, unpackU8);
-  var Int16Array = makeConstructor(2, packI16, unpackI16);
-  var Uint16Array = makeConstructor(2, packU16, unpackU16);
-  var Int32Array = makeConstructor(4, packI32, unpackI32);
-  var Uint32Array = makeConstructor(4, packU32, unpackU32);
-  var Float32Array = makeConstructor(4, packF32, unpackF32);
-  var Float64Array = makeConstructor(8, packF64, unpackF64);
-
-  exports.Int8Array = exports.Int8Array || Int8Array;
-  exports.Uint8Array = exports.Uint8Array || Uint8Array;
-  exports.Uint8ClampedArray = exports.Uint8ClampedArray || Uint8ClampedArray;
-  exports.Int16Array = exports.Int16Array || Int16Array;
-  exports.Uint16Array = exports.Uint16Array || Uint16Array;
-  exports.Int32Array = exports.Int32Array || Int32Array;
-  exports.Uint32Array = exports.Uint32Array || Uint32Array;
-  exports.Float32Array = exports.Float32Array || Float32Array;
-  exports.Float64Array = exports.Float64Array || Float64Array;
-}());
-
-//
-// 6 The DataView View Type
-//
-
-(function() {
-  function r(array, index) {
-    return ECMAScript.IsCallable(array.get) ? array.get(index) : array[index];
-  }
-
-  var IS_BIG_ENDIAN = (function() {
-    var u16array = new(exports.Uint16Array)([0x1234]),
-        u8array = new(exports.Uint8Array)(u16array.buffer);
-    return r(u8array, 0) === 0x12;
-  }());
-
-  // Constructor(ArrayBuffer buffer,
-  //             optional unsigned long byteOffset,
-  //             optional unsigned long byteLength)
-  /** @constructor */
-  var DataView = function DataView(buffer, byteOffset, byteLength) {
-    if (arguments.length === 0) {
-      buffer = new exports.ArrayBuffer(0);
-    } else if (!(buffer instanceof exports.ArrayBuffer || ECMAScript.Class(buffer) === 'ArrayBuffer')) {
-      throw new TypeError("TypeError");
-    }
-
-    this.buffer = buffer || new exports.ArrayBuffer(0);
-
-    this.byteOffset = ECMAScript.ToUint32(byteOffset);
-    if (this.byteOffset > this.buffer.byteLength) {
-      throw new RangeError("byteOffset out of range");
-    }
-
-    if (arguments.length < 3) {
-      this.byteLength = this.buffer.byteLength - this.byteOffset;
-    } else {
-      this.byteLength = ECMAScript.ToUint32(byteLength);
-    }
-
-    if ((this.byteOffset + this.byteLength) > this.buffer.byteLength) {
-      throw new RangeError("byteOffset and length reference an area beyond the end of the buffer");
-    }
-
-    configureProperties(this);
-  };
-
-  function makeGetter(arrayType) {
-    return function(byteOffset, littleEndian) {
-
-      byteOffset = ECMAScript.ToUint32(byteOffset);
-
-      if (byteOffset + arrayType.BYTES_PER_ELEMENT > this.byteLength) {
-        throw new RangeError("Array index out of range");
-      }
-      byteOffset += this.byteOffset;
-
-      var uint8Array = new exports.Uint8Array(this.buffer, byteOffset, arrayType.BYTES_PER_ELEMENT),
-          bytes = [], i;
-      for (i = 0; i < arrayType.BYTES_PER_ELEMENT; i += 1) {
-        bytes.push(r(uint8Array, i));
-      }
-
-      if (Boolean(littleEndian) === Boolean(IS_BIG_ENDIAN)) {
-        bytes.reverse();
-      }
-
-      return r(new arrayType(new exports.Uint8Array(bytes).buffer), 0);
-    };
-  }
-
-  DataView.prototype.getUint8 = makeGetter(exports.Uint8Array);
-  DataView.prototype.getInt8 = makeGetter(exports.Int8Array);
-  DataView.prototype.getUint16 = makeGetter(exports.Uint16Array);
-  DataView.prototype.getInt16 = makeGetter(exports.Int16Array);
-  DataView.prototype.getUint32 = makeGetter(exports.Uint32Array);
-  DataView.prototype.getInt32 = makeGetter(exports.Int32Array);
-  DataView.prototype.getFloat32 = makeGetter(exports.Float32Array);
-  DataView.prototype.getFloat64 = makeGetter(exports.Float64Array);
-
-  function makeSetter(arrayType) {
-    return function(byteOffset, value, littleEndian) {
-
-      byteOffset = ECMAScript.ToUint32(byteOffset);
-      if (byteOffset + arrayType.BYTES_PER_ELEMENT > this.byteLength) {
-        throw new RangeError("Array index out of range");
-      }
-
-      // Get bytes
-      var typeArray = new arrayType([value]),
-          byteArray = new exports.Uint8Array(typeArray.buffer),
-          bytes = [], i, byteView;
-
-      for (i = 0; i < arrayType.BYTES_PER_ELEMENT; i += 1) {
-        bytes.push(r(byteArray, i));
-      }
-
-      // Flip if necessary
-      if (Boolean(littleEndian) === Boolean(IS_BIG_ENDIAN)) {
-        bytes.reverse();
-      }
-
-      // Write them
-      byteView = new exports.Uint8Array(this.buffer, byteOffset, arrayType.BYTES_PER_ELEMENT);
-      byteView.set(bytes);
-    };
-  }
-
-  DataView.prototype.setUint8 = makeSetter(exports.Uint8Array);
-  DataView.prototype.setInt8 = makeSetter(exports.Int8Array);
-  DataView.prototype.setUint16 = makeSetter(exports.Uint16Array);
-  DataView.prototype.setInt16 = makeSetter(exports.Int16Array);
-  DataView.prototype.setUint32 = makeSetter(exports.Uint32Array);
-  DataView.prototype.setInt32 = makeSetter(exports.Int32Array);
-  DataView.prototype.setFloat32 = makeSetter(exports.Float32Array);
-  DataView.prototype.setFloat64 = makeSetter(exports.Float64Array);
-
-  exports.DataView = exports.DataView || DataView;
-
-}());
-
-},{}],31:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4795,7 +4483,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":35,"./writable.js":37,"inherits":26,"process/browser.js":33}],32:[function(require,module,exports){
+},{"./readable.js":28,"./writable.js":30,"inherits":19,"process/browser.js":26}],25:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4924,9 +4612,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":31,"./passthrough.js":34,"./readable.js":35,"./transform.js":36,"./writable.js":37,"events":25,"inherits":26}],33:[function(require,module,exports){
-module.exports=require(27)
-},{}],34:[function(require,module,exports){
+},{"./duplex.js":24,"./passthrough.js":27,"./readable.js":28,"./transform.js":29,"./writable.js":30,"events":18,"inherits":19}],26:[function(require,module,exports){
+module.exports=require(20)
+},{}],27:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4969,7 +4657,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":36,"inherits":26}],35:[function(require,module,exports){
+},{"./transform.js":29,"inherits":19}],28:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5904,7 +5592,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":32,"__browserify_process":27,"buffer":28,"events":25,"inherits":26,"process/browser.js":33,"string_decoder":38}],36:[function(require,module,exports){
+},{"./index.js":25,"__browserify_process":20,"buffer":21,"events":18,"inherits":19,"process/browser.js":26,"string_decoder":31}],29:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6110,7 +5798,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":31,"inherits":26}],37:[function(require,module,exports){
+},{"./duplex.js":24,"inherits":19}],30:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6498,7 +6186,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":32,"buffer":28,"inherits":26,"process/browser.js":33}],38:[function(require,module,exports){
+},{"./index.js":25,"buffer":21,"inherits":19,"process/browser.js":26}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6691,7 +6379,7 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":28}],39:[function(require,module,exports){
+},{"buffer":21}],32:[function(require,module,exports){
 var process=require("__browserify_process");// vim:ts=4:sts=4:sw=4:
 /*!
  *
@@ -8630,12 +8318,13 @@ return Q;
 
 });
 
-},{"__browserify_process":27}],40:[function(require,module,exports){
+},{"__browserify_process":20}],33:[function(require,module,exports){
 var Q = require("q");
-var createShader = require("gl-shader");
-var glslExports = require("glsl-exports"); // FIXME: temporary required because gl-shader does not expose types
+var createShader = require("gl-shader-core");
+var glslExports = require("glsl-exports");
 
 var VERTEX_SHADER = 'attribute vec2 position; void main() { gl_Position = vec4(2.0*position-1.0, 0.0, 1.0);}';
+var VERTEX_TYPES = glslExports(VERTEX_SHADER);
 
 var CONTEXTS = ["webgl", "experimental-webgl"];
 function getWebGLContext (canvas) {
@@ -8660,6 +8349,15 @@ var requestAnimationFrame = (function(){
             window.setTimeout(callback, 1000 / 60);
           };
 })();
+
+function extend (obj) {
+  for(var a=1; a<arguments.length; ++a) {
+    var source = arguments[a];
+    for (var prop in source)
+      if (source[prop] !== void 0) obj[prop] = source[prop];
+  }
+  return obj;
+}
 
 function identity (x) { return x; }
 
@@ -8722,8 +8420,19 @@ function GlslTransition (canvas) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
   }
 
-  function loadTransitionShader (glsl) {
-    var shader = createShader(gl, VERTEX_SHADER, glsl);
+  function loadTransitionShader (glsl, glslTypes) {
+    var uniformsByName = extend({}, glslTypes.uniforms, VERTEX_TYPES.uniforms);
+    var attributesByName = extend({}, glslTypes.attributes, VERTEX_TYPES.attributes);
+    var name;
+    var uniforms = [];
+    var attributes = [];
+    for (name in uniformsByName) {
+      uniforms.push({ name: name, type: uniformsByName[name] });
+    }
+    for (name in attributesByName) {
+      attributes.push({ name: name, type: attributesByName[name] });
+    }
+    var shader = createShader(gl, VERTEX_SHADER, glsl, uniforms, attributes);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     shader.attributes.position.pointer();
     shader.attributes.position.enable();
@@ -8749,15 +8458,15 @@ function GlslTransition (canvas) {
     // Second level variables
     var shader, textureUnits, textures, currentAnimationD;
 
-    var types = glslExports(glsl); // FIXME: we can remove the glslExports call when gl-shader gives access to those types
+    var glslTypes = glslExports(glsl);
     function load () {
       if (!gl) return;
-      shader = loadTransitionShader(glsl);
+      shader = loadTransitionShader(glsl, glslTypes);
       textureUnits = {};
       textures = {};
       var i = 0;
-      for (var name in types.uniforms) {
-        var t = types.uniforms[name];
+      for (var name in glslTypes.uniforms) {
+        var t = glslTypes.uniforms[name];
         if (t === "sampler2D") {
           gl.activeTexture(gl.TEXTURE0 + i);
           textureUnits[name] = i;
@@ -8862,6 +8571,23 @@ function GlslTransition (canvas) {
         return Q.reject(e);
       }
 
+      var allUniforms = extend({}, uniforms, defaultUniforms, { progress: 0 });
+      var name;
+      for (name in shader.uniforms) {
+        if (name === resolutionParameter) continue;
+        if (!(name in allUniforms)) {
+          throw new Error("uniform '"+name+"': You must provide an initial value.");
+        }
+      }
+      for (name in allUniforms) {
+        if (name === resolutionParameter) {
+          throw new Error("The '"+name+"' uniform is reserved, you must not use it.");
+        }
+        if (!(name in shader.uniforms)) {
+          throw new Error("uniform '"+name+"': This uniform does not exist in your GLSL code.");
+        }
+      }
+
       // If shader has changed, we need to bind it
       if (currentShader !== shader) {
         currentShader = shader;
@@ -8869,20 +8595,10 @@ function GlslTransition (canvas) {
       }
 
       // Set all uniforms
-      for (var name in shader.uniforms) {
-        if (name === progressParameter || name === resolutionParameter) continue;
-        if (name in defaultUniforms) {
-          setUniform(name, defaultUniforms[name]);
-        }
-        else if (name in uniforms) {
-          setUniform(name, uniforms[name]);
-        }
-        else {
-          throw new Error("You must provide a value for uniform '"+name+"'.");
-        }
+      for (name in allUniforms) {
+        setUniform(name, allUniforms[name]);
       }
       syncViewport();
-      setProgress(0);
 
       // Perform the transition
       return animate(duration, easing);
@@ -8911,6 +8627,6 @@ GlslTransition.isSupported = function () {
 
 module.exports = GlslTransition;
 
-},{"gl-shader":1,"glsl-exports":14,"q":39}]},{},[40])
-(40)
+},{"gl-shader-core":6,"glsl-exports":7,"q":32}]},{},[33])
+(33)
 });
