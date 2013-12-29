@@ -1,8 +1,9 @@
 var Q = require("q");
-var createShader = require("gl-shader");
-var glslExports = require("glsl-exports"); // FIXME: temporary required because gl-shader does not expose types
+var createShader = require("gl-shader-core");
+var glslExports = require("glsl-exports");
 
 var VERTEX_SHADER = 'attribute vec2 position; void main() { gl_Position = vec4(2.0*position-1.0, 0.0, 1.0);}';
+var VERTEX_TYPES = glslExports(VERTEX_SHADER);
 
 var CONTEXTS = ["webgl", "experimental-webgl"];
 function getWebGLContext (canvas) {
@@ -27,6 +28,15 @@ var requestAnimationFrame = (function(){
             window.setTimeout(callback, 1000 / 60);
           };
 })();
+
+function extend (obj) {
+  for(var a=1; a<arguments.length; ++a) {
+    var source = arguments[a];
+    for (var prop in source)
+      if (source[prop] !== void 0) obj[prop] = source[prop];
+  }
+  return obj;
+}
 
 function identity (x) { return x; }
 
@@ -89,8 +99,19 @@ function GlslTransition (canvas) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
   }
 
-  function loadTransitionShader (glsl) {
-    var shader = createShader(gl, VERTEX_SHADER, glsl);
+  function loadTransitionShader (glsl, glslTypes) {
+    var uniformsByName = extend({}, glslTypes.uniforms, VERTEX_TYPES.uniforms);
+    var attributesByName = extend({}, glslTypes.attributes, VERTEX_TYPES.attributes);
+    var name;
+    var uniforms = [];
+    var attributes = [];
+    for (name in uniformsByName) {
+      uniforms.push({ name: name, type: uniformsByName[name] });
+    }
+    for (name in attributesByName) {
+      attributes.push({ name: name, type: attributesByName[name] });
+    }
+    var shader = createShader(gl, VERTEX_SHADER, glsl, uniforms, attributes);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     shader.attributes.position.pointer();
     shader.attributes.position.enable();
@@ -116,15 +137,15 @@ function GlslTransition (canvas) {
     // Second level variables
     var shader, textureUnits, textures, currentAnimationD;
 
-    var types = glslExports(glsl); // FIXME: we can remove the glslExports call when gl-shader gives access to those types
+    var glslTypes = glslExports(glsl);
     function load () {
       if (!gl) return;
-      shader = loadTransitionShader(glsl);
+      shader = loadTransitionShader(glsl, glslTypes);
       textureUnits = {};
       textures = {};
       var i = 0;
-      for (var name in types.uniforms) {
-        var t = types.uniforms[name];
+      for (var name in glslTypes.uniforms) {
+        var t = glslTypes.uniforms[name];
         if (t === "sampler2D") {
           gl.activeTexture(gl.TEXTURE0 + i);
           textureUnits[name] = i;
@@ -229,6 +250,23 @@ function GlslTransition (canvas) {
         return Q.reject(e);
       }
 
+      var allUniforms = extend({}, uniforms, defaultUniforms, { progress: 0 });
+      var name;
+      for (name in shader.uniforms) {
+        if (name === resolutionParameter) continue;
+        if (!(name in allUniforms)) {
+          throw new Error("uniform '"+name+"': You must provide an initial value.");
+        }
+      }
+      for (name in allUniforms) {
+        if (name === resolutionParameter) {
+          throw new Error("The '"+name+"' uniform is reserved, you must not use it.");
+        }
+        if (!(name in shader.uniforms)) {
+          throw new Error("uniform '"+name+"': This uniform does not exist in your GLSL code.");
+        }
+      }
+
       // If shader has changed, we need to bind it
       if (currentShader !== shader) {
         currentShader = shader;
@@ -236,20 +274,10 @@ function GlslTransition (canvas) {
       }
 
       // Set all uniforms
-      for (var name in shader.uniforms) {
-        if (name === progressParameter || name === resolutionParameter) continue;
-        if (name in defaultUniforms) {
-          setUniform(name, defaultUniforms[name]);
-        }
-        else if (name in uniforms) {
-          setUniform(name, uniforms[name]);
-        }
-        else {
-          throw new Error("You must provide a value for uniform '"+name+"'.");
-        }
+      for (name in allUniforms) {
+        setUniform(name, allUniforms[name]);
       }
       syncViewport();
-      setProgress(0);
 
       // Perform the transition
       return animate(duration, easing);
