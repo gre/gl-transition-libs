@@ -8325,6 +8325,8 @@ var glslExports = require("glsl-exports");
 
 var VERTEX_SHADER = 'attribute vec2 position; void main() { gl_Position = vec4(2.0*position-1.0, 0.0, 1.0);}';
 var VERTEX_TYPES = glslExports(VERTEX_SHADER);
+var PROGRESS_UNIFORM = "progress";
+var RESOLUTION_UNIFORM = "resolution";
 
 var CONTEXTS = ["webgl", "experimental-webgl"];
 function getWebGLContext (canvas) {
@@ -8449,10 +8451,8 @@ function GlslTransition (canvas) {
    * Creates a GLSL Transition for the current canvas context.
    */
   function createTransition (glsl, options) {
-    var progressParameter = options && options.progress || "progress";
-    var resolutionParameter = options && options.resolution || "resolution";
     var defaultUniforms = options && options.uniforms || {};
-    if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string" || typeof progressParameter !== "string")
+    if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string")
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
     // Second level variables
@@ -8488,7 +8488,7 @@ function GlslTransition (canvas) {
       var w = canvas.width, h = canvas.height;
       gl.viewport(0, 0, w, h);
       if (currentShader) {
-        currentShader.uniforms[resolutionParameter] = [ w, h ];
+        currentShader.uniforms[RESOLUTION_UNIFORM] = [ w, h ];
       }
       var x1 = 0, x2 = w, y1 = 0, y2 = h;
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -8502,7 +8502,7 @@ function GlslTransition (canvas) {
     }
 
     function setProgress (p) {
-      shader.uniforms[progressParameter] = p;
+      shader.uniforms[PROGRESS_UNIFORM] = p;
     }
 
     function setUniform (name, value) {
@@ -8571,16 +8571,17 @@ function GlslTransition (canvas) {
         return Q.reject(e);
       }
 
-      var allUniforms = extend({}, uniforms, defaultUniforms, { progress: 0 });
+      var allUniforms = extend({}, uniforms, defaultUniforms);
+      allUniforms[PROGRESS_UNIFORM] = 0;
       var name;
       for (name in shader.uniforms) {
-        if (name === resolutionParameter) continue;
+        if (name === RESOLUTION_UNIFORM) continue;
         if (!(name in allUniforms)) {
           throw new Error("uniform '"+name+"': You must provide an initial value.");
         }
       }
       for (name in allUniforms) {
-        if (name === resolutionParameter) {
+        if (name === RESOLUTION_UNIFORM) {
           throw new Error("The '"+name+"' uniform is reserved, you must not use it.");
         }
         if (!(name in shader.uniforms)) {
