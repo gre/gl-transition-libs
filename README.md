@@ -1,6 +1,6 @@
 # glsl-transition
 
-> Makes complex transitions with GLSL (e.g. from one image to another).
+> Make Transitions Effects with the power of WebGL Shaders (GLSL)
 
 [Open the example](https://gre.github.com/glsl-transition/).
 
