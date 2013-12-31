@@ -15,12 +15,23 @@ module.exports = function (grunt) {
         options: {
           standalone: "GlslTransition"
         }
+      },
+      test: {
+        src: 'test/index.js',
+        dest: 'test/bundle.js',
+        options: {
+          debug: true
+        }
       }
     },
     watch: {
       lib: {
-        files: '<%= jshint.src %>',
-        tasks: ['jshint', 'browserify']
+        files: '<%= browserify.lib.src %>',
+        tasks: ['jshint', 'browserify:lib']
+      },
+      test: {
+        files: ['test/**.js', '!test/bundle.js'],
+        tasks: ['browserify:test']
       }
     },
     'gh-pages': {

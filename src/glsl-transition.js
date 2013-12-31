@@ -134,10 +134,20 @@ function GlslTransition (canvas) {
     if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string")
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
+    var glslTypes = glslExports(glsl);
+
+    for (var name in defaultUniforms) {
+      if (name === RESOLUTION_UNIFORM) {
+        throw new Error("The '"+name+"' uniform is reserved, you must not use it.");
+      }
+      if (!(name in glslTypes.uniforms)) {
+        throw new Error("uniform '"+name+"': This uniform does not exist in your GLSL code.");
+      }
+    }
+
     // Second level variables
     var shader, textureUnits, textures, currentAnimationD;
 
-    var glslTypes = glslExports(glsl);
     function load () {
       if (!gl) return;
       shader = loadTransitionShader(glsl, glslTypes);
@@ -193,7 +203,7 @@ function GlslTransition (canvas) {
         syncTexture(texture, value);
         shader.uniforms[name] = i;
       }
-      else if (typeof value === "number") {
+      else {
         shader.uniforms[name] = value;
       }
     }
@@ -244,17 +254,17 @@ function GlslTransition (canvas) {
       var allUniforms = extend({}, uniforms, defaultUniforms);
       allUniforms[PROGRESS_UNIFORM] = 0;
       var name;
-      for (name in shader.uniforms) {
+      for (name in glslTypes.uniforms) {
         if (name === RESOLUTION_UNIFORM) continue;
         if (!(name in allUniforms)) {
           throw new Error("uniform '"+name+"': You must provide an initial value.");
         }
       }
-      for (name in allUniforms) {
+      for (name in uniforms) {
         if (name === RESOLUTION_UNIFORM) {
           throw new Error("The '"+name+"' uniform is reserved, you must not use it.");
         }
-        if (!(name in shader.uniforms)) {
+        if (!(name in glslTypes.uniforms)) {
           throw new Error("uniform '"+name+"': This uniform does not exist in your GLSL code.");
         }
       }
