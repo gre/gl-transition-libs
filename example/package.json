@@ -11,7 +11,8 @@
   "license": "MIT",
   "scripts": {
     "server": "http-server",
-    "build": "browserify ./main.js -t glslifyify -o ./bundle.js"
+    "build": "browserify ./main.js -t glslifyify -o ./bundle.js",
+    "watch": "watchify ./main.js -t glslifyify -o ./bundle.js"
   },
   "dependencies": {
     "glsl-transition": "x.x.x",
@@ -20,6 +21,7 @@
     "bezier-easing": "0.2.x"
   },
   "devDependencies": {
+    "watchify": "0.5.0",
     "browserify": "3.14.0",
     "glslifyify": "0.1.1",
     "http-server": "0.6.x"

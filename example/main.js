@@ -37,6 +37,7 @@ $delay.addEventListener("change", syncDelay, false);
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 var transitions = [
+  ["fadetocolor", Transition(require("./transitions/fadetocolor.glsl"), { uniforms: { color: [0.0,0.0,0.0], colorPhase: 0.5 } })],
   ["deformation", Transition(require("./transitions/deformation.glsl"), { uniforms: { size: 0.04, zoom: 20.0 } })],
   ["blur"       , Transition(require("./transitions/blur.glsl"), { uniforms: { size: 0.03 } })],
   ["wind"       , Transition(require("./transitions/wind.glsl"), { uniforms: { size: 0.2 } })],
