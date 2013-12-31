@@ -236,19 +236,10 @@ function GlslTransition (canvas) {
      */
     function transition (uniforms, duration, easing) {
       if (!easing) easing = identity;
-      // Validate Bad Arguments static errors
+
+      // Validate static errors: Bad arguments / missing uniforms
       if (arguments.length < 2 || arguments.length > 3 || typeof uniforms !== "object" || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
         throw new Error("Bad arguments. usage: t(uniforms, duration, easing) -- uniforms is an Object, duration an integer > 0, easing an optional function.");
-
-      // Validate Runtime errors
-      if (!gl) return Q.reject(new Error("WebGL context is null."));
-      if (currentAnimationD) return Q.reject(new Error("another transition is already running."));
-      try {
-        if (!shader) load(); // Possibly shader was not loaded before because of no gl available.
-      }
-      catch (e) {
-        return Q.reject(e);
-      }
 
       var allUniforms = extend({}, uniforms, defaultUniforms);
       allUniforms[PROGRESS_UNIFORM] = 0;
@@ -266,6 +257,16 @@ function GlslTransition (canvas) {
         if (!(name in shader.uniforms)) {
           throw new Error("uniform '"+name+"': This uniform does not exist in your GLSL code.");
         }
+      }
+
+      // Validate Runtime errors
+      if (!gl) return Q.reject(new Error("WebGL context is null."));
+      if (currentAnimationD) return Q.reject(new Error("another transition is already running."));
+      try {
+        if (!shader) load(); // Possibly shader was not loaded before because of no gl available.
+      }
+      catch (e) {
+        return Q.reject(e);
       }
 
       // If shader has changed, we need to bind it
