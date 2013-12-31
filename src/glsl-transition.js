@@ -251,7 +251,7 @@ function GlslTransition (canvas) {
       if (arguments.length < 2 || arguments.length > 3 || typeof uniforms !== "object" || typeof duration !== "number" || duration <= 0 || typeof easing !== "function")
         throw new Error("Bad arguments. usage: t(uniforms, duration, easing) -- uniforms is an Object, duration an integer > 0, easing an optional function.");
 
-      var allUniforms = extend({}, uniforms, defaultUniforms);
+      var allUniforms = extend({}, defaultUniforms, uniforms);
       allUniforms[PROGRESS_UNIFORM] = 0;
       var name;
       for (name in glslTypes.uniforms) {

@@ -325,7 +325,7 @@ Q.all([
             c = util.getColor(snap2, 40, 40);
             assert(arrayEquals(c, [0, 0, 255, 255]), "snap2 is blue");
             c = util.getColor(snap3, 40, 40);
-            assert(arrayEquals(c, [255, 255, 255, 255]), "snap3 is whitz");
+            assert(arrayEquals(c, [255, 255, 255, 255]), "snap3 is white");
             done();
           });
       });
