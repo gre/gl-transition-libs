@@ -107,5 +107,5 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['jshint', 'browserify', 'watch']);
   grunt.registerTask('publish', ['shell:buildExample', 'gh-pages']);
-  grunt.registerTask('test-sauce', ['connect:test', 'saucelabs-mocha']);
+  grunt.registerTask('test-sauce', ['jshint', 'browserify', 'connect:test', 'saucelabs-mocha']);
 };
