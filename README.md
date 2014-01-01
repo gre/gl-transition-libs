@@ -4,6 +4,8 @@
 
 [Open the example](https://gre.github.com/glsl-transition/).
 
+[![SauceLabs Status](https://saucelabs.com/browser-matrix/glsl-transition.svg)](https://saucelabs.com/u/glsl-transition)
+
 # Getting Started
 
 [![npm install glsl-transition](https://nodei.co/npm/glsl-transition.png?mini=true)](http://npmjs.org/package/glsl-transition)
