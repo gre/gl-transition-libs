@@ -6,11 +6,11 @@ var Qimage = require("qimage");
 var WebGLDebugUtils = window.WebGLDebugUtils;
 
 var GLSL_FADE = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform float progress;\nuniform sampler2D from, to;\n\nvoid main (void) {\n  vec2 p = gl_FragCoord.xy / resolution.xy;\n  gl_FragColor = mix(texture2D(from, p), texture2D(to, p), progress);\n}\n";
-var GLSL_FADETOCOLOR = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform float progress;\nuniform sampler2D from, to;\nuniform vec3 color;\nuniform float colorPhase;\n\nvoid main (void) {\n  vec2 p = gl_FragCoord.xy / resolution.xy;\n  gl_FragColor = mix(vec4(color, 1.0), texture2D(from, p), smoothstep(1.0-colorPhase, 0.0, progress)) + \n                 mix(vec4(color, 1.0), texture2D(to,   p), smoothstep(    colorPhase, 1.0, progress));\n}\n";
+var GLSL_FADETOCOLOR = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform float progress;\nuniform sampler2D from, to;\nuniform vec3 color;\nuniform float colorPhase;\n\nvoid main (void) {\n  vec2 p = gl_FragCoord.xy / resolution.xy;\n  gl_FragColor = mix(mix(vec4(color, 1.0), texture2D(from, p), smoothstep(1.0-colorPhase, 0.0, progress)) , \n                 mix(vec4(color, 1.0), texture2D(to,   p), smoothstep(    colorPhase, 1.0, progress)), progress);\n}\n";
 var GLSL_DEFORMATION = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform float progress;\nuniform sampler2D from, to;\nuniform float size, zoom;\n\nvoid main (void) {\n  vec2 p = gl_FragCoord.xy / resolution.xy;\n  \n  float inv = 1. - progress;\n  vec2 disp = size*vec2(cos(zoom*p.x), sin(zoom*p.y));\n  vec4 texTo = texture2D(to, p + inv*disp);\n  vec4 texFrom = texture2D(from, p + progress*disp);\n  gl_FragColor = texTo*progress + texFrom*inv;\n}\n";
 
-var W = 400;
-var H = 300;
+var W = 300;
+var H = 200;
 
 function linear (x) {
   return x;
@@ -41,11 +41,14 @@ function safe (f) {
 }
 
 var testcontainer = document.getElementById("testcontainer");
+var lastCanvases = [];
 function replace (c) {
-  testcontainer.innerHTML = "";
+  if (lastCanvases.length > 1) {
+    testcontainer.removeChild(lastCanvases.pop());
+  }
   testcontainer.appendChild(c);
+  lastCanvases.unshift(c);
 }
-
 
 function createCanvas () {
   var canvas = util.createCanvas(W, H);
@@ -390,7 +393,7 @@ Q.all([
             return p;
           })
           .then(safe(function () {
-            var p = anim3(randomFromTo({ color: [1, 1, 1] }), 1000);
+            var p = anim3(randomFromTo({ color: [1, 0, 1] }), 1000);
             Q.delay(500).then(safe(function () {
               snap3 = util.snapshot(canvas);
             }));
@@ -403,7 +406,7 @@ Q.all([
             c = util.getColor(snap2, 40, 40);
             assert(arrayEquals(c, [0, 0, 255, 255]), "snap2 is blue");
             c = util.getColor(snap3, 40, 40);
-            assert(arrayEquals(c, [255, 255, 255, 255]), "snap3 is white");
+            assert(arrayEquals(c, [255, 0, 255, 255]), "snap3 is purple");
             done();
           });
       });
