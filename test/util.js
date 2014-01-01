@@ -17,7 +17,7 @@ module.exports = {
   snapshot: function (canvas) {
     var c = this.createCanvas(canvas.width, canvas.height);
     var ctx = c.getContext("2d");
-    ctx.drawImage(canvas, 0, 0);
+    ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height);
     return c;
   },
   getColor: function (canvas, x, y) {
