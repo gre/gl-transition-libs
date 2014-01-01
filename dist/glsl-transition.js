@@ -3074,8 +3074,7 @@ Buffer.poolSize = 8192
 var browserSupport = (function () {
    // Detect if browser supports Typed Arrays. Supported browsers are IE 10+,
    // Firefox 4+, Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+.
-   if (typeof Uint8Array === 'undefined' || typeof ArrayBuffer === 'undefined' ||
-        typeof DataView === 'undefined')
+   if (typeof Uint8Array === 'undefined' || typeof ArrayBuffer === 'undefined')
       return false
 
   // Does the browser support adding properties to `Uint8Array` instances? If
@@ -3085,12 +3084,12 @@ var browserSupport = (function () {
   try {
     var arr = new Uint8Array(0)
     arr.foo = function () { return 42 }
-    return 42 === arr.foo()
+    return 42 === arr.foo() &&
+        typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
   } catch (e) {
     return false
   }
 })()
-
 
 /**
  * Class: Buffer
@@ -3176,7 +3175,6 @@ Buffer.isEncoding = function (encoding) {
     case 'base64':
     case 'raw':
       return true
-
     default:
       return false
   }
@@ -3190,28 +3188,22 @@ Buffer.byteLength = function (str, encoding) {
   switch (encoding || 'utf8') {
     case 'hex':
       return str.length / 2
-
     case 'utf8':
     case 'utf-8':
       return utf8ToBytes(str).length
-
     case 'ascii':
     case 'binary':
       return str.length
-
     case 'base64':
       return base64ToBytes(str).length
-
     default:
       throw new Error('Unknown encoding')
   }
 }
 
 Buffer.concat = function (list, totalLength) {
-  if (!isArray(list)) {
-    throw new Error('Usage: Buffer.concat(list, [totalLength])\n' +
-        'list should be an Array.')
-  }
+  assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
+      'list should be an Array.')
 
   if (list.length === 0) {
     return new Buffer(0)
@@ -3254,15 +3246,14 @@ function _hexWrite (buf, string, offset, length) {
 
   // must be an even number of digits
   var strLen = string.length
-  if (strLen % 2 !== 0) {
-    throw new Error('Invalid hex string')
-  }
+  assert(strLen % 2 === 0, 'Invalid hex string')
+
   if (length > strLen / 2) {
     length = strLen / 2
   }
   for (var i = 0; i < length; i++) {
     var byte = parseInt(string.substr(i * 2, 2), 16)
-    if (isNaN(byte)) throw new Error('Invalid hex string')
+    assert(!isNaN(byte), 'Invalid hex string')
     buf[offset + i] = byte
   }
   Buffer._charsWritten = i * 2
@@ -3318,20 +3309,15 @@ Buffer.prototype.write = function (string, offset, length, encoding) {
   switch (encoding) {
     case 'hex':
       return _hexWrite(this, string, offset, length)
-
     case 'utf8':
     case 'utf-8':
       return _utf8Write(this, string, offset, length)
-
     case 'ascii':
       return _asciiWrite(this, string, offset, length)
-
     case 'binary':
       return _binaryWrite(this, string, offset, length)
-
     case 'base64':
       return _base64Write(this, string, offset, length)
-
     default:
       throw new Error('Unknown encoding')
   }
@@ -3353,20 +3339,15 @@ Buffer.prototype.toString = function (encoding, start, end) {
   switch (encoding) {
     case 'hex':
       return _hexSlice(self, start, end)
-
     case 'utf8':
     case 'utf-8':
       return _utf8Slice(self, start, end)
-
     case 'ascii':
       return _asciiSlice(self, start, end)
-
     case 'binary':
       return _binarySlice(self, start, end)
-
     case 'base64':
       return _base64Slice(self, start, end)
-
     default:
       throw new Error('Unknown encoding')
   }
@@ -3392,14 +3373,11 @@ Buffer.prototype.copy = function (target, target_start, start, end) {
   if (target.length === 0 || source.length === 0) return
 
   // Fatal error conditions
-  if (end < start)
-    throw new Error('sourceEnd < sourceStart')
-  if (target_start < 0 || target_start >= target.length)
-    throw new Error('targetStart out of bounds')
-  if (start < 0 || start >= source.length)
-    throw new Error('sourceStart out of bounds')
-  if (end < 0 || end > source.length)
-    throw new Error('sourceEnd out of bounds')
+  assert(end >= start, 'sourceEnd < sourceStart')
+  assert(target_start >= 0 && target_start < target.length,
+      'targetStart out of bounds')
+  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
+  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
 
   // Are we oob?
   if (end > this.length)
@@ -3509,27 +3487,17 @@ function _readUInt16 (buf, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 1 < len) {
-      return buf._dataview.getUint16(offset, littleEndian)
-    } else {
-      var dv = new DataView(new ArrayBuffer(2))
-      dv.setUint8(0, buf[len - 1])
-      return dv.getUint16(0, littleEndian)
-    }
+  var val
+  if (littleEndian) {
+    val = buf[offset]
+    if (offset + 1 < len)
+      val |= buf[offset + 1] << 8
   } else {
-    var val
-    if (littleEndian) {
-      val = buf[offset]
-      if (offset + 1 < len)
-        val |= buf[offset + 1] << 8
-    } else {
-      val = buf[offset] << 8
-      if (offset + 1 < len)
-        val |= buf[offset + 1]
-    }
-    return val
+    val = buf[offset] << 8
+    if (offset + 1 < len)
+      val |= buf[offset + 1]
   }
+  return val
 }
 
 Buffer.prototype.readUInt16LE = function (offset, noAssert) {
@@ -3551,37 +3519,25 @@ function _readUInt32 (buf, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 3 < len) {
-      return buf._dataview.getUint32(offset, littleEndian)
-    } else {
-      var dv = new DataView(new ArrayBuffer(4))
-      for (var i = 0; i + offset < len; i++) {
-        dv.setUint8(i, buf[i + offset])
-      }
-      return dv.getUint32(0, littleEndian)
-    }
+  var val
+  if (littleEndian) {
+    if (offset + 2 < len)
+      val = buf[offset + 2] << 16
+    if (offset + 1 < len)
+      val |= buf[offset + 1] << 8
+    val |= buf[offset]
+    if (offset + 3 < len)
+      val = val + (buf[offset + 3] << 24 >>> 0)
   } else {
-    var val
-    if (littleEndian) {
-      if (offset + 2 < len)
-        val = buf[offset + 2] << 16
-      if (offset + 1 < len)
-        val |= buf[offset + 1] << 8
-      val |= buf[offset]
-      if (offset + 3 < len)
-        val = val + (buf[offset + 3] << 24 >>> 0)
-    } else {
-      if (offset + 1 < len)
-        val = buf[offset + 1] << 16
-      if (offset + 2 < len)
-        val |= buf[offset + 2] << 8
-      if (offset + 3 < len)
-        val |= buf[offset + 3]
-      val = val + (buf[offset] << 24 >>> 0)
-    }
-    return val
+    if (offset + 1 < len)
+      val = buf[offset + 1] << 16
+    if (offset + 2 < len)
+      val |= buf[offset + 2] << 8
+    if (offset + 3 < len)
+      val |= buf[offset + 3]
+    val = val + (buf[offset] << 24 >>> 0)
   }
+  return val
 }
 
 Buffer.prototype.readUInt32LE = function (offset, noAssert) {
@@ -3603,15 +3559,11 @@ Buffer.prototype.readInt8 = function (offset, noAssert) {
   if (offset >= buf.length)
     return
 
-  if (browserSupport) {
-    return buf._dataview.getInt8(offset)
-  } else {
-    var neg = buf[offset] & 0x80
-    if (neg)
-      return (0xff - buf[offset] + 1) * -1
-    else
-      return buf[offset]
-  }
+  var neg = buf[offset] & 0x80
+  if (neg)
+    return (0xff - buf[offset] + 1) * -1
+  else
+    return buf[offset]
 }
 
 function _readInt16 (buf, offset, littleEndian, noAssert) {
@@ -3625,22 +3577,12 @@ function _readInt16 (buf, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 1 === len) {
-      var dv = new DataView(new ArrayBuffer(2))
-      dv.setUint8(0, buf[len - 1])
-      return dv.getInt16(0, littleEndian)
-    } else {
-      return buf._dataview.getInt16(offset, littleEndian)
-    }
-  } else {
-    var val = _readUInt16(buf, offset, littleEndian, true)
-    var neg = val & 0x8000
-    if (neg)
-      return (0xffff - val + 1) * -1
-    else
-      return val
-  }
+  var val = _readUInt16(buf, offset, littleEndian, true)
+  var neg = val & 0x8000
+  if (neg)
+    return (0xffff - val + 1) * -1
+  else
+    return val
 }
 
 Buffer.prototype.readInt16LE = function (offset, noAssert) {
@@ -3662,24 +3604,12 @@ function _readInt32 (buf, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 3 >= len) {
-      var dv = new DataView(new ArrayBuffer(4))
-      for (var i = 0; i + offset < len; i++) {
-        dv.setUint8(i, buf[i + offset])
-      }
-      return dv.getInt32(0, littleEndian)
-    } else {
-      return buf._dataview.getInt32(offset, littleEndian)
-    }
-  } else {
-    var val = _readUInt32(buf, offset, littleEndian, true)
-    var neg = val & 0x80000000
-    if (neg)
-      return (0xffffffff - val + 1) * -1
-    else
-      return val
-  }
+  var val = _readUInt32(buf, offset, littleEndian, true)
+  var neg = val & 0x80000000
+  if (neg)
+    return (0xffffffff - val + 1) * -1
+  else
+    return val
 }
 
 Buffer.prototype.readInt32LE = function (offset, noAssert) {
@@ -3696,11 +3626,7 @@ function _readFloat (buf, offset, littleEndian, noAssert) {
     assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
   }
 
-  if (browserSupport) {
-    return buf._dataview.getFloat32(offset, littleEndian)
-  } else {
-    return ieee754.read(buf, offset, littleEndian, 23, 4)
-  }
+  return ieee754.read(buf, offset, littleEndian, 23, 4)
 }
 
 Buffer.prototype.readFloatLE = function (offset, noAssert) {
@@ -3717,11 +3643,7 @@ function _readDouble (buf, offset, littleEndian, noAssert) {
     assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
   }
 
-  if (browserSupport) {
-    return buf._dataview.getFloat64(offset, littleEndian)
-  } else {
-    return ieee754.read(buf, offset, littleEndian, 52, 8)
-  }
+  return ieee754.read(buf, offset, littleEndian, 52, 8)
 }
 
 Buffer.prototype.readDoubleLE = function (offset, noAssert) {
@@ -3759,20 +3681,10 @@ function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 1 === len) {
-      var dv = new DataView(new ArrayBuffer(2))
-      dv.setUint16(0, value, littleEndian)
-      buf[offset] = dv.getUint8(0)
-    } else {
-      buf._dataview.setUint16(offset, value, littleEndian)
-    }
-  } else {
-    for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
-      buf[offset + i] =
-          (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-              (littleEndian ? i : 1 - i) * 8
-    }
+  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
+    buf[offset + i] =
+        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+            (littleEndian ? i : 1 - i) * 8
   }
 }
 
@@ -3797,22 +3709,9 @@ function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  var i
-  if (browserSupport) {
-    if (offset + 3 >= len) {
-      var dv = new DataView(new ArrayBuffer(4))
-      dv.setUint32(0, value, littleEndian)
-      for (i = 0; i + offset < len; i++) {
-        buf[i + offset] = dv.getUint8(i)
-      }
-    } else {
-      buf._dataview.setUint32(offset, value, littleEndian)
-    }
-  } else {
-    for (i = 0, j = Math.min(len - offset, 4); i < j; i++) {
-      buf[offset + i] =
-          (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-    }
+  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
+    buf[offset + i] =
+        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
   }
 }
 
@@ -3836,14 +3735,10 @@ Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
   if (offset >= buf.length)
     return
 
-  if (browserSupport) {
-    buf._dataview.setInt8(offset, value)
-  } else {
-    if (value >= 0)
-      buf.writeUInt8(value, offset, noAssert)
-    else
-      buf.writeUInt8(0xff + value + 1, offset, noAssert)
-  }
+  if (value >= 0)
+    buf.writeUInt8(value, offset, noAssert)
+  else
+    buf.writeUInt8(0xff + value + 1, offset, noAssert)
 }
 
 function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
@@ -3859,20 +3754,10 @@ function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 1 === len) {
-      var dv = new DataView(new ArrayBuffer(2))
-      dv.setInt16(0, value, littleEndian)
-      buf[offset] = dv.getUint8(0)
-    } else {
-      buf._dataview.setInt16(offset, value, littleEndian)
-    }
-  } else {
-    if (value >= 0)
-      _writeUInt16(buf, value, offset, littleEndian, noAssert)
-    else
-      _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
-  }
+  if (value >= 0)
+    _writeUInt16(buf, value, offset, littleEndian, noAssert)
+  else
+    _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
 }
 
 Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
@@ -3896,22 +3781,10 @@ function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 3 >= len) {
-      var dv = new DataView(new ArrayBuffer(4))
-      dv.setInt32(0, value, littleEndian)
-      for (var i = 0; i + offset < len; i++) {
-        buf[i + offset] = dv.getUint8(i)
-      }
-    } else {
-      buf._dataview.setInt32(offset, value, littleEndian)
-    }
-  } else {
-    if (value >= 0)
-      _writeUInt32(buf, value, offset, littleEndian, noAssert)
-    else
-      _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
-  }
+  if (value >= 0)
+    _writeUInt32(buf, value, offset, littleEndian, noAssert)
+  else
+    _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
 }
 
 Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
@@ -3935,19 +3808,7 @@ function _writeFloat (buf, value, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 3 >= len) {
-      var dv = new DataView(new ArrayBuffer(4))
-      dv.setFloat32(0, value, littleEndian)
-      for (var i = 0; i + offset < len; i++) {
-        buf[i + offset] = dv.getUint8(i)
-      }
-    } else {
-      buf._dataview.setFloat32(offset, value, littleEndian)
-    }
-  } else {
-    ieee754.write(buf, value, offset, littleEndian, 23, 4)
-  }
+  ieee754.write(buf, value, offset, littleEndian, 23, 4)
 }
 
 Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
@@ -3972,19 +3833,7 @@ function _writeDouble (buf, value, offset, littleEndian, noAssert) {
   if (offset >= len)
     return
 
-  if (browserSupport) {
-    if (offset + 7 >= len) {
-      var dv = new DataView(new ArrayBuffer(8))
-      dv.setFloat64(0, value, littleEndian)
-      for (var i = 0; i + offset < len; i++) {
-        buf[i + offset] = dv.getUint8(i)
-      }
-    } else {
-      buf._dataview.setFloat64(offset, value, littleEndian)
-    }
-  } else {
-    ieee754.write(buf, value, offset, littleEndian, 52, 8)
-  }
+  ieee754.write(buf, value, offset, littleEndian, 52, 8)
 }
 
 Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
@@ -4005,23 +3854,15 @@ Buffer.prototype.fill = function (value, start, end) {
     value = value.charCodeAt(0)
   }
 
-  if (typeof value !== 'number' || isNaN(value)) {
-    throw new Error('value is not a number')
-  }
-
-  if (end < start) throw new Error('end < start')
+  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
+  assert(end >= start, 'end < start')
 
   // Fill 0 bytes; we're done
   if (end === start) return
   if (this.length === 0) return
 
-  if (start < 0 || start >= this.length) {
-    throw new Error('start out of bounds')
-  }
-
-  if (end < 0 || end > this.length) {
-    throw new Error('end out of bounds')
-  }
+  assert(start >= 0 && start < this.length, 'start out of bounds')
+  assert(end >= 0 && end <= this.length, 'end out of bounds')
 
   for (var i = start; i < end; i++) {
     this[i] = value
@@ -4101,9 +3942,6 @@ function augment (arr) {
   arr.fill = BP.fill
   arr.inspect = BP.inspect
   arr.toArrayBuffer = BufferToArrayBuffer
-
-  if (arr.byteLength !== 0)
-    arr._dataview = new DataView(arr.buffer, arr.byteOffset, arr.byteLength)
 
   return arr
 }
@@ -4219,14 +4057,41 @@ function assert (test, message) {
 }
 
 },{"base64-js":22,"ieee754":23}],22:[function(require,module,exports){
-(function (exports) {
+var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+;(function (exports) {
 	'use strict';
 
-	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  var Arr = (typeof Uint8Array !== 'undefined')
+    ? Uint8Array
+    : Array
+
+	var ZERO   = '0'.charCodeAt(0)
+	var PLUS   = '+'.charCodeAt(0)
+	var SLASH  = '/'.charCodeAt(0)
+	var NUMBER = '0'.charCodeAt(0)
+	var LOWER  = 'a'.charCodeAt(0)
+	var UPPER  = 'A'.charCodeAt(0)
+
+	function decode (elt) {
+		var code = elt.charCodeAt(0)
+		if(code === PLUS)
+			return 62 // '+'
+		if(code === SLASH)
+			return 63 // '/'
+		if(code < NUMBER)
+			return -1 //no match
+		if(code < NUMBER + 10)
+			return code - NUMBER + 26 + 26
+		if(code < UPPER + 26)
+			return code - UPPER
+		if(code < LOWER + 26)
+			return code - LOWER + 26
+	}
 
 	function b64ToByteArray(b64) {
 		var i, j, l, tmp, placeHolders, arr;
-	
+
 		if (b64.length % 4 > 0) {
 			throw 'Invalid string. Length must be a multiple of 4';
 		}
@@ -4236,29 +4101,38 @@ function assert (test, message) {
 		// represent one byte
 		// if there is only one, then the three characters before it represent 2 bytes
 		// this is just a cheap hack to not do indexOf twice
-		placeHolders = indexOf(b64, '=');
-		placeHolders = placeHolders > 0 ? b64.length - placeHolders : 0;
+		var len = b64.length
+		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
 
 		// base64 is 4/3 + up to two characters of the original data
-		arr = [];//new Uint8Array(b64.length * 3 / 4 - placeHolders);
+		arr = new Arr(b64.length * 3 / 4 - placeHolders);
 
 		// if there are placeholders, only get up to the last complete 4 chars
+
+
+
 		l = placeHolders > 0 ? b64.length - 4 : b64.length;
 
+		var L = 0
+
+		function push (v) {
+			arr[L++] = v
+		}
+
 		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (indexOf(lookup, b64.charAt(i)) << 18) | (indexOf(lookup, b64.charAt(i + 1)) << 12) | (indexOf(lookup, b64.charAt(i + 2)) << 6) | indexOf(lookup, b64.charAt(i + 3));
-			arr.push((tmp & 0xFF0000) >> 16);
-			arr.push((tmp & 0xFF00) >> 8);
-			arr.push(tmp & 0xFF);
+			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3));
+			push((tmp & 0xFF0000) >> 16);
+			push((tmp & 0xFF00) >> 8);
+			push(tmp & 0xFF);
 		}
 
 		if (placeHolders === 2) {
-			tmp = (indexOf(lookup, b64.charAt(i)) << 2) | (indexOf(lookup, b64.charAt(i + 1)) >> 4);
-			arr.push(tmp & 0xFF);
+			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4);
+			push(tmp & 0xFF);
 		} else if (placeHolders === 1) {
-			tmp = (indexOf(lookup, b64.charAt(i)) << 10) | (indexOf(lookup, b64.charAt(i + 1)) << 4) | (indexOf(lookup, b64.charAt(i + 2)) >> 2);
-			arr.push((tmp >> 8) & 0xFF);
-			arr.push(tmp & 0xFF);
+			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2);
+			push((tmp >> 8) & 0xFF);
+			push(tmp & 0xFF);
 		}
 
 		return arr;
@@ -4270,8 +4144,12 @@ function assert (test, message) {
 			output = "",
 			temp, length;
 
+		function encode (num) {
+			return lookup.charAt(num)
+		}
+
 		function tripletToBase64 (num) {
-			return lookup.charAt(num >> 18 & 0x3F) + lookup.charAt(num >> 12 & 0x3F) + lookup.charAt(num >> 6 & 0x3F) + lookup.charAt(num & 0x3F);
+			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F);
 		};
 
 		// go through the array every three bytes, we'll deal with trailing stuff later
@@ -4284,15 +4162,15 @@ function assert (test, message) {
 		switch (extraBytes) {
 			case 1:
 				temp = uint8[uint8.length - 1];
-				output += lookup.charAt(temp >> 2);
-				output += lookup.charAt((temp << 4) & 0x3F);
+				output += encode(temp >> 2);
+				output += encode((temp << 4) & 0x3F);
 				output += '==';
 				break;
 			case 2:
 				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1]);
-				output += lookup.charAt(temp >> 10);
-				output += lookup.charAt((temp >> 4) & 0x3F);
-				output += lookup.charAt((temp << 2) & 0x3F);
+				output += encode(temp >> 10);
+				output += encode((temp >> 4) & 0x3F);
+				output += encode((temp << 2) & 0x3F);
 				output += '=';
 				break;
 		}
@@ -4304,24 +4182,6 @@ function assert (test, message) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-function indexOf (arr, elt /*, from*/) {
-	var len = arr.length;
-
-	var from = Number(arguments[1]) || 0;
-	from = (from < 0)
-		? Math.ceil(from)
-		: Math.floor(from);
-	if (from < 0)
-		from += len;
-
-	for (; from < len; from++) {
-		if ((typeof arr === 'string' && arr.charAt(from) === elt) ||
-				(typeof arr !== 'string' && arr[from] === elt)) {
-			return from;
-		}
-	}
-	return -1;
-}
 
 },{}],23:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {

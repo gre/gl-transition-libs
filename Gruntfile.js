@@ -85,8 +85,10 @@ module.exports = function (grunt) {
     },
     connect: {
       test: {
-        port: 9999,
-        base: 'test'
+        options: {
+          port: 9999,
+          base: 'test'
+        }
       }
     },
     'saucelabs-mocha': {
