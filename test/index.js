@@ -79,7 +79,17 @@ function randomFadeToColorUniforms () {
   };
 }
 
-if (!GlslTransition.isSupported()) throw new Error("WebGL is not supported. Can't run the tests.");
+describe('WebGL', function () {
+  it('is supported', function () {
+    assert(GlslTransition.isSupported(), "WebGL is supported. Required for the tests.");
+  });
+});
+
+if (!GlslTransition.isSupported()) {
+  mocha.checkLeaks();
+  mocha.run();
+  throw new Error("WebGL is not supported.");
+}
 
 Q.all([
   "./images/0.jpg",
