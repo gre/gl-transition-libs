@@ -40,11 +40,10 @@ function safe (f) {
   };
 }
 
-
 var testcontainer = document.getElementById("testcontainer");
 function replace (c) {
   testcontainer.innerHTML = "";
-  // testcontainer.appendChild(c);
+  testcontainer.appendChild(c);
 }
 
 
@@ -270,8 +269,8 @@ Q.all([
       }(tries)).then(success(), failure()).done(done);
     });
     it('should work with a lot of transitions', function (done) {
-      var maxDuration = 20;
-      var tries = 200;
+      var maxDuration = 30;
+      var tries = 100;
       this.timeout((30+maxDuration) * tries);
       var Transition = GlslTransition(createCanvas());
       var transitions = [

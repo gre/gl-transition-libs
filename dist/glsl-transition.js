@@ -8329,11 +8329,11 @@ var PROGRESS_UNIFORM = "progress";
 var RESOLUTION_UNIFORM = "resolution";
 
 var CONTEXTS = ["webgl", "experimental-webgl"];
-function getWebGLContext (canvas) {
+function getWebGLContext (canvas, options) {
   if (!canvas.getContext) return;
   for (var i = 0; i < CONTEXTS.length; ++i) {
     try {
-      var ctx = canvas.getContext(CONTEXTS[i]);
+      var ctx = canvas.getContext(CONTEXTS[i], options||{});
       if (ctx) return ctx;
     } catch(e) {
     }
@@ -8382,7 +8382,7 @@ function GlslTransition (canvas) {
 
   function init () {
     transitions = [];
-    gl = getWebGLContext(canvas);
+    gl = getWebGLContext(canvas, GlslTransition.defaults.contextAttributes);
     canvas.addEventListener("webglcontextlost", onContextLost, false);
     canvas.addEventListener("webglcontextrestored", onContextRestored, false);
   }
@@ -8626,11 +8626,19 @@ function GlslTransition (canvas) {
     return transition;
   }
 
+  createTransition.getGL = function () {
+    return gl;
+  };
+
   // Finally init the GlslTransition context
   init();
 
   return createTransition;
 }
+
+GlslTransition.defaults = {
+  contextAttributes: { preserveDrawingBuffer: true }
+};
 
 GlslTransition.isSupported = function () {
   var c = document.createElement("canvas");
