@@ -8573,7 +8573,7 @@ function GlslTransition (canvas) {
         throw new Error("Bad arguments. usage: t(uniforms, duration, easing) -- uniforms is an Object, duration an integer > 0, easing an optional function.");
 
       var allUniforms = extend({}, defaultUniforms, uniforms);
-      allUniforms[PROGRESS_UNIFORM] = 0;
+      allUniforms[PROGRESS_UNIFORM] = easing(0);
       var name;
       for (name in glslTypes.uniforms) {
         if (name === RESOLUTION_UNIFORM) continue;
