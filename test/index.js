@@ -316,8 +316,31 @@ Q.all([
           assert(meanDiff < 0.05, "is a real fade, the image diff is proportional (5% tolerance)");
         }).done(done);
       });
-    });
+      it('easing: should inverse when using (x)=>(1-x) easing', function (done) {
+        var duration = 1000;
+        this.timeout(1000 + duration);
+        var w = 800;
+        var h = 600;
+        var canvas = util.createCanvas(w, h);
+        var Transition = GlslTransition(canvas);
+        var fade = Transition(GLSL_FADE);
+        var uniforms = randomFromTo();
+        uniforms.from = util.fromImage(uniforms.from);
+        var snapshots = [];
+        function snap () {
+          snapshots.push(util.snapshot(canvas));
+        }
 
+        var anim = fade(uniforms, duration, function (x) { return 1 - x; });
+        setTimeout(snap, 1);
+        setTimeout(snap, duration);
+
+        anim.delay(100).then(function(){
+          assert(util.diff(snapshots[0], util.fromImage(uniforms.to  , w, h)) < 0.02, "initially 'to' image");
+          assert(util.diff(snapshots[1], util.fromImage(uniforms.from, w, h)) < 0.02, "ending 'from' image");
+        }).done(done);
+      });
+    });
 
     describe('fadetocolor transition', function () {
       it('should works with different uniforms', function (done) {
