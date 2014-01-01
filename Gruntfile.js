@@ -98,7 +98,7 @@ module.exports = function (grunt) {
           concurrency: 3,
           browsers: browsers,
           testname: "glsl-transition tests",
-          testReadyTimeout: 30000,
+          testReadyTimeout: 50000,
           tags: ["master"]
         }
       }
