@@ -3,6 +3,7 @@ var assert = require("assert");
 var util = require("./util");
 var Q = require("q");
 var Qimage = require("qimage");
+var WebGLDebugUtils = window.WebGLDebugUtils;
 
 var GLSL_FADE = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform float progress;\nuniform sampler2D from, to;\n\nvoid main (void) {\n  vec2 p = gl_FragCoord.xy / resolution.xy;\n  gl_FragColor = mix(texture2D(from, p), texture2D(to, p), progress);\n}\n";
 var GLSL_FADETOCOLOR = "#ifdef GL_ES\nprecision mediump float;\n#endif\n\nuniform vec2 resolution;\nuniform float progress;\nuniform sampler2D from, to;\nuniform vec3 color;\nuniform float colorPhase;\n\nvoid main (void) {\n  vec2 p = gl_FragCoord.xy / resolution.xy;\n  gl_FragColor = mix(vec4(color, 1.0), texture2D(from, p), smoothstep(1.0-colorPhase, 0.0, progress)) + \n                 mix(vec4(color, 1.0), texture2D(to,   p), smoothstep(    colorPhase, 1.0, progress));\n}\n";
@@ -190,6 +191,35 @@ Q.all([
       assert.throws(function () { deform2(randomFromTo({}), 100); });
       assert.throws(function () { deform2(randomFromTo({ zoom: 1, foo: 1 }), 100); });
       assert.throws(function () { deform3(randomFromTo({ foo: 1 }), 100); });
+    });
+    it('should handle context lost and restore', function (done) {
+      var canvas = util.createCanvas(100, 100);
+      WebGLDebugUtils.makeLostContextSimulatingCanvas(canvas); // Enhance the canvas with some debugging properties
+      var Transition = GlslTransition(canvas);
+      var fade = Transition(GLSL_FADE);
+      fade(randomFromTo(), 100)
+        .then(success(), failure("first transition should work"))
+        .then(function () {
+          canvas.loseContext();
+          // a direct transition is accepted to fail (not sure)
+          return fade(randomFromTo(), 100).then(success(), success());
+        })
+        .then(success(), failure("loseContext works for this Debugging Canvas"))
+        .delay(50)
+        .then(function () {
+          // now it should work
+          return fade(randomFromTo(), 100);
+        })
+        .then(success(), failure("second transition should work"))
+        .then(function () {
+          return Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() })(randomFromTo(), 100);
+        })
+        .then(success(), failure("a new transition should work"))
+        .then(function () {
+          return fade(randomFromTo(), 100);
+        })
+        .then(success(), failure("third transition should work"))
+        .done(done);
     });
     it('should complete non initialized uniforms', function (done) {
       var Transition = GlslTransition(util.createCanvas(100, 100));
