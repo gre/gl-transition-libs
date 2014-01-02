@@ -37,7 +37,10 @@ $delay.addEventListener("change", syncDelay, false);
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 var transitions = [
-  ["fadetocolor", Transition(require("./transitions/fadetocolor.glsl"), { uniforms: { color: [0.0,1.0,0.0], colorPhase: 0.5 } })],
+  ["vwipe"      , Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [1, 0], smoothness: 0.5 } })],
+  ["hwipe"      , Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [0, -1], smoothness: 0.5 } })],
+  ["circleopen" , Transition(require("./transitions/circleopen.glsl"), { uniforms: { opening: true, smoothness: 0.3 } })],
+  ["fadetocolor", Transition(require("./transitions/fadetocolor.glsl"), { uniforms: { color: [1.0,1.0,1.0], colorPhase: 0.5 } })],
   ["deformation", Transition(require("./transitions/deformation.glsl"), { uniforms: { size: 0.04, zoom: 20.0 } })],
   ["blur"       , Transition(require("./transitions/blur.glsl"), { uniforms: { size: 0.03 } })],
   ["wind"       , Transition(require("./transitions/wind.glsl"), { uniforms: { size: 0.2 } })],
@@ -70,10 +73,30 @@ var awesomeWikimediaImages = [
   "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Arlington_Row_Bibury.jpg/1280px-Arlington_Row_Bibury.jpg"
 ];
 
+var localImages = [
+  "./images/0.jpg",
+  "./images/1.jpg",
+  "./images/2.jpg",
+  "./images/3.jpg",
+  "./images/4.jpg",
+  "./images/5.jpg",
+  "./images/6.jpg",
+  "./images/7.jpg",
+  "./images/8.jpg",
+  "./images/9.jpg"
+];
+
+var images = awesomeWikimediaImages;
+
+if (window.location.hostname === "localhost") {
+  images = localImages;
+}
+
 function crossOriginLoading (src) {
   return Qimage(src, { crossorigin: "Anonymous" });
 }
 
-Q.all(awesomeWikimediaImages.map(crossOriginLoading))
+
+Q.all(images.map(crossOriginLoading))
  .then(loopForever)
  .done();

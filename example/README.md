@@ -4,6 +4,5 @@ Running the exemple
 ---
 
 ```bash
-npm run build
-npm run server
+npm run watch & npm run server
 ```
