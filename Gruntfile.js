@@ -86,15 +86,14 @@ module.exports = function (grunt) {
     connect: {
       test: {
         options: {
-          port: 9999,
-          base: 'test'
+          port: 9999
         }
       }
     },
     'saucelabs-mocha': {
       all: {
         options: {
-          urls: ["http://127.0.0.1:9999/"],
+          urls: ["http://127.0.0.1:9999/test/"],
           tunnelTimeout: 5,
           build: (new Date()).getTime(),
           concurrency: 3,
@@ -107,7 +106,10 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['jshint', 'browserify', 'watch']);
+
+  grunt.registerTask('default', ['build', 'watch']);
+  grunt.registerTask('build', ['jshint', 'browserify']);
   grunt.registerTask('publish', ['shell:buildExample', 'gh-pages']);
-  grunt.registerTask('test-sauce', ['jshint', 'browserify', 'connect:test', 'saucelabs-mocha']);
+  grunt.registerTask('test', ['jshint', 'browserify', 'connect:test', 'watch']);
+  grunt.registerTask('test-sauce', ['build', 'connect:test', 'saucelabs-mocha']);
 };
