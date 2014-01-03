@@ -6,6 +6,8 @@
 
 [![SauceLabs Status](https://saucelabs.com/browser-matrix/glsl-transition.svg)](https://saucelabs.com/u/glsl-transition)
 
+// Oops, SauceLabs doesn't support WebGL yet. but [this may come soon](https://twitter.com/saucelabs/status/418861018400313344)!
+
 # Getting Started
 
 [![npm install glsl-transition](https://nodei.co/npm/glsl-transition.png?mini=true)](http://npmjs.org/package/glsl-transition)
