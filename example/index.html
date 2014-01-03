@@ -20,7 +20,7 @@
       display: inline-block;
       min-width: 200px;
     }
-    p input[type=range], p .readonly {
+    p input, p select, p .readonly {
       width: 250px;
     }
     p .readonly {
@@ -63,9 +63,9 @@
     <canvas id="viewport" width="640" height="450"></canvas>
     <div id="props">
       <p>
-        <label for="transitionname">Transition name:</label>
-        <span id="transitionname" class="readonly">&nbsp;</span>
-        <span class="value"></span>
+        <label for="transition">Transition:</label>
+        <select id="transition"></select>
+        <span class="value">&nbsp;</span>
       </p>
       <p>
         <label for="duration">Transition Duration:</label>

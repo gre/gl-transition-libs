@@ -8476,6 +8476,10 @@ function GlslTransition (canvas) {
       return animate(duration, easing);
     }
 
+    transition.getUniforms = function () {
+      return extend({}, glslTypes);
+    };
+
     transition.onContextLost = onContextLost;
     transition.onContextRestored = onContextRestored;
 

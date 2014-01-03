@@ -3,13 +3,16 @@ var Q = require("q");
 var Qimage = require("qimage");
 var BezierEasingEditor = require("./bezier-easing-editor");
 
+var currentTransition;
+var transitions;
+
 // Bind sliders
 var transitionDuration, stayTime;
 var $duration = document.getElementById("duration");
 var $delay = document.getElementById("delay");
 var $durationValue = document.getElementById("durationValue");
 var $delayValue = document.getElementById("delayValue");
-var $transitionname = document.getElementById("transitionname");
+var $transition = document.getElementById("transition");
 var $easingtext = document.getElementById("easingtext");
 var easingEditor = new BezierEasingEditor(document.getElementById("easing"));
 
@@ -25,34 +28,49 @@ function syncDelay () {
   $delayValue.innerHTML = $delay.value;
   stayTime = parseInt($delay.value, 10);
 }
-syncEasing();
-syncDuration();
-syncDelay();
-easingEditor.onChange = syncEasing;
-$duration.addEventListener("change", syncDuration, false);
-$delay.addEventListener("change", syncDelay, false);
+function syncTransition () {
+  var name = $transition.value;
+  currentTransition = transitions[name];
+}
+function init () {
+  for (var name in transitions) {
+    var option = document.createElement("option");
+    option.innerHTML = name;
+    option.value = name;
+    $transition.appendChild(option);
+  }
+  syncEasing();
+  syncDuration();
+  syncDelay();
+  syncTransition();
+  easingEditor.onChange = syncEasing;
+  $duration.addEventListener("change", syncDuration, false);
+  $delay.addEventListener("change", syncDelay, false);
+  $transition.addEventListener("change", syncTransition, false);
+}
 
 // Cool stuff from the library starts now...
 
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
-var transitions = [
-  ["vwipe"      , Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [1, 0], smoothness: 0.5 } })],
-  ["hwipe"      , Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [0, -1], smoothness: 0.5 } })],
-  ["circleopen" , Transition(require("./transitions/circleopen.glsl"), { uniforms: { opening: true, smoothness: 0.3 } })],
-  ["fadetocolor", Transition(require("./transitions/fadetocolor.glsl"), { uniforms: { color: [1.0,1.0,1.0], colorPhase: 0.5 } })],
-  ["deformation", Transition(require("./transitions/deformation.glsl"), { uniforms: { size: 0.04, zoom: 20.0 } })],
-  ["blur"       , Transition(require("./transitions/blur.glsl"), { uniforms: { size: 0.03 } })],
-  ["wind"       , Transition(require("./transitions/wind.glsl"), { uniforms: { size: 0.2 } })],
-  ["rainbow"    , Transition(require("./transitions/rainbow.glsl"), { uniforms: { size: 0.5 } })]
-];
+transitions = {
+  "swap"       : Transition(require("./transitions/swap.glsl"), { uniforms: {} }),
+  "vwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [1, 0], smoothness: 0.5 } }),
+  "hwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [0, -1], smoothness: 0.5 } }),
+  "circleopen" : Transition(require("./transitions/circleopen.glsl"), { uniforms: { opening: true, smoothness: 0.3 } }),
+  "fadetocolor": Transition(require("./transitions/fadetocolor.glsl"), { uniforms: { color: [1.0,1.0,1.0], colorPhase: 0.5 } }),
+  "deformation": Transition(require("./transitions/deformation.glsl"), { uniforms: { size: 0.04, zoom: 20.0 } }),
+  "blur"       : Transition(require("./transitions/blur.glsl"), { uniforms: { size: 0.03 } }),
+  "wind"       : Transition(require("./transitions/wind.glsl"), { uniforms: { size: 0.2 } }),
+  "rainbow"    : Transition(require("./transitions/rainbow.glsl"), { uniforms: { size: 0.5 } })
+};
+
+currentTransition = transitions.swap;
 
 function loopForever (images) {
   return (function loop (i) {
-    var t = transitions[Math.floor(Math.random() * transitions.length)];
-    $transitionname.innerHTML = t[0];
     var next = i+1 === images.length ? 0 : i+1;
-    return t[1]({ from: images[i], to: images[next] }, transitionDuration, easingEditor.getEasing())
+    return currentTransition({ from: images[i], to: images[next] }, transitionDuration, easingEditor.getEasing())
       .delay(stayTime)
       .then(function (){ return loop(next); });
   }(0));
@@ -96,7 +114,7 @@ function crossOriginLoading (src) {
   return Qimage(src, { crossorigin: "Anonymous" });
 }
 
-
+init();
 Q.all(images.map(crossOriginLoading))
  .then(loopForever)
  .done();
