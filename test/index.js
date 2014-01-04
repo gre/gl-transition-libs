@@ -159,17 +159,17 @@ Q.all([
           Transition(GLSL_FADE);
         }
         else if (i % 3 === 1) {
-          Transition(GLSL_FADETOCOLOR, { uniforms: randomFadeToColorUniforms() });
+          Transition(GLSL_FADETOCOLOR, randomFadeToColorUniforms() );
         }
         else {
-          Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() });
+          Transition(GLSL_DEFORMATION, randomDeformationUniforms() );
         }
       }
     });
     it('should fail if uniforms does not exist in the GLSL', function () {
       var Transition = GlslTransition(createCanvas());
-      assert.throws(function () { Transition(GLSL_FADE, { uniforms: { foo: 0 } }); });
-      assert.throws(function () { Transition(GLSL_DEFORMATION, { uniforms: { size: 0.1, zoom: 1, foo: 0 } }); });
+      assert.throws(function () { Transition(GLSL_FADE, { foo: 0 }); });
+      assert.throws(function () { Transition(GLSL_DEFORMATION, { size: 0.1, zoom: 1, foo: 0 }); });
     });
   });
 
@@ -225,9 +225,9 @@ Q.all([
     });
     it('should fail if uniforms are not provided or if not defined uniforms.', function () {
       var Transition = GlslTransition(createCanvas());
-      var deform1 = Transition(GLSL_DEFORMATION, { uniforms: {} });
-      var deform2 = Transition(GLSL_DEFORMATION, { uniforms: { size: 0.1 } });
-      var deform3 = Transition(GLSL_DEFORMATION, { uniforms: { size: 0.1, zoom: 1 } });
+      var deform1 = Transition(GLSL_DEFORMATION, {});
+      var deform2 = Transition(GLSL_DEFORMATION, { size: 0.1 });
+      var deform3 = Transition(GLSL_DEFORMATION, { size: 0.1, zoom: 1 });
       assert.throws(function () { deform1(randomFromTo({}), 100); });
       assert.throws(function () { deform2(randomFromTo({}), 100); });
       assert.throws(function () { deform2(randomFromTo({ zoom: 1, foo: 1 }), 100); });
@@ -252,7 +252,7 @@ Q.all([
         }))
         .then(success(), failure("second transition should work"))
         .then(safe(function () {
-          return Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() })(randomFromTo(), 100);
+          return Transition(GLSL_DEFORMATION, randomDeformationUniforms())(randomFromTo(), 100);
         }))
         .then(success(), failure("a new transition should work"))
         .then(safe(function () {
@@ -263,7 +263,7 @@ Q.all([
     });
     it('should complete non initialized uniforms', function (done) {
       var Transition = GlslTransition(createCanvas());
-      var deform2 = Transition(GLSL_DEFORMATION, { uniforms: { size: 0.1 } });
+      var deform2 = Transition(GLSL_DEFORMATION, { size: 0.1 });
       deform2(randomFromTo({ zoom: 10 }), 100)
         .then(success(), failure())
         .done(done);
@@ -288,17 +288,17 @@ Q.all([
       var Transition = GlslTransition(createCanvas());
       var transitions = [
         Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() }),
+        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
         Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() }),
+        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
         Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() }),
+        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
         Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() }),
+        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
         Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() }),
+        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
         Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, { uniforms: randomDeformationUniforms() })
+        Transition(GLSL_DEFORMATION, randomDeformationUniforms())
       ];
       (function loop (i) {
         if (i<=0) return;
@@ -386,8 +386,8 @@ Q.all([
         var canvas = createCanvas();
         var Transition = GlslTransition(canvas);
         var anim1 = Transition(GLSL_FADETOCOLOR);
-        var anim2 = Transition(GLSL_FADETOCOLOR, { uniforms: { colorPhase: 0.5 } });
-        var anim3 = Transition(GLSL_FADETOCOLOR, { uniforms: { color: [1, 0, 0], colorPhase: 0.5 } });
+        var anim2 = Transition(GLSL_FADETOCOLOR, { colorPhase: 0.5 });
+        var anim3 = Transition(GLSL_FADETOCOLOR, { color: [1, 0, 0], colorPhase: 0.5 });
 
         var snap1, snap2, snap3;
 

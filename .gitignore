@@ -1,4 +1,5 @@
 .DS_Store
-example/bundle.js
+bundle.js
 node_modules
 components
+

@@ -10,17 +10,17 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
-  "ripple"     : Transition(require("./transitions/ripple.glsl"), { uniforms: { amplitude: 100, speed: 50 } }),
-  "doorway"    : Transition(require("./transitions/doorway.glsl"), { uniforms: { reflection: 0.4, perspective: 0.4, depth: 3.0 } }),
-  "swap"       : Transition(require("./transitions/swap.glsl"), { uniforms: { reflection: 0.4, perspective: 0.2, depth: 3.0 } }),
-  "vwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [1, 0], smoothness: 0.5 } }),
-  "hwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [0, -1], smoothness: 0.5 } }),
-  "circleopen" : Transition(require("./transitions/circleopen.glsl"), { uniforms: { opening: true, smoothness: 0.3 } }),
-  "fadetocolor": Transition(require("./transitions/fadetocolor.glsl"), { uniforms: { color: [1.0,1.0,1.0], colorPhase: 0.5 } }),
-  "deformation": Transition(require("./transitions/deformation.glsl"), { uniforms: { size: 0.04, zoom: 20.0 } }),
-  "blur"       : Transition(require("./transitions/blur.glsl"), { uniforms: { size: 0.03 } }),
-  "wind"       : Transition(require("./transitions/wind.glsl"), { uniforms: { size: 0.2 } }),
-  "rainbow"    : Transition(require("./transitions/rainbow.glsl"), { uniforms: { size: 0.5 } })
+  "ripple"     : Transition(require("./transitions/ripple.glsl"), { amplitude: 100, speed: 50 }),
+  "doorway"    : Transition(require("./transitions/doorway.glsl"), { reflection: 0.4, perspective: 0.4, depth: 3.0 }),
+  "swap"       : Transition(require("./transitions/swap.glsl"), { reflection: 0.4, perspective: 0.2, depth: 3.0 }),
+  "vwipe"      : Transition(require("./transitions/wipe.glsl"), { direction: [1, 0], smoothness: 0.5 }),
+  "hwipe"      : Transition(require("./transitions/wipe.glsl"), { direction: [0, -1], smoothness: 0.5 }),
+  "circleopen" : Transition(require("./transitions/circleopen.glsl"), { opening: true, smoothness: 0.3 }),
+  "fadetocolor": Transition(require("./transitions/fadetocolor.glsl"), { color: [1.0,1.0,1.0], colorPhase: 0.5 }),
+  "deformation": Transition(require("./transitions/deformation.glsl"), { size: 0.04, zoom: 20.0 }),
+  "blur"       : Transition(require("./transitions/blur.glsl"), { size: 0.03 }),
+  "wind"       : Transition(require("./transitions/wind.glsl"), { size: 0.2 }),
+  "rainbow"    : Transition(require("./transitions/rainbow.glsl"), { size: 0.5 })
 };
 
 currentTransition = transitions.swap;

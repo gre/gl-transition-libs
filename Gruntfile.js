@@ -70,9 +70,9 @@ module.exports = function (grunt) {
     'gh-pages': {
       example: {
         options: {
-          base: 'example'
+          base: '.'
         },
-        src: ['bundle.js', 'index.html']
+        src: ['**']
       }
     },
     shell: {
@@ -109,7 +109,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['build', 'watch']);
   grunt.registerTask('build', ['jshint', 'browserify']);
-  grunt.registerTask('publish', ['shell:buildExample', 'gh-pages']);
+  grunt.registerTask('publish', ['build', 'shell:buildExample', 'gh-pages']);
   grunt.registerTask('test', ['jshint', 'browserify', 'connect:test', 'watch']);
   grunt.registerTask('test-sauce', ['build', 'connect:test', 'saucelabs-mocha']);
 };
