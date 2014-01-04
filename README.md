@@ -2,7 +2,7 @@
 
 > Make Transitions Effects with the power of WebGL Shaders (GLSL)
 
-[**Open The Example**](https://gre.github.com/glsl-transition/)
+[**Open The Example**](https://gre.github.com/glsl-transition/example)
 
 
 # Getting Started
@@ -29,13 +29,13 @@ GlslTransition(canvas, opts)(glsl, uniforms)(uniforms, duration, easing) // => P
 
 It is important to have these 3-level function calls, both for **optimization** and **usability** purposes.
 
-* The *first call* **creates a Transitions context with a Canvas** and optionally some options. Available options are:
+* The *first call* **creates a Transitions context with a Canvas** and optionally some options. Available options:
   * `contextAttributes`: an object which overrides default Context Attributes to give in `getContext`.
 
 * The *second call* **creates a GLSL Transition for this context** with a **fragment shader** `glsl` source code and optionally some default uniform values.
-  * For each `{ key: value }` in that object, value will be mapped to the uniform named `key`.
+  * For each `{ key: value }` in that uniform object, `value` will be mapped to the uniform named `key`.
 
-* Finally, the *third call* **performs this transition** for given `uniforms` *(which overrides those given at the second call level)*, for a `duration` in milliseconds and using an `easing` function. The returned value of this transition is a Promise resolved when transition has succeed or rejected when it has failed (rare cases like webgl context lost).
+* Finally, the *third call* **performs this transition** for given `uniforms` *(which overrides those given at the second call level)*, for a `duration` in milliseconds and using an `easing` function. The returned value of this transition call is a **Promise** resolved when transition has succeed or rejected if it has failed (rare cases like WebGL Context Lost).
 
 * The result of a successful Promise is a metadata object containing: 
   * `startAt`: milliseconds timestamp of the start time.
