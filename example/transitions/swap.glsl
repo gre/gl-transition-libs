@@ -8,10 +8,9 @@ uniform sampler2D to;
 uniform float progress;
 uniform vec2 resolution;
 
-// Those could be uniforms if needed
-const float reflection = 0.3;
-const float perspective = 0.3;
-const float maxDepth = 3.0;
+uniform float reflection;
+uniform float perspective;
+uniform float depth;
 
 const vec4 black = vec4(0.0, 0.0, 0.0, 1.0);
 const vec2 boundMin = vec2(0.0, 0.0);
@@ -21,15 +20,19 @@ bool inBounds (vec2 p) {
   return all(lessThan(boundMin, p)) && all(lessThan(p, boundMax));
 }
 
+vec2 project (vec2 p) {
+  return p * vec2(1.0, -1.2) + vec2(0.0, -0.02);
+}
+
 vec4 bgColor (vec2 p, vec2 pfr, vec2 pto) {
   vec4 c = black;
-  pfr = pfr * vec2(1.0, -1.0) + vec2(0.0, -0.02);
+  pfr = project(pfr);
   if (inBounds(pfr)) {
-    c += mix(black, texture2D(from, pfr), reflection * mix(1.0, -1.0, pfr.y));
+    c += mix(black, texture2D(from, pfr), reflection * mix(1.0, 0.0, pfr.y));
   }
-  pto = pto * vec2(1.0, -1.0) + vec2(0.0, -0.02);
+  pto = project(pto);
   if (inBounds(pto)) {
-    c += mix(black, texture2D(to, pto), reflection * mix(1.0, -1.0, pto.y));
+    c += mix(black, texture2D(to, pto), reflection * mix(1.0, 0.0, pto.y));
   }
   return c;
 }
@@ -39,11 +42,11 @@ void main() {
 
   vec2 pfr, pto = vec2(-1.);
 
-  float size = mix(1.0, maxDepth, progress);
+  float size = mix(1.0, depth, progress);
   float persp = perspective * progress;
   pfr = (p + vec2(-0.0, -0.5)) * vec2(size/(1.0-perspective*progress), size/(1.0-size*persp*p.x)) + vec2(0.0, 0.5);
 
-  size = mix(1.0, maxDepth, 1.-progress);
+  size = mix(1.0, depth, 1.-progress);
   persp = perspective * (1.-progress);
   pto = (p + vec2(-1.0, -0.5)) * vec2(size/(1.0-perspective*(1.0-progress)), size/(1.0-size*persp*(0.5-p.x))) + vec2(1.0, 0.5);
 

@@ -3,58 +3,14 @@ var Q = require("q");
 var Qimage = require("qimage");
 var BezierEasingEditor = require("./bezier-easing-editor");
 
-var currentTransition;
-var transitions;
-
-// Bind sliders
-var transitionDuration, stayTime;
-var $duration = document.getElementById("duration");
-var $delay = document.getElementById("delay");
-var $durationValue = document.getElementById("durationValue");
-var $delayValue = document.getElementById("delayValue");
-var $transition = document.getElementById("transition");
-var $easingtext = document.getElementById("easingtext");
 var easingEditor = new BezierEasingEditor(document.getElementById("easing"));
-
-function syncEasing () {
-  var easing = easingEditor.getEasing();
-  $easingtext.innerHTML = easing.toString();
-}
-function syncDuration () {
-  $durationValue.innerHTML = $duration.value;
-  transitionDuration = parseInt($duration.value, 10);
-}
-function syncDelay () {
-  $delayValue.innerHTML = $delay.value;
-  stayTime = parseInt($delay.value, 10);
-}
-function syncTransition () {
-  var name = $transition.value;
-  currentTransition = transitions[name];
-}
-function init () {
-  for (var name in transitions) {
-    var option = document.createElement("option");
-    option.innerHTML = name;
-    option.value = name;
-    $transition.appendChild(option);
-  }
-  syncEasing();
-  syncDuration();
-  syncDelay();
-  syncTransition();
-  easingEditor.onChange = syncEasing;
-  $duration.addEventListener("change", syncDuration, false);
-  $delay.addEventListener("change", syncDelay, false);
-  $transition.addEventListener("change", syncTransition, false);
-}
-
-// Cool stuff from the library starts now...
+var transitionDuration, stayTime, currentTransition;
+var transitions;
 
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
-  "swap"       : Transition(require("./transitions/swap.glsl"), { uniforms: {} }),
+  "swap"       : Transition(require("./transitions/swap.glsl"), { uniforms: { reflection: 0.4, perspective: 0.2, depth: 3.0 } }),
   "vwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [1, 0], smoothness: 0.5 } }),
   "hwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [0, -1], smoothness: 0.5 } }),
   "circleopen" : Transition(require("./transitions/circleopen.glsl"), { uniforms: { opening: true, smoothness: 0.3 } }),
@@ -114,7 +70,46 @@ function crossOriginLoading (src) {
   return Qimage(src, { crossorigin: "Anonymous" });
 }
 
-init();
 Q.all(images.map(crossOriginLoading))
  .then(loopForever)
  .done();
+
+// Bind sliders
+var $duration = document.getElementById("duration");
+var $delay = document.getElementById("delay");
+var $durationValue = document.getElementById("durationValue");
+var $delayValue = document.getElementById("delayValue");
+var $transition = document.getElementById("transition");
+var $easingtext = document.getElementById("easingtext");
+
+function syncEasing () {
+  var easing = easingEditor.getEasing();
+  $easingtext.innerHTML = easing.toString();
+}
+function syncDuration () {
+  $durationValue.innerHTML = $duration.value;
+  transitionDuration = parseInt($duration.value, 10);
+}
+function syncDelay () {
+  $delayValue.innerHTML = $delay.value;
+  stayTime = parseInt($delay.value, 10);
+}
+function syncTransition () {
+  var name = $transition.value;
+  currentTransition = transitions[name];
+}
+
+for (var name in transitions) {
+  var option = document.createElement("option");
+  option.innerHTML = name;
+  option.value = name;
+  $transition.appendChild(option);
+}
+syncEasing();
+syncDuration();
+syncDelay();
+syncTransition();
+easingEditor.onChange = syncEasing;
+$duration.addEventListener("change", syncDuration, false);
+$delay.addEventListener("change", syncDelay, false);
+$transition.addEventListener("change", syncTransition, false);
