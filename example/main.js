@@ -10,7 +10,7 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
-  "doorway"       : Transition(require("./transitions/doorway.glsl"), { uniforms: { reflection: 0.4, perspective: 0.4, depth: 3.0 } }),
+  "doorway"    : Transition(require("./transitions/doorway.glsl"), { uniforms: { reflection: 0.4, perspective: 0.4, depth: 3.0 } }),
   "swap"       : Transition(require("./transitions/swap.glsl"), { uniforms: { reflection: 0.4, perspective: 0.2, depth: 3.0 } }),
   "vwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [1, 0], smoothness: 0.5 } }),
   "hwipe"      : Transition(require("./transitions/wipe.glsl"), { uniforms: { direction: [0, -1], smoothness: 0.5 } }),
