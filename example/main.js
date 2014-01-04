@@ -10,15 +10,16 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
-  "flyeye1"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.2, zoom: 100.0 }),
-  "flyeye2"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.02, zoom: 40.0 }),
   "ripple"     : Transition(require("./transitions/ripple.glsl"), { amplitude: 100, speed: 50 }),
+  "flyeye1"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.04, zoom: 20.0 }),
+  "flyeye2"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.1, zoom: 40.0 }),
+  "flyeye3"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.2, zoom: 100.0 }),
   "doorway"    : Transition(require("./transitions/doorway.glsl"), { reflection: 0.4, perspective: 0.4, depth: 3.0 }),
   "swap"       : Transition(require("./transitions/swap.glsl"), { reflection: 0.4, perspective: 0.2, depth: 3.0 }),
   "wipe1"      : Transition(require("./transitions/wipe.glsl"), { direction: [1, 0], smoothness: 0.5 }),
   "wipe2"      : Transition(require("./transitions/wipe.glsl"), { direction: [0, -1], smoothness: 0.5 }),
   "wipe3"      : Transition(require("./transitions/wipe.glsl"), { direction: [1, 1], smoothness: 0.5 }),
-  "wipe4"      : Transition(require("./transitions/wipe.glsl"), { direction: [-1, -1], smoothness: 0.5 }),
+  "wipe4"      : Transition(require("./transitions/wipe.glsl"), { direction: [1, -1], smoothness: 0.5 }),
   "heartwipe"  : Transition(require("./transitions/heartwipe.glsl"), {}),
   "circleopen" : Transition(require("./transitions/circleopen.glsl"), { opening: true, smoothness: 0.3 }),
   "fadetowhite": Transition(require("./transitions/fadetocolor.glsl"), { color: [1.0,1.0,1.0], colorPhase: 0.5 }),
