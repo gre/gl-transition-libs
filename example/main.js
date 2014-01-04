@@ -10,6 +10,7 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
+  "heartwipe"  : Transition(require("./transitions/heartwipe.glsl"), {}),
   "ripple"     : Transition(require("./transitions/ripple.glsl"), { amplitude: 100, speed: 50 }),
   "doorway"    : Transition(require("./transitions/doorway.glsl"), { reflection: 0.4, perspective: 0.4, depth: 3.0 }),
   "swap"       : Transition(require("./transitions/swap.glsl"), { reflection: 0.4, perspective: 0.2, depth: 3.0 }),
