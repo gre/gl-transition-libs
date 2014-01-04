@@ -8233,16 +8233,18 @@ function identity (x) { return x; }
  * GlslTransition(canvas)
  * Creates a Transitions context with a canvas.
  */
-function GlslTransition (canvas) {
+function GlslTransition (canvas, opts) {
   if (arguments.length !== 1 || !("getContext" in canvas))
     throw new Error("Bad arguments. usage: GlslTransition(canvas)");
+
+  var contextAttributes = extend({}, opts && opts.contextAttributes || {}, GlslTransition.defaults.contextAttributes);
 
   // First level variables
   var gl, currentShader, currentAnimationD, transitions;
 
   function init () {
     transitions = [];
-    gl = getWebGLContext(canvas, GlslTransition.defaults.contextAttributes);
+    gl = getWebGLContext(canvas, contextAttributes);
     canvas.addEventListener("webglcontextlost", onContextLost, false);
     canvas.addEventListener("webglcontextrestored", onContextRestored, false);
   }
@@ -8307,11 +8309,11 @@ function GlslTransition (canvas) {
 
   /**
    * ~~~ Second Call in the API
-   * createTransition(glslSource, [options])
+   * createTransition(glslSource, [uniforms])
    * Creates a GLSL Transition for the current canvas context.
    */
-  function createTransition (glsl, options) {
-    var defaultUniforms = options && options.uniforms || {};
+  function createTransition (glsl, defaultUniforms) {
+    if (!defaultUniforms) defaultUniforms = {};
     if (arguments.length < 1 || arguments.length > 2 || typeof glsl !== "string")
       throw new Error("Bad arguments. usage: T(glsl [, options])");
 
