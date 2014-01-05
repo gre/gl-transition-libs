@@ -10,6 +10,7 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
+  "page"       : Transition(require("./transitions/page.glsl"), {}),
   "squares1"   : Transition(require("./transitions/squares.glsl"), { size: [13, 9], smoothness: 0.5 }),
   "squares2"   : Transition(require("./transitions/squares.glsl"), { size: [64, 45], smoothness: 0.2 }),
   "flash"      : Transition(require("./transitions/flash.glsl"), { flashPhase: 0.3, flashIntensity: 3.0, flashZoomEffect: 0.5 }),
