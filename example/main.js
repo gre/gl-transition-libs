@@ -10,6 +10,7 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
+  "squares"    : Transition(require("./transitions/squares.glsl"), { size: [64, 45], smoothness: 0.2 }),
   "ripple"     : Transition(require("./transitions/ripple.glsl"), { amplitude: 100, speed: 50 }),
   "flyeye1"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.04, zoom: 20.0 }),
   "flyeye2"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.1, zoom: 40.0 }),
