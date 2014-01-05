@@ -22,13 +22,13 @@ transitions = {
   "wipe2"      : Transition(require("./transitions/wipe.glsl"), { direction: [0, -1], smoothness: 0.5 }),
   "wipe3"      : Transition(require("./transitions/wipe.glsl"), { direction: [1, 1], smoothness: 0.5 }),
   "wipe4"      : Transition(require("./transitions/wipe.glsl"), { direction: [1, -1], smoothness: 0.5 }),
+  "rainbowwipe": Transition(require("./transitions/rainbowwipe.glsl"), { direction: [1, 0.5], smoothness: 0.6 }),
   "heartwipe"  : Transition(require("./transitions/heartwipe.glsl"), {}),
   "circleopen" : Transition(require("./transitions/circleopen.glsl"), { opening: true, smoothness: 0.3 }),
   "fadetowhite": Transition(require("./transitions/fadetocolor.glsl"), { color: [1.0,1.0,1.0], colorPhase: 0.5 }),
   "fadetoblack": Transition(require("./transitions/fadetocolor.glsl"), { color: [0.0,0.0,0.0], colorPhase: 0.5 }),
   "blur"       : Transition(require("./transitions/blur.glsl"), { size: 0.03 }),
-  "wind"       : Transition(require("./transitions/wind.glsl"), { size: 0.2 }),
-  "rainbow"    : Transition(require("./transitions/rainbow.glsl"), { size: 0.5 })
+  "wind"       : Transition(require("./transitions/wind.glsl"), { size: 0.2 })
 };
 
 currentTransition = transitions.swap;
