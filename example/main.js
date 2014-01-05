@@ -25,6 +25,7 @@ transitions = {
   "rainbowwipe": Transition(require("./transitions/rainbowwipe.glsl"), { direction: [1, 0.5], smoothness: 0.6 }),
   "heartwipe"  : Transition(require("./transitions/heartwipe.glsl"), {}),
   "circleopen" : Transition(require("./transitions/circleopen.glsl"), { opening: true, smoothness: 0.3 }),
+  "fadegrayscale": Transition(require("./transitions/fadegrayscale.glsl"), { grayPhase: 0.3 }),
   "fadetowhite": Transition(require("./transitions/fadetocolor.glsl"), { color: [1.0,1.0,1.0], colorPhase: 0.5 }),
   "fadetoblack": Transition(require("./transitions/fadetocolor.glsl"), { color: [0.0,0.0,0.0], colorPhase: 0.5 }),
   "blur"       : Transition(require("./transitions/blur.glsl"), { size: 0.03 }),
