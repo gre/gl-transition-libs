@@ -81,7 +81,7 @@ function GlslTransition (canvas, opts) {
   }
 
   function onContextRestored (e) {
-    gl = getWebGLContext(canvas);
+    gl = getWebGLContext(canvas, contextAttributes);
     for (var i=0; i<transitions.length; ++i) {
       transitions[i].onContextRestored(e);
     }
