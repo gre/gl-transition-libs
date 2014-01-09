@@ -50,7 +50,7 @@ function BezierEasingEditor (canvas) {
 
   function positionWithE (e) {
     var o = cumulativeOffset(canvas);
-    return { x: relativeX(e.clientX+window.scrollX-o.left), y: relativeY(e.clientY+window.scrollY-o.top) };
+    return { x: relativeX(e.clientX+(window.scrollX||window.pageXOffset)-o.left), y: relativeY(e.clientY+(window.scrollY||window.pageYOffset)-o.top) };
   }
 
   function setup() {
@@ -62,14 +62,14 @@ function BezierEasingEditor (canvas) {
         draggingHandle = hnum;
         oneHandleClicked = true;
       }
-    });
+    }, false);
     canvas.addEventListener("mouseup", function (e) {
       var p = positionWithE(e);
       if (draggingHandle) {
         setHandle(draggingHandle, p.x, p.y);
         draggingHandle = 0;
       }
-    });
+    }, false);
     canvas.addEventListener("mousemove", function (e) {
       e.preventDefault();
       var p = positionWithE(e);
@@ -77,17 +77,17 @@ function BezierEasingEditor (canvas) {
         setHandle(draggingHandle, p.x, p.y);
       }
       hoveringHandle = draggingHandle || findHandle(p.x, p.y);
-    });
+    }, false);
     canvas.addEventListener("mouseover", function () {
       hovering = true;
       hasChanged = true;
-    });
+    }, false);
     canvas.addEventListener("mouseout", function () {
       hovering = false;
       hasChanged = true;
       draggingHandle = 0;
       hoveringHandle = 0;
-    });
+    }, false);
 
     syncBezier();
   }
