@@ -269,9 +269,9 @@ Q.all([
         .done(done);
     });
     it('should work with a lot of transition() call', function (done) {
-      var maxDuration = 20;
-      var tries = 200;
-      this.timeout((30+maxDuration) * tries);
+      var maxDuration = 30;
+      var tries = 100;
+      this.timeout(10000);
       var transition = GlslTransition(createCanvas())(GLSL_FADE);
       (function loop (i) {
         if (i<=0) return;
@@ -284,7 +284,7 @@ Q.all([
     it('should work with a lot of transitions', function (done) {
       var maxDuration = 30;
       var tries = 100;
-      this.timeout((30+maxDuration) * tries);
+      this.timeout(10000);
       var Transition = GlslTransition(createCanvas());
       var transitions = [
         Transition(GLSL_FADE),
@@ -316,7 +316,7 @@ Q.all([
       it('should correctly fade', function (done) {
         var duration = 2000;
         var splits = 6;
-        this.timeout(1000 + duration);
+        this.timeout(5000);
         var canvas = createCanvas();
         var Transition = GlslTransition(canvas);
         var fade = Transition(GLSL_FADE);
@@ -357,8 +357,8 @@ Q.all([
         })).done(done);
       });
       it('easing: should inverse when using (x)=>(1-x) easing', function (done) {
-        var duration = 1000;
-        this.timeout(1000 + duration);
+        var duration = 2000;
+        this.timeout(5000);
         var canvas = createCanvas();
         var Transition = GlslTransition(canvas);
         var fade = Transition(GLSL_FADE);
@@ -373,7 +373,7 @@ Q.all([
         setTimeout(snap, 1);
         setTimeout(snap, duration);
 
-        anim.delay(100).then(safe(function(){
+        anim.delay(300).then(safe(function(){
           assert(util.diff(snapshots[0], util.fromImage(uniforms.to  , W, H)) < 0.05, "initially 'to' image");
           assert(util.diff(snapshots[1], util.fromImage(uniforms.from, W, H)) < 0.05, "ending 'from' image");
         })).done(done);
@@ -382,7 +382,7 @@ Q.all([
 
     describe('fadetocolor transition', function () {
       it('should works with different uniforms', function (done) {
-        this.timeout(4000);
+        this.timeout(10000);
         var canvas = createCanvas();
         var Transition = GlslTransition(canvas);
         var anim1 = Transition(GLSL_FADETOCOLOR);
