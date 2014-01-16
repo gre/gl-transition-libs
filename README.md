@@ -116,6 +116,6 @@ Tests
 
 ## See also
 
-This library took its inspiration from [Zanimo](http://npmjs.org/package/zanimo) transition, which is a CSS Transitions + Promise library.
+This library took its inspiration from [Zanimo](https://github.com/peutetre/Zanimo) transition, which is a CSS Transitions + Promise library.
 
-You could easily make an abstraction of GLSL and CSS transitions out of **glsl-transition**, [Zanimo](http://npmjs.org/package/zanimo) and [https://github.com/gre/bezier-easing](https://github.com/gre/bezier-easing) !
+You could easily make an abstraction of GLSL and CSS transitions out of **glsl-transition**, [Zanimo](https://github.com/peutetre/Zanimo) and [https://github.com/gre/bezier-easing](https://github.com/gre/bezier-easing) !
