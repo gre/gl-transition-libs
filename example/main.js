@@ -10,6 +10,7 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
+  "squeeze"    : Transition(require("./transitions/squeeze.glsl"), { colorSplitIntensity: 0.04 }),
   "page"       : Transition(require("./transitions/page.glsl"), {}),
   "squares1"   : Transition(require("./transitions/squares.glsl"), { size: [13, 9], smoothness: 0.5 }),
   "squares2"   : Transition(require("./transitions/squares.glsl"), { size: [64, 45], smoothness: 0.2 }),
@@ -85,7 +86,7 @@ function crossOriginLoading (src) {
 
 Q.all(images.map(crossOriginLoading))
  .then(loopForever)
- .done();
+ .done(window.alert);
 
 // Bind sliders
 var $duration = document.getElementById("duration");
