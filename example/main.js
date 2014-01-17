@@ -31,7 +31,7 @@ transitions = {
   "fadegrayscale": Transition(require("./transitions/fadegrayscale.glsl"), { grayPhase: 0.3 }),
   "fadetowhite": Transition(require("./transitions/fadetocolor.glsl"), { color: [1.0,1.0,1.0], colorPhase: 0.5 }),
   "fadetoblack": Transition(require("./transitions/fadetocolor.glsl"), { color: [0.0,0.0,0.0], colorPhase: 0.5 }),
-  "blur"       : Transition(require("./transitions/blur.glsl"), { size: 0.2, quality: 32 }),
+  "blur"       : Transition(require("./transitions/blur.glsl"), { size: 0.1 }),
   "wind"       : Transition(require("./transitions/wind.glsl"), { size: 0.2 })
 };
 
