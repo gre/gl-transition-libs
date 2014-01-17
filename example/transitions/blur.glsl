@@ -10,28 +10,26 @@ uniform vec2 resolution;
 
 // Custom parameters
 uniform float size;
+uniform int quality;
 
-vec4 blur(sampler2D t, vec2 c, float b) {
-   vec4 sum = texture2D(t, c);
-   sum += texture2D(t, c+b*vec2(-0.326212, -0.405805));
-   sum += texture2D(t, c+b*vec2(-0.840144, -0.073580));
-   sum += texture2D(t, c+b*vec2(-0.695914,  0.457137));
-   sum += texture2D(t, c+b*vec2(-0.203345,  0.620716));
-   sum += texture2D(t, c+b*vec2( 0.962340, -0.194983));
-   sum += texture2D(t, c+b*vec2( 0.473434, -0.480026));
-   sum += texture2D(t, c+b*vec2( 0.519456,  0.767022));
-   sum += texture2D(t, c+b*vec2( 0.185461, -0.893124));
-   sum += texture2D(t, c+b*vec2( 0.507431,  0.064425));
-   sum += texture2D(t, c+b*vec2( 0.896420,  0.412458));
-   sum += texture2D(t, c+b*vec2(-0.321940, -0.932615));
-   sum += texture2D(t, c+b*vec2(-0.791559, -0.597705));
-   return sum / 13.0;
+const GOLDEN_ANGLE = 2.399963229728653; // PI * (3.0 - sqrt(5.0))
+
+vec4 blur(sampler2D t, vec2 c, float radius, int n) {
+  vec4 sum = texture2D(t, c);
+  // Using a "spiral" to propagate points.
+  for (int i=0; i<n; ++i) {
+    float a = i * GOLDEN_ANGLE;
+    float r = sqrt(i / float(n)) * radius;
+    vec2 p = vec2(c+cos(a)*r, c+sin(a)*r);
+    sum += texture2D(t, p);
+  }
+   return sum / (1.0 + float(n));
 }
 
 void main()
 {
   vec2 p = gl_FragCoord.xy / resolution.xy;
   float inv = 1.-progress;
-  gl_FragColor = inv*blur(from, p, progress*size) + progress*blur(to, p, inv*size);
+  gl_FragColor = inv*blur(from, p, progress*size, quality) + progress*blur(to, p, inv*size);
 }
 
