@@ -10,15 +10,15 @@ var transitions;
 var canvas = document.getElementById("viewport");
 var Transition = GlslTransition(canvas);
 transitions = {
-  "squeeze"    : Transition(require("./transitions/squeeze.glsl"), { colorSplitIntensity: 0.04 }),
+  "squeeze"    : Transition(require("./transitions/squeeze.glsl"), { colorSeparation: 0.04 }),
   "page"       : Transition(require("./transitions/page.glsl"), {}),
   "squares1"   : Transition(require("./transitions/squares.glsl"), { size: [13, 9], smoothness: 0.5 }),
   "squares2"   : Transition(require("./transitions/squares.glsl"), { size: [64, 45], smoothness: 0.2 }),
   "flash"      : Transition(require("./transitions/flash.glsl"), { flashPhase: 0.3, flashIntensity: 3.0, flashZoomEffect: 0.5 }),
   "ripple"     : Transition(require("./transitions/ripple.glsl"), { amplitude: 100, speed: 50 }),
-  "flyeye1"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.04, zoom: 20.0 }),
-  "flyeye2"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.1, zoom: 40.0 }),
-  "flyeye3"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.2, zoom: 100.0 }),
+  "flyeye1"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.04, zoom: 20.0, colorSeparation: 0.5 }),
+  "flyeye2"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.1, zoom: 40.0, colorSeparation: 0.2 }),
+  "flyeye3"    : Transition(require("./transitions/flyeye.glsl"), { size: 0.2, zoom: 100.0, colorSeparation: 0.1 }),
   "doorway"    : Transition(require("./transitions/doorway.glsl"), { reflection: 0.4, perspective: 0.4, depth: 3.0 }),
   "swap"       : Transition(require("./transitions/swap.glsl"), { reflection: 0.4, perspective: 0.2, depth: 3.0 }),
   "wipe1"      : Transition(require("./transitions/wipe.glsl"), { direction: [1, 0], smoothness: 0.5 }),
