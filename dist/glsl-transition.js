@@ -8327,7 +8327,7 @@ function GlslTransition (canvas, opts) {
     }
 
     // Second level variables
-    var shader, textureUnits, textures, currentAnimationD;
+    var shader, textureUnits, textures;
 
     function load () {
       if (!gl) return;
