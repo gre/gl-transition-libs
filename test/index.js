@@ -287,19 +287,12 @@ Q.all([
       this.timeout(10000);
       var Transition = GlslTransition(createCanvas());
       var transitions = [
-        Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
-        Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
-        Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
-        Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
-        Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, randomDeformationUniforms()),
-        Transition(GLSL_FADE),
-        Transition(GLSL_DEFORMATION, randomDeformationUniforms())
+        Transition(GLSL_FADE)
       ];
+      var interval = setInterval(function () {
+        transitions.push(Transition(GLSL_DEFORMATION, randomDeformationUniforms()));
+      }, 1000);
+
       (function loop (i) {
         if (i<=0) return;
         var transition = transitions[Math.floor(Math.random()*transitions.length)];
@@ -309,6 +302,9 @@ Q.all([
           }));
       }(tries))
         .then(success(), failure())
+        .then(function () {
+          clearInterval(interval);
+        })
         .done(done);
     });
 
@@ -336,6 +332,10 @@ Q.all([
           if (snapshots.length === splits+1) return;
           setTimeout(loop, 0);
         }, 30);
+
+        setTimeout(function () {
+          Transition(GLSL_FADETOCOLOR, randomFadeToColorUniforms());
+        }, 200); // Create another transition while performing one
 
         anim.delay(50).then(safe(function (obj) {
           var i;

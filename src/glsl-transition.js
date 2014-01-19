@@ -275,7 +275,7 @@ function GlslTransition (canvas, opts) {
       if (!gl) return Q.reject(new Error("WebGL context is null."));
       if (currentAnimationD) return Q.reject(new Error("another transition is already running."));
       try {
-        if (!shader) load(); // Possibly shader was not loaded before because of no gl available.
+        if (!shader) load(); // Possibly shader was not loaded.
       }
       catch (e) {
         return Q.reject(e);
@@ -305,7 +305,7 @@ function GlslTransition (canvas, opts) {
     transition.onContextRestored = onContextRestored;
 
     // Finally load the transition and put it in the transitions array
-    load();
+    if (!currentAnimationD) load(); // Only load if there is no current animation (busy) (see #6)
     transitions.push(transition);
 
     return transition;
