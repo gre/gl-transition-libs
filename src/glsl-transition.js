@@ -315,6 +315,16 @@ function GlslTransition (canvas, opts) {
     return gl;
   };
 
+  /**
+   * Interrupts any transition performed on the canvas.
+   */
+  createTransition.abort = function () {
+    if (currentAnimationD) {
+      currentAnimationD.reject(new Error("Transition aborted."));
+      currentAnimationD = null;
+    }
+  };
+
   // Finally init the GlslTransition context
   init();
 

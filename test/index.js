@@ -223,6 +223,18 @@ Q.all([
         assert.equal(anim2.isFulfilled(), false, "anim2 failed.");
       }).done(done);
     });
+    it('can be aborted', function (done) {
+      var Transition = GlslTransition(createCanvas());
+      var fade = Transition(GLSL_FADE);
+      var anim1 = fade(randomFromTo(), 100);
+      Transition.abort();
+      anim1.then(failure("anim1 should fail"), success())
+        .then(function(){ return fade(randomFromTo(), 100); })
+        .then(success(), failure("anim2 should succeed"))
+        .then(function(){ Transition.abort(); })
+        .then(success(), failure("an abort has no effect"))
+        .done(done);
+    });
     it('should fail if uniforms are not provided or if not defined uniforms.', function () {
       var Transition = GlslTransition(createCanvas());
       var deform1 = Transition(GLSL_DEFORMATION, {});
