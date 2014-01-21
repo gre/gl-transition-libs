@@ -8476,6 +8476,10 @@ function GlslTransition (canvas, opts) {
       return animate(duration, easing);
     }
 
+    // Those are just "privately" available for some specific use-cases
+    transition.draw = draw;
+    transition.setUniform = setUniform;
+
     transition.getUniforms = function () {
       return extend({}, glslTypes);
     };
