@@ -1,4 +1,7 @@
 
+var distance = require("ndarray-distance");
+var ndarray = require("ndarray");
+
 module.exports = {
   createCanvas: function (w, h) {
     var canvas = document.createElement("canvas");
@@ -27,13 +30,7 @@ module.exports = {
     if (c1.width !== c2.width && c1.height !== c2.height) throw new Error("diff need 2 canvas of same sizes");
     var data1 = c1.getContext("2d").getImageData(0, 0, c1.width, c1.height).data;
     var data2 = c2.getContext("2d").getImageData(0, 0, c2.width, c2.height).data;
-    var sum = 0;
-    for (var i=0; i<data1.length; i += 4) {
-      var r = Math.abs(data1[i]-data2[i]) / 255;
-      var g = Math.abs(data1[i+1]-data2[i+1]) / 255;
-      var b = Math.abs(data1[i+2]-data2[i+2]) / 255;
-      sum += r + b + g;
-    }
-    return (3/4) * sum / data1.length;
+    var diff = distance(ndarray(data1), ndarray(data2));
+    return diff;
   }
 };

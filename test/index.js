@@ -202,7 +202,7 @@ Q.all(awesomeWikimediaImages.map(crossOriginLoading)).then(safe(function (images
         assert.equal(typeof obj.startAt, "number", "Promise object should have startAt value.");
         assert.equal(typeof obj.endAt, "number", "Promise object should have endAt value.");
         assert.equal(obj.endAt-obj.startAt, obj.elapsedTime, "endAt-startAt should equals elapsedTime");
-        assert(isValidDuration(obj, duration1, 0.1), "duration seems to take the right time (10% tolerance)");
+        assert(isValidDuration(obj, duration1, 0.2), "duration seems to take the right time (20% tolerance)");
         return fade(randomFromTo(), 50, linear);
       });
       anim2.then(function(){
@@ -369,10 +369,10 @@ Q.all(awesomeWikimediaImages.map(crossOriginLoading)).then(safe(function (images
           }
           meanDiff /= splits;
 
-          assert(util.diff(snapshots[0],      util.fromImage(uniforms.from, W, H)) < 0.05, "initially 'from' image");
-          assert(util.diff(snapshots[splits], util.fromImage(uniforms.to  , W, H)) < 0.05, "ending 'to' image");
-          assert(isValidDuration(obj, duration, 0.05), "duration seems to take the right time (5% tolerance)");
-          assert(meanDiff < 0.05, "is a real fade, the image diff is proportional (5% tolerance)");
+          assert(util.diff(snapshots[0],      util.fromImage(uniforms.from, W, H)) < 5000, "initially 'from' image");
+          assert(util.diff(snapshots[splits], util.fromImage(uniforms.to  , W, H)) < 5000, "ending 'to' image");
+          assert(isValidDuration(obj, duration, 0.2), "duration seems to take the right time (20% tolerance)");
+          assert(meanDiff < 5000, "is a real fade, the image diff is ~ proportional");
         })).done(done);
       });
       it('easing: should inverse when using (x)=>(1-x) easing', function (done) {
@@ -393,8 +393,8 @@ Q.all(awesomeWikimediaImages.map(crossOriginLoading)).then(safe(function (images
         setTimeout(snap, duration);
 
         anim.delay(300).then(safe(function(){
-          assert(util.diff(snapshots[0], util.fromImage(uniforms.to  , W, H)) < 0.05, "initially 'to' image");
-          assert(util.diff(snapshots[1], util.fromImage(uniforms.from, W, H)) < 0.05, "ending 'from' image");
+          assert(util.diff(snapshots[0], util.fromImage(uniforms.to  , W, H)) < 5000, "initially 'to' image");
+          assert(util.diff(snapshots[1], util.fromImage(uniforms.from, W, H)) < 5000, "ending 'from' image");
         })).done(done);
       });
     });
