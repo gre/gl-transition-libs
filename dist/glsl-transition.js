@@ -8478,12 +8478,18 @@ function GlslTransition (canvas, opts) {
 
     // Those are just "privately" available for some specific use-cases
     transition.reset = function () {
-      if (!shader) load(); // Possibly shader was not loaded.
+      var hasChanged = false;
+      if (!shader) {
+        load(); // Possibly shader was not loaded.
+        hasChanged = true;
+      }
       if (currentShader !== shader) {
         currentShader = shader;
         shader.bind();
+        hasChanged = true;
       }
       syncViewport();
+      return hasChanged;
     };
     transition.draw = draw;
     transition.setUniform = setUniform;
