@@ -21,8 +21,8 @@
   "license": "MIT",
   "dependencies": {
     "q": "1.0.x",
-    "gl-shader-core": "0.0.0",
-    "glsl-exports": "~0.0.0"
+    "gl-shader-core": "2.0.x",
+    "glsl-exports": "0.0.x"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

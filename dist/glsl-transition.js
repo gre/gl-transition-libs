@@ -64,18 +64,7 @@ var proto = ShaderAttribute.prototype
 proto.pointer = function setAttribPointer(type, normalized, stride, offset) {
   var gl = this._gl
   gl.vertexAttribPointer(this._location, this._dimension, type||gl.FLOAT, normalized?gl.TRUE:gl.FALSE, stride||0, offset||0)
-}
-
-proto.enable = function enableAttrib() {
   this._gl.enableVertexAttribArray(this._location)
-}
-
-proto.disable = function disableAttrib() {
-  this._gl.disableVertexAttribArray(this._location)
-}
-
-proto.set = function setAttribConstant(x, y, z, w) {
-  this._constFunc(this._gl, this._location, x, y, z, w)
 }
 
 Object.defineProperty(proto, "location", {
@@ -83,11 +72,11 @@ Object.defineProperty(proto, "location", {
     return this._location
   }
   , set: function(v) {
-    if(v !== this.location) {
+    if(v !== this._location) {
       this._location = v
-      this.gl.bindAttribLocation(this._program, v, this._name)
-      this.gl.linkProgram(this._program)
-      this.relink()
+      this._gl.bindAttribLocation(this._program, v, this._name)
+      this._gl.linkProgram(this._program)
+      this._relink()
     }
   }
 })
@@ -108,6 +97,7 @@ function addVectorAttribute(gl, program, location, dimension, obj, name, doLink)
   var attr = new ShaderAttribute(gl, program, location, dimension, name, constFunc, doLink)
   Object.defineProperty(obj, name, {
     set: function(x) {
+      gl.disableVertexAttribArray(attr._location)
       constFunc(gl, attr._location, x)
       return x
     }
@@ -149,6 +139,7 @@ function createAttributeWrapper(gl, program, attributes, doLink) {
   }
   return obj
 }
+
 },{}],3:[function(require,module,exports){
 "use strict"
 
@@ -182,7 +173,8 @@ function createUniformWrapper(gl, program, uniforms, locations) {
       case "float":
         return "gl.uniform1f(locations[" + index + "],obj" + path + ")"
       default:
-        if(type.indexOf("vec") >= 0 && type.length <= 5) {
+        var vidx = type.indexOf("vec")
+        if(0 <= vidx && vidx <= 1 && type.length === 4 + vidx) {
           var d = type.charCodeAt(type.length-1) - 48
           if(d < 2 || d > 4) {
             throw new Error("Invalid data type")
@@ -196,7 +188,7 @@ function createUniformWrapper(gl, program, uniforms, locations) {
             default:
               throw new Error("Unrecognized data type for vector " + name + ": " + type)
           }
-        } else if(type.charAt(0) === "m" && type.length === 5) {
+        } else if(type.indexOf("mat") === 0 && type.length === 4) {
           var d = type.charCodeAt(type.length-1) - 48
           if(d < 2 || d > 4) {
             throw new Error("Invalid uniform dimension type for matrix " + name + ": " + type)
@@ -258,7 +250,8 @@ function createUniformWrapper(gl, program, uniforms, locations) {
       case "float":
         return 0.0
       default:
-        if(type.indexOf("vec") >= 0 && type.length <= 5) {
+        var vidx = type.indexOf("vec")
+        if(0 <= vidx && vidx <= 1 && type.length === 4 + vidx) {
           var d = type.charCodeAt(type.length-1) - 48
           if(d < 2 || d > 4) {
             throw new Error("Invalid data type")
@@ -267,7 +260,7 @@ function createUniformWrapper(gl, program, uniforms, locations) {
             return dup(d, false)
           }
           return dup(d)
-        } else if(type.charAt(0) === "m" && type.length <= 5) {
+        } else if(type.indexOf("mat") === 0 && type.length === 4) {
           var d = type.charCodeAt(type.length-1) - 48
           if(d < 2 || d > 4) {
             throw new Error("Invalid uniform dimension type for matrix " + name + ": " + type)
@@ -432,16 +425,26 @@ var createAttributeWrapper = require("./lib/create-attributes.js")
 var makeReflect = require("./lib/reflect.js")
 
 //Shader object
-function Shader(gl, prog, attributes, typeInfo) {
+function Shader(gl, prog, attributes, typeInfo, vertShader, fragShader) {
   this.gl = gl
-  this.program = prog
+  this.handle = prog
   this.attributes = attributes
   this.types = typeInfo
+  this.vertexShader = vertShader
+  this.fragmentShader = fragShader
 }
 
 //Binds the shader
 Shader.prototype.bind = function() {
-  this.gl.useProgram(this.program)
+  this.gl.useProgram(this.handle)
+}
+
+//Destroy shader, release resources
+Shader.prototype.dispose = function() {
+  var gl = this.gl
+  gl.deleteShader(this.vertexShader)
+  gl.deleteShader(this.fragmentShader)
+  gl.deleteProgram(this.handle)
 }
 
 //Relinks all uniforms
@@ -500,7 +503,11 @@ function createShader(
       doLink), { 
         uniforms: makeReflect(uniforms), 
         attributes: makeReflect(attributes)
-    })
+    },
+    vertShader,
+    fragShader
+  )
+
   Object.defineProperty(shader, "uniforms", createUniformWrapper(
     gl, 
     program, 
@@ -8297,7 +8304,6 @@ function GlslTransition (canvas, opts) {
     var shader = createShader(gl, VERTEX_SHADER, glsl, uniforms, attributes);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     shader.attributes.position.pointer();
-    shader.attributes.position.enable();
     return shader;
   }
   

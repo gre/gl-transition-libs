@@ -118,7 +118,6 @@ function GlslTransition (canvas, opts) {
     var shader = createShader(gl, VERTEX_SHADER, glsl, uniforms, attributes);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     shader.attributes.position.pointer();
-    shader.attributes.position.enable();
     return shader;
   }
   
