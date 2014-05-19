@@ -4,6 +4,7 @@
 
 [**Open The Example**](https://gre.github.com/glsl-transition/example)
 
+[Please checkout GLSL.io](http://glsl.io/)
 
 # Getting Started
 
