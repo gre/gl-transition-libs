@@ -8306,7 +8306,7 @@ function GlslTransition (canvas, opts) {
     shader.attributes.position.pointer();
     return shader;
   }
-  
+
   function draw () {
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
@@ -8499,6 +8499,12 @@ function GlslTransition (canvas, opts) {
     };
     transition.draw = draw;
     transition.setUniform = setUniform;
+    transition.destroy = function () {
+      if (currentShader === shader) {
+        currentShader = null;
+      }
+      shader.dispose();
+    };
 
     transition.getUniforms = function () {
       return extend({}, glslTypes);
