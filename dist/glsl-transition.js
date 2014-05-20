@@ -8401,7 +8401,7 @@ function GlslTransition (canvas, opts) {
       var d = Q.defer();
       currentAnimationD = d;
       (function render () {
-        if (!currentAnimationD) return;
+        if (currentAnimationD !== d) return;
         ++ frames;
         var now = Date.now();
         var p = (now-transitionStart)/transitionDuration;
