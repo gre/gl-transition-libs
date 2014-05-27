@@ -42,6 +42,13 @@ function extend (obj) {
 
 function identity (x) { return x; }
 
+function TransitionAbortedError (message) {
+  this.message = message;
+  this.stack = (new Error()).stack;
+}
+TransitionAbortedError.prototype = new Error();
+TransitionAbortedError.prototype.name = "TransitionAbortedError";
+
 /**
  * API:
  * GlslTransition(canvas)(glslSource, options)(uniforms, duration, easing) // => Promise
@@ -72,7 +79,7 @@ function GlslTransition (canvas, opts) {
     e.preventDefault();
     gl = null;
     if (currentAnimationD) {
-      currentAnimationD.reject(e);
+      currentAnimationD.reject(new TransitionAbortedError("WebGL Context Lost"));
       currentAnimationD = null;
     }
     for (var i=0; i<transitions.length; ++i) {
@@ -344,7 +351,7 @@ function GlslTransition (canvas, opts) {
    */
   createTransition.abort = function () {
     if (currentAnimationD) {
-      currentAnimationD.reject(new Error("Transition aborted."));
+      currentAnimationD.reject(new TransitionAbortedError("Transition aborted by user."));
       currentAnimationD = null;
     }
   };
@@ -354,6 +361,8 @@ function GlslTransition (canvas, opts) {
 
   return createTransition;
 }
+
+GlslTransition.TransitionAbortedError = TransitionAbortedError;
 
 GlslTransition.defaults = {
   contextAttributes: { preserveDrawingBuffer: true }
