@@ -22,7 +22,9 @@
   "dependencies": {
     "q": "1.0.x",
     "gl-shader-core": "2.0.x",
-    "glsl-exports": "0.0.x"
+    "glsl-exports": "0.0.x",
+    "raf": "2.0.x",
+    "performance-now": "~0.1.3"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

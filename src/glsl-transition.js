@@ -1,6 +1,8 @@
 var Q = require("q");
 var createShader = require("gl-shader-core");
 var glslExports = require("glsl-exports");
+var requestAnimationFrame = require("raf");
+var now = require("performance-now");
 
 var VERTEX_SHADER = 'attribute vec2 position; void main() { gl_Position = vec4(2.0*position-1.0, 0.0, 1.0);}';
 var VERTEX_TYPES = glslExports(VERTEX_SHADER);
@@ -18,18 +20,6 @@ function getWebGLContext (canvas, options) {
     }
   }
 }
-
-// requestAnimationFrame polyfill
-var requestAnimationFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          window.mozRequestAnimationFrame    ||
-          window.webkitRequestAnimationFrame ||
-          function (callback) {
-            window.setTimeout(callback, 1000 / 60);
-          };
-})();
 
 function extend (obj) {
   for(var a=1; a<arguments.length; ++a) {
@@ -222,15 +212,15 @@ function GlslTransition (canvas, opts) {
     }
 
     function animate (transitionDuration, transitionEasing) {
-      var transitionStart = Date.now();
+      var transitionStart = now();
       var frames = 0;
       var d = Q.defer();
       currentAnimationD = d;
       (function render () {
         if (currentAnimationD !== d) return;
         ++ frames;
-        var now = Date.now();
-        var p = (now-transitionStart)/transitionDuration;
+        var t = now();
+        var p = (t-transitionStart)/transitionDuration;
         try {
           if (p<1) {
             requestAnimationFrame(render, canvas);
@@ -240,7 +230,7 @@ function GlslTransition (canvas, opts) {
           else {
             setProgress(transitionEasing(1));
             draw();
-            d.resolve({ startAt: transitionStart, endAt: now, elapsedTime: now-transitionStart, frames: frames }); // Resolve some meta-data of the successful transition.
+            d.resolve({ startAt: transitionStart, endAt: t, elapsedTime: t-transitionStart, frames: frames }); // Resolve some meta-data of the successful transition.
             currentAnimationD = null;
           }
         }
