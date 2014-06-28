@@ -1,6 +1,6 @@
 {
   "name": "glsl-transition",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "description": "Make Transitions Effects with the power of WebGL Shaders (GLSL)",
   "keywords": [
     "glsl",
@@ -20,7 +20,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "glsl-transition-core": "0.1.1",
+    "glsl-transition-core": "0.1.x",
     "q": "1.0.x",
     "raf": "2.0.1",
     "performance-now": "0.1.3"

@@ -2766,7 +2766,14 @@ function GlslTransitionCore (canvas, opts) {
   function syncTexture (texture, image) {
     gl.bindTexture(gl.TEXTURE_2D, texture);
     if (image) {
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      if (typeof image === "function") {
+        // This allows everything. It is a workaround to define non Image/Canvas/Video textures like using Array.
+        // We may use gl-texture2d in the future but it brings more deps to the project
+        image(gl);
+      }
+      else {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      }
     }
     else {
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2, 2, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -2835,7 +2842,7 @@ function GlslTransitionCore (canvas, opts) {
       var w = canvas.width, h = canvas.height;
       gl.viewport(0, 0, w, h);
       if (currentShader) {
-        currentShader.uniforms[RESOLUTION_UNIFORM] = [ w, h ];
+        currentShader.uniforms[RESOLUTION_UNIFORM] = new Float32Array([ w, h ]);
       }
       var x1 = 0, x2 = w, y1 = 0, y2 = h;
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
@@ -2885,7 +2892,10 @@ function GlslTransitionCore (canvas, opts) {
       if (currentShader === shader) {
         currentShader = null;
       }
-      shader.dispose();
+      if (shader) {
+        shader.dispose();
+        shader = null;
+      }
     }
 
     function getUniforms () {
@@ -2893,6 +2903,9 @@ function GlslTransitionCore (canvas, opts) {
     }
 
     var transition = {
+      getGL: function () {
+        return gl;
+      },
       load: function () {
         // Possibly shader was not loaded.
         if (!shader) load();
