@@ -8787,9 +8787,11 @@ function GlslTransition (canvas/*, opts*/) {
 
     if (!currentAnimationD) transitionCore.load();
 
-    function animate (transitionDuration, transitionEasing) {
+    function animate (transitionDuration, transitionEasing, allUniforms) {
       var transitionStart = now();
       var frames = 0;
+      var fromWillNeedRefresh = !(allUniforms.from instanceof window.HTMLImageElement);
+      var toWillNeedRefresh = !(allUniforms.to instanceof window.HTMLImageElement);
       var d = Q.defer();
       currentAnimationD = d;
       (function render () {
@@ -8800,10 +8802,14 @@ function GlslTransition (canvas/*, opts*/) {
         try {
           if (p<1) {
             requestAnimationFrame(render, canvas);
+            if (fromWillNeedRefresh) transitionCore.setUniform("from", allUniforms.from);
+            if (toWillNeedRefresh) transitionCore.setUniform("to", allUniforms.to);
             transitionCore.setProgress(transitionEasing(p));
             transitionCore.draw();
           }
           else {
+            if (fromWillNeedRefresh) transitionCore.setUniform("from", allUniforms.from);
+            if (toWillNeedRefresh) transitionCore.setUniform("to", allUniforms.to);
             transitionCore.setProgress(transitionEasing(1));
             transitionCore.draw();
             d.resolve({ startAt: transitionStart, endAt: t, elapsedTime: t-transitionStart, frames: frames }); // Resolve some meta-data of the successful transition.
@@ -8867,7 +8873,7 @@ function GlslTransition (canvas/*, opts*/) {
       transitionCore.syncViewport();
 
       // Perform the transition
-      return animate(duration, easing);
+      return animate(duration, easing, allUniforms);
     }
 
     transition.destroy = function () {
