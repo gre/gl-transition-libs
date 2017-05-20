@@ -1,0 +1,35 @@
+.editor-status-bar {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  padding: 0 5px;
+  font-size: 10px;
+  font-family: Monoid;
+  box-sizing: border-box;
+  overflow: auto;
+  white-space: nowrap;
+}
+.editor-status-bar.error {
+  background-color: #C33;
+  color: #FFF;
+}
+.editor-status-bar.warn {
+  background-color: #d73;
+  color: #FFF;
+}
+.editor-status-bar.success {
+  background-color: #3C6;
+  color: #FFF;
+}
+.editor-status-bar.info {
+  background-color: #666;
+  color: #FFF;
+}
+.editor-status-bar.success, .editor-status-bar.info, .editor-status-bar.error, .editor-status-bar.warn {
+  transition: none;
+}
+.editor-status-bar {
+  background-color: #666;
+  color: #999;
+  transition: 0.5s;
+}

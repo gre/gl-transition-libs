@@ -1,0 +1,33 @@
+{
+  "name": "transitions",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "flow-bin": "^0.46.0",
+    "gl-react": "next",
+    "gl-react-dom": "next",
+    "gl-shader": "^4.2.1",
+    "gl-transition-utils": "^1.0.0",
+    "glsl-parser": "^2.0.0",
+    "glsl-tokenizer": "^2.1.2",
+    "glsl-uniforms-editor": "^0.5.0",
+    "glsldoc": "^0.0.4",
+    "highlight.js": "^9.11.0",
+    "performance-now": "^2.1.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-gl-transition": "^1.0.0",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1"
+  },
+  "devDependencies": {
+    "react-scripts": "0.9.5"
+  },
+  "scripts": {
+    "prepare": "./src/images/generate.sh",
+    "start": "yarn run prepare && react-scripts start",
+    "build": "yarn run prepare && react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

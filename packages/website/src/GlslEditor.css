@@ -1,0 +1,11 @@
+.glsl-editor {
+  width: 100%;
+  height: 100%;
+}
+
+.glsl-editor .ace_step.error {
+  background: rgba(255, 0, 0, 0.3) !important;
+}
+.glsl-editor .ace_step.warn {
+  background: rgba(255, 100, 0, 0.3) !important;
+}

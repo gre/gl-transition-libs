@@ -1,0 +1,11 @@
+.transitions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.transitions > * {
+  margin: 10px;
+}

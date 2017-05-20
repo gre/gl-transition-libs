@@ -1,0 +1,18 @@
+@font-face {
+  font-family: "Monoid Regular";
+  src: url("./Monoid-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Monoid Bold";
+  src: url("Monoid-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Monoid Italic";
+  src: url("Monoid-Italic.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}

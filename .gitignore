@@ -1,0 +1,9 @@
+node_modules/
+packages/*/lib/
+lerna-debug.log
+npm-debug.log
+.DS_Store
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

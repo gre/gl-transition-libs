@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`just the transition function is fine 1`] = `
+Object {
+  "data": Object {
+    "author": null,
+    "defaultParams": Object {},
+    "glsl": "
+      vec4 transition (vec2 uv) {
+        return vec4(0.0);
+      }
+  ",
+    "license": null,
+    "name": "test",
+    "paramsTypes": Object {},
+  },
+  "errors": Array [],
+}
+`;
+
+exports[`must define the transition function 1`] = `
+Object {
+  "data": Object {
+    "author": null,
+    "defaultParams": Object {},
+    "glsl": "
+
+",
+    "license": null,
+    "name": "test",
+    "paramsTypes": Object {},
+  },
+  "errors": Array [
+    Object {
+      "code": "GLT_transition_no_impl",
+      "message": "'vec4 transition(vec2 uv)' function is not implemented",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`must not override existing things 1`] = `
+Object {
+  "data": Object {
+    "author": null,
+    "defaultParams": Object {
+      "from": 42,
+      "to": 42,
+    },
+    "glsl": "
+uniform float from; /* = 42. */
+uniform float to; /* = 42. */
+vec4 transition (vec2 uv) {}
+",
+    "license": null,
+    "name": "test",
+    "paramsTypes": Object {
+      "from": "float",
+      "to": "float",
+    },
+  },
+  "errors": Array [
+    Object {
+      "code": "GLT_reserved_variable_used",
+      "column": 18,
+      "line": 2,
+      "message": "You have defined these forbidden variables in the scope: from. They are reserved for the wrapping code.",
+      "type": "error",
+    },
+    Object {
+      "code": "GLT_reserved_variable_used",
+      "column": 16,
+      "line": 3,
+      "message": "You have defined these forbidden variables in the scope: to. They are reserved for the wrapping code.",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`not providing a default creates a warning 1`] = `
+Object {
+  "author": "gre",
+  "defaultParams": Object {
+    "color": Array [
+      0,
+      0,
+      0,
+    ],
+  },
+  "glsl": "
+// Author: gre
+// License: MIT
+uniform vec3 color;
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv) + vec4(progress*color, 1.0),
+    getToColor(uv) + vec4((1.0-progress)*color, 1.0),
+    progress
+  );
+}
+  ",
+  "license": "MIT",
+  "name": "burn-2",
+  "paramsTypes": Object {
+    "color": "vec3",
+  },
+}
+`;
+
+exports[`other example 1`] = `
+Object {
+  "data": Object {
+    "author": "gre",
+    "defaultParams": Object {
+      "color": Array [
+        0.9,
+        0.4,
+        0.2,
+      ],
+      "foo": 42,
+      "yo": null,
+    },
+    "glsl": "
+  // author: gre
+  // License: MIT
+  uniform vec3 color /* = vec3(0.9, 0.4, 0.2) */;
+  uniform float foo; /* = 42. */
+  uniform sampler2D yo;
+  vec4 transition (/* weird comment in the middle */vec2 uv) {
+    return mix(
+    getFromColor(uv) + vec4(progress*color, 1.0),
+    getToColor(uv) + vec4((1.0-progress)*color, 1.0),
+    progress);
+  }
+  ",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": Object {
+      "color": "vec3",
+      "foo": "float",
+      "yo": "sampler2D",
+    },
+  },
+  "errors": Array [],
+}
+`;
+
+exports[`parse correctly burn.glsl 1`] = `
+Object {
+  "data": Object {
+    "author": "gre",
+    "defaultParams": Object {
+      "color": Array [
+        0.9,
+        0.4,
+        0.2,
+      ],
+    },
+    "glsl": "
+// author: gre
+// license: MIT
+uniform vec3 color; // = vec3(0.9, 0.4, 0.2)
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv) + vec4(progress*color, 1.0),
+    getToColor(uv) + vec4((1.0-progress)*color, 1.0),
+    progress
+  );
+}
+  ",
+    "license": "MIT",
+    "name": "burn",
+    "paramsTypes": Object {
+      "color": "vec3",
+    },
+  },
+  "errors": Array [],
+}
+`;
+
+exports[`you must define the correct signature 1`] = `
+Object {
+  "data": Object {
+    "author": null,
+    "defaultParams": Object {},
+    "glsl": "void transition (vec2 uv) {}",
+    "license": null,
+    "name": "test",
+    "paramsTypes": Object {},
+  },
+  "errors": Array [
+    Object {
+      "code": "GLT_GLSL_error",
+      "line": 1,
+      "message": "GLSL code error: expected \`{\`, got {}
+{} at line 1",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`you must define uv params 1`] = `
+Object {
+  "data": Object {
+    "author": null,
+    "defaultParams": Object {},
+    "glsl": "
+      vec4 transition () {
+        return vec4(0.0);
+      }
+  ",
+    "license": null,
+    "name": "test",
+    "paramsTypes": Object {},
+  },
+  "errors": Array [
+    Object {
+      "code": "GLT_transition_wrong_type",
+      "column": 21,
+      "line": 2,
+      "message": "transition must be a function with following signature: 'vec4 transition(vec2 uv)'",
+      "type": "error",
+    },
+  ],
+}
+`;

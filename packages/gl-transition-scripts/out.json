@@ -1,0 +1,1 @@
+[{"name":"fade","author":"gre","license":"MIT","paramsTypes":{},"defaultParams":{},"glsl":"// author: gre\n// license: MIT\n\nvec4 transition (vec2 uv) {\n  return mix(\n    getFromColor(uv),\n    getToColor(uv),\n    progress\n  );\n}\n"}]

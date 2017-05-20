@@ -1,0 +1,44 @@
+
+.glsl-documentation {
+  margin-top: 20px;
+}
+.glsl-documentation p {
+  margin: 2px 0;
+}
+.glsl-documentation .glsl-token-type-name {
+  margin-bottom: 2px;
+  overflow: auto;
+}
+.glsl-documentation .glsl-token-type-name  .glsl-token-type {
+  float: right;
+  margin-right: 0.5em;
+}
+
+.glsl-documentation .glsl-token-type-name .glsl-token-name {
+  float: left;
+}
+
+.glsl-documentation .glsl-token-type {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.5em;
+  background: #000;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+.glsl-documentation .glsl-token-name {
+  font-family: monospace;
+}
+.glsl-documentation .glsl-token-usage {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.8em;
+}
+.glsl-documentation .glsl-token-description {
+  font-weight: 300;
+  font-style: italic;
+  padding: 0.6em;
+  font-size: 0.8em;
+  opacity: 0.7;
+  background: #222;
+}

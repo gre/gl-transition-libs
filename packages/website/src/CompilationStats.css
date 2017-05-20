@@ -1,0 +1,30 @@
+.compilation-stats {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  width: 100px;
+}
+.compilation-stats-time {
+  padding: 10px 5px;
+}
+.compilation-stats-time .label {
+  font-size: 0.8em;
+}
+.compilation-stats-time .value {
+  font-size: 1.4em;
+  font-family: Monoid;
+}
+.compilation-stats-time .unit {
+  font-size: 0.6em;
+  vertical-align: baseline;
+  font-family: Monoid;
+}
+.compilation-stats-time .color-green {
+  color: #6F6;
+}
+.compilation-stats-time .color-yellow {
+  color: #FE3;
+}
+.compilation-stats-time .color-red {
+  color: #F55;
+}

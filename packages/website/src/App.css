@@ -1,0 +1,59 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App > header {
+  background: #111;
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+}
+
+.App .logo {
+  align-self: center;
+  font-weight: bold;
+  padding: 0 1em;
+}
+
+.App .logo span:first-child {
+  color: #fff;
+}
+.App .logo span:last-child {
+  color: #fc6;
+}
+
+.App > header > nav {
+  display: flex;
+  flex-direction: row;
+}
+.App > header > nav > a {
+  padding: 0.7em 1em;
+  color: #ccc;
+}
+.App > header > nav > a:hover {
+  color: #fff;
+}
+.App > header > nav > a.active {
+  background: #444;
+  color: #fff;
+}
+
+.App > main {
+  background: #333;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.App > main .toolbar {
+  background: #444;
+  width: 100%;
+  height: 40px;
+  padding: 0 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}

@@ -1,0 +1,22 @@
+{
+  "name": "react-gl-transition",
+  "version": "1.0.0",
+  "main": "lib/GLTransition.js",
+  "license": "MIT",
+  "scripts": {
+    "compile": "babel --presets es2015,stage-1,react -d lib/ src/",
+    "prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1"
+  },
+  "peerDependencies": {
+    "gl-react": "^3.5.0",
+    "react": "^15.5.4"
+  },
+  "dependencies": {
+  }
+}
