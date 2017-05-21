@@ -52,3 +52,8 @@ when merged, Travis runs to effectively compile & deploy it on NPM.
 - deploy: compile && deploy on NPM
 
 - a way for travis to autocomment on github? :o
+
+
+## PR workflow
+
+- travis doing the full build on a PR is one thing. but what would be neat is to also comment on that PR with feedback for the user. the potential errors/warns but also with, let's say, a preview of the transition in a GIF 😱

@@ -2,7 +2,7 @@
 import program from "commander";
 import fs from "fs";
 import path from "path";
-import createGL from "headless-gl";
+import createGL from "gl";
 import transformSource from "gl-transition-utils/lib/transformSource";
 import createWebGLCompiler from "gl-transition-utils/lib/createWebGLCompiler";
 

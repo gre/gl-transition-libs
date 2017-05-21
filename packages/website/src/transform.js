@@ -10,14 +10,21 @@ const gl = canvas.getContext("webgl");
 if (!gl) throw new Error("GL validation context could not be created");
 const browserWebGLCompiler = createWebGLCompiler(gl);
 
-export default (filename: string, glsl: string) => {
+export default (
+  filename: string,
+  glsl: string,
+  extraErrorsForTransitionResult: * = () => []
+) => {
   const compilationRes = browserWebGLCompiler(glsl);
   const transitionRes = transformSource(filename, glsl);
+  const extraErrors = extraErrorsForTransitionResult(transitionRes);
   return {
     data: {
       transition: transitionRes.data,
       compilation: compilationRes.data,
     },
-    errors: compilationRes.errors.concat(transitionRes.errors),
+    errors: compilationRes.errors
+      .concat(transitionRes.errors)
+      .concat(extraErrors),
   };
 };

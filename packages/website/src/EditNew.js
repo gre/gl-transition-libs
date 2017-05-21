@@ -4,6 +4,20 @@ import URL from "url";
 import Editor from "./Editor";
 import transform from "./transform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
+import { transitionsByName } from "./data";
+
+const transformWithoutNameCollision = (filename, glsl) =>
+  transform(filename, glsl, ({ data: { name } }) => {
+    const errors = [];
+    if (name in transitionsByName) {
+      errors.push({
+        type: "warn",
+        code: "GLT_invalid_filename",
+        message: "Transition '" + name + "' already exists",
+      });
+    }
+    return errors;
+  });
 
 const initialTransitionResult = transform(
   ".glsl",
@@ -27,7 +41,7 @@ export default class EditNew extends Component {
 
   onFragChange = (glsl: string) => {
     this.setState(({ transitionResult }) => ({
-      transitionResult: transform(
+      transitionResult: transformWithoutNameCollision(
         transitionResult.data.transition.name + ".glsl",
         glsl
       ),
@@ -36,7 +50,7 @@ export default class EditNew extends Component {
 
   onFileNameChange = ({ target: { value } }: *) => {
     this.setState(({ transitionResult }) => ({
-      transitionResult: transform(
+      transitionResult: transformWithoutNameCollision(
         value + ".glsl",
         transitionResult.data.transition.glsl
       ),
@@ -48,6 +62,7 @@ export default class EditNew extends Component {
     const invalidFilename = transitionResult.errors.some(
       e => e.code === "GLT_invalid_filename"
     );
+    const { name } = transitionResult.data.transition;
     return (
       <Editor
         errors={transitionResult.errors}
@@ -72,7 +87,7 @@ export default class EditNew extends Component {
               type="text"
               placeholder="Transition Name"
               autoFocus
-              value={transitionResult.data.transition.name}
+              value={name}
               onChange={this.onFileNameChange}
               maxLength={40}
             />
@@ -85,9 +100,12 @@ export default class EditNew extends Component {
               pathname: "https://github.com/" +
                 githubRepoPath +
                 "/new/master" +
-                githubRepoFolder,
+                githubRepoFolder +
+                "/" +
+                name +
+                ".glsl",
               query: {
-                filename: transitionResult.data.transition.name + ".glsl",
+                filename: name + ".glsl",
                 value: transitionResult.data.transition.glsl,
               },
             })}

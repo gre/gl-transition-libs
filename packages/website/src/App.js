@@ -12,7 +12,7 @@ import { transitionsByName } from "./data";
 const renderEditor = (props: *) => {
   const { name } = props.match.params;
   if (name in transitionsByName) {
-    return <Edit {...props} transition={transitionsByName[name]} />;
+    return <Edit {...props} name={name} />;
   }
   if (name) {
     return <NotFound {...props} />;

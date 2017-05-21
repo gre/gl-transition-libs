@@ -4,16 +4,17 @@ import URL from "url";
 import Editor from "./Editor";
 import transform from "./transform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
+import { transitionsByName } from "./data";
 
 export default class Edit extends Component {
   props: {
-    transition: *,
+    name: string,
   };
 
   state = {
     transitionResult: transform(
-      this.props.transition.name + ".glsl",
-      this.props.transition.glsl
+      this.props.name + ".glsl",
+      transitionsByName[this.props.name].glsl
     ),
   };
 
@@ -27,17 +28,17 @@ export default class Edit extends Component {
   };
 
   render() {
-    const { transition } = this.props;
+    const { name } = this.props;
     const { transitionResult } = this.state;
+    const transition = transitionsByName[name];
     const submitPatchHref = URL.format({
       pathname: "https://github.com/" +
         githubRepoPath +
-        "/new/master" +
-        githubRepoFolder,
-      query: {
-        filename: transitionResult.data.transition.name + ".glsl",
-        value: transitionResult.data.transition.glsl,
-      },
+        "/edit/master" +
+        githubRepoFolder +
+        "/" +
+        name +
+        ".glsl",
     });
     const fileHref = URL.format({
       pathname: "https://github.com/" +
@@ -45,7 +46,7 @@ export default class Edit extends Component {
         "/tree/master" +
         githubRepoFolder +
         "/" +
-        transitionResult.data.name +
+        name +
         ".glsl",
     });
     return (
