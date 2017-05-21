@@ -15,7 +15,7 @@ class EditorVignette extends Component {
   render() {
     const { transition } = this.props;
     return (
-      <Link to={"/editor/" + transition.name}>
+      <Link to={"/transition/" + transition.name}>
         <Vignette
           transition={transition}
           from={fromImage}

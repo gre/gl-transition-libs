@@ -55,6 +55,8 @@ const blacklistScope = [
   "to",
 ];
 
+const reservedTransitionNames = ["new"];
+
 const typeInfos = {
   float: {
     primitiveType: "float",
@@ -232,11 +234,17 @@ export default function transformSource(
         code: "GLT_invalid_filename",
         message: `filename is too long`,
       });
-    } else if (!data.name.match(/^[a-zA-Z0-9-_]+$/)) {
+    } else if (!name.match(/^[a-zA-Z0-9-_]+$/)) {
       errors.push({
         type: "error",
         code: "GLT_invalid_filename",
         message: `filename can only contains letters, numbers or - and _ characters. Got '${filename}'`,
+      });
+    } else if (reservedTransitionNames.includes(name)) {
+      errors.push({
+        type: "error",
+        code: "GLT_invalid_filename",
+        message: `filename cannot be called '${name}'.`,
       });
     }
   } else {

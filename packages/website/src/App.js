@@ -35,15 +35,15 @@ class App extends Component {
           </Link>
           <nav>
             <NavLink exact to="/gallery">Gallery</NavLink>
-            <NavLink to="/editor">Editor</NavLink>
+            <NavLink to="/transition/new">Editor</NavLink>
           </nav>
         </header>
         <main>
           <Switch>
             <Route exact path="/" component={notImpl /*About*/} />
             <Route path="/gallery" component={Gallery} />
-            <Route path="/editor/:name" component={renderEditor} />
-            <Route path="/editor" component={renderEditor} />
+            <Route path="/transition/new" component={renderEditor} />
+            <Route path="/transition/:name" component={renderEditor} />
             <Route component={NotFound} />
           </Switch>
         </main>
