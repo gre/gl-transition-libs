@@ -96,6 +96,7 @@ export default class EditNew extends Component {
           <a
             className="primary-btn"
             target="_blank"
+            rel="noopener noreferrer"
             href={URL.format({
               pathname: "https://github.com/" +
                 githubRepoPath +

@@ -1,13 +1,15 @@
 //@flow
 import React, { Component } from "react";
-import { Route, NavLink, Switch, Link } from "react-router-dom";
+import { Redirect, Route, NavLink, Switch, Link } from "react-router-dom";
 import "./App.css";
 import Gallery from "./Gallery";
 import Edit from "./Edit";
 import EditNew from "./EditNew";
-import About from "./About";
+//import About from "./About";
 import NotFound from "./NotFound";
 import { transitionsByName } from "./data";
+
+const notImpl = () => <Redirect to={{ pathname: "/gallery" }} />;
 
 const renderEditor = (props: *) => {
   const { name } = props.match.params;
@@ -38,7 +40,7 @@ class App extends Component {
         </header>
         <main>
           <Switch>
-            <Route exact path="/" component={About} />
+            <Route exact path="/" component={notImpl /*About*/} />
             <Route path="/gallery" component={Gallery} />
             <Route path="/editor/:name" component={renderEditor} />
             <Route path="/editor" component={renderEditor} />

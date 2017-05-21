@@ -155,6 +155,7 @@ export default class Editor extends Component {
                 <a
                   href="https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <i className="fa fa-book" />
                   GLSL Spec.
@@ -162,6 +163,7 @@ export default class Editor extends Component {
                 <a
                   href="https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf"
                   target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <i className="fa fa-file-code-o" />
                   Quick Ref.

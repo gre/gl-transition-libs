@@ -1,8 +1,8 @@
 //@flow
 import React, { Component } from "react";
+import "./GlslEditor.css";
 const { ace } = window;
 ace.require("ace/ext/language_tools");
-import "./GlslEditor.css";
 
 export default class GlslEditor extends Component {
   props: {

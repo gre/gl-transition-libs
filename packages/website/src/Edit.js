@@ -58,13 +58,18 @@ export default class Edit extends Component {
       >
         <div className="toolbar">
           <h2 style={{ marginLeft: 366 }}>
-            <a href={fileHref} target="_blank">
+            <a href={fileHref} target="_blank" rel="noopener noreferrer">
               <i className="fa fa-github" />
               {" "}
               <strong>{transition.name}</strong> by <em>{transition.author}</em>
             </a>
           </h2>
-          <a className="primary-btn" target="_blank" href={submitPatchHref}>
+          <a
+            className="primary-btn"
+            target="_blank"
+            rel="noopener noreferrer"
+            href={submitPatchHref}
+          >
             <i className="fa fa-github" />
             {" "}
             Submit Patch on Github
