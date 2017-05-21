@@ -1,7 +1,7 @@
 # general
 
 - write short blog post.
-- a bot that comment on new PR with feedback for the user: the compilation results (& potential errors/warns) + a preview of the transition in a GIF 😱
+- travis should tag the releases on NPM too.
 - review the old issues, see if we miss anything.
 
 # editor features
