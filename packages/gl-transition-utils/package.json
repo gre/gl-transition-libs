@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "compile": "babel -d lib/ src/ && flow-copy-source src/ lib/",
+    "watch": "babel -w -d lib/ src/",
     "prepublish": "npm run compile",
     "test": "jest src"
   },

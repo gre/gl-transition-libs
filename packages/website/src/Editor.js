@@ -27,7 +27,6 @@ type Props = {
 
 type State = {
   transitionParams: Object,
-  lastCompilingTransition: Transition,
   token: *,
 };
 
@@ -35,31 +34,16 @@ export default class Editor extends Component {
   props: Props;
   state: State = {
     transitionParams: this.props.transition.defaultParams,
-    lastCompilingTransition: this.props.transition,
     token: null,
   };
 
   componentWillReceiveProps(props: Props) {
-    this.setState((state: State) => {
-      let { transitionParams, lastCompilingTransition } = state;
-      let mutation;
-
-      const compilationErrors = props.errors.filter(
-        e => e.code === "WebGL_error"
-      );
-      if (compilationErrors.length === 0) {
-        lastCompilingTransition = props.transition;
-        mutation = {
-          ...mutation,
-          lastCompilingTransition,
-        };
-      }
-
-      const newDefaultParams = lastCompilingTransition.defaultParams;
+    if (!props.errors.some(e => e.code === "WebGL_error")) {
+      const newDefaultParams = props.transition.defaultParams;
       const oldDefaultParams = this.props.transition.defaultParams;
       if (newDefaultParams !== oldDefaultParams) {
         // synchronise the params
-        transitionParams = { ...transitionParams };
+        const transitionParams = { ...this.state.transitionParams };
         for (let key in oldDefaultParams) {
           if (!(key in newDefaultParams)) {
             // key was removed !
@@ -72,10 +56,9 @@ export default class Editor extends Component {
             transitionParams[key] = newDefaultParams[key];
           }
         }
-        mutation = { ...mutation, transitionParams };
+        this.setState({ transitionParams });
       }
-      return mutation;
-    });
+    }
   }
 
   renderNoUniforms = () => {
@@ -131,7 +114,9 @@ export default class Editor extends Component {
       compilation,
       onFragChange,
     } = this.props;
-    const { lastCompilingTransition, transitionParams, token } = this.state;
+    const { transitionParams, token } = this.state;
+
+    const shaderCompiles = !errors.some(e => e.code === "WebGL_error");
 
     return (
       <div className="Editor">
@@ -141,43 +126,47 @@ export default class Editor extends Component {
             <CompilationStats compilation={compilation} />
           </div>
           <div className="leftpanel">
-            <Vignette
-              transition={transition}
-              from={fromImage}
-              to={toImage}
-              transitionParams={transitionParams}
-              width={256}
-              height={200}
-            />
-            <GlslUniformsEditor
-              className="uniforms-editor"
-              style={{ margin: "20px 0 20px -100px" }}
-              types={lastCompilingTransition.paramsTypes}
-              values={transitionParams}
-              onChange={this.onTransitionParamsChange}
-              width={356}
-              renderNoUniforms={this.renderNoUniforms}
-              labelStyle={this.labelStyle}
-              inputStyle={this.inputStyle}
-            />
-            <div style={{ flex: 1 }} />
-            <GlslContextualHelp token={token} />
-            <div style={{ flex: 2 }} />
-            <div className="links">
-              <a
-                href="https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf"
-                target="_blank"
-              >
-                <i className="fa fa-book" />
-                GLSL Spec.
-              </a>
-              <a
-                href="https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf"
-                target="_blank"
-              >
-                <i className="fa fa-file-code-o" />
-                Quick Ref.
-              </a>
+            <div className="section">
+              <Vignette
+                transition={transition}
+                from={fromImage}
+                to={toImage}
+                transitionParams={transitionParams}
+                width={256}
+                height={200}
+              />
+              {shaderCompiles
+                ? <GlslUniformsEditor
+                    className="uniforms-editor"
+                    style={{ margin: "20px 0 20px -100px" }}
+                    types={transition.paramsTypes}
+                    values={transitionParams}
+                    onChange={this.onTransitionParamsChange}
+                    width={356}
+                    renderNoUniforms={this.renderNoUniforms}
+                    labelStyle={this.labelStyle}
+                    inputStyle={this.inputStyle}
+                  />
+                : null}
+            </div>
+            <div className="section">
+              <GlslContextualHelp token={token} />
+              <div className="links">
+                <a
+                  href="https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf"
+                  target="_blank"
+                >
+                  <i className="fa fa-book" />
+                  GLSL Spec.
+                </a>
+                <a
+                  href="https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf"
+                  target="_blank"
+                >
+                  <i className="fa fa-file-code-o" />
+                  Quick Ref.
+                </a>
+              </div>
             </div>
           </div>
           <div className="main">

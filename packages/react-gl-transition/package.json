@@ -4,7 +4,8 @@
   "main": "lib/GLTransition.js",
   "license": "MIT",
   "scripts": {
-    "compile": "babel --presets es2015,stage-1,react -d lib/ src/",
+    "compile": "babel -d lib/ src/",
+    "watch": "babel -w -d lib/ src/",
     "prepublish": "npm run compile"
   },
   "devDependencies": {

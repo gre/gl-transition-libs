@@ -22,6 +22,9 @@
   display: flex;
   flex-direction: column;
 }
+.Editor .leftpanel .section {
+  flex: 1;
+}
 .Editor .main {
   flex: 1;
   display: flex;

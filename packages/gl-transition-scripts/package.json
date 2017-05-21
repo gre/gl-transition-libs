@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "description": "Utility for generating gl-transition",
   "bin": {
-    "gl-transition": "lib/index.js"
+    "gl-transition-transform": "bin/transform.js"
   },
   "license": "MIT",
   "scripts": {
     "compile": "babel -d lib/ src/",
+    "watch": "babel -w -d lib/ src/",
     "prepublish": "npm run compile"
   },
   "files": [
+    "bin",
     "lib",
     "src"
   ],
