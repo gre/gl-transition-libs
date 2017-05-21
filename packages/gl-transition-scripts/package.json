@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-scripts",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "description": "Utility for generating gl-transition",
   "bin": {
     "gl-transition-transform": "bin/glsl-transition-transform.js",
