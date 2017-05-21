@@ -1,6 +1,6 @@
 {
   "name": "gl-transition",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Vanilla library to run a gl-transition frame",
   "main": "index.js",
   "license": "MIT"

@@ -1,6 +1,6 @@
 {
   "name": "react-gl-transition",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "main": "lib/GLTransition.js",
   "license": "MIT",
   "scripts": {
@@ -18,6 +18,5 @@
     "gl-react": "^3.5.0",
     "react": "^15.5.4"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
