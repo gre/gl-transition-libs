@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-scripts",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Utility for generating gl-transition",
   "bin": {
     "gl-transition-transform": "bin/transform.js"
@@ -18,8 +18,8 @@
   ],
   "dependencies": {
     "commander": "^2.9.0",
-    "gl-transition-utils": "^1.0.0",
-    "headless-gl": "^3.0.7"
+    "gl": "^3.0.4",
+    "gl-transition-utils": "^1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
