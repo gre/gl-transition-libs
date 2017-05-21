@@ -3,6 +3,7 @@
   "scripts": {
     "postinstall": "lerna bootstrap --hoist --nohoist=headless-gl",
     "start": "cd packages/website && yarn start",
+    "build-website": "cd packages/website && yarn build",
     "test": "cd packages/gl-transition-utils && yarn test"
   },
   "devDependencies": {
