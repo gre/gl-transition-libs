@@ -1,27 +1,24 @@
-# TODO
+# general
 
-- finish editor. push on github.
-- move some code out to be used from outside: the GLTransitionUtils. gl-transitions-utils
-- setup gl-transitions repo with all requires scripts & config & travis auto-publishing to gl-transitions lib.
-- release a new gl-transition lib.
-- release a react-gl-transition lib. (or gl-react-transition :-O) it just renders the <Node> of gl-react.
 - write short blog post.
 
+- a bot that comment on new PR with feedback for the user: the compilation results (& potential errors/warns) + a preview of the transition in a GIF 😱
+
+- review the old issues, see if we miss anything.
+
 # editor features
+
+- gallery pagination
 
 - auto start the transition when not hovered & if shader compiles. (make it stop if window not focused xD)
 
 - if there are edits. need to prevent redirection!
 
-- write the home screen that will quickly explain the idea of gl transition, how it's hosted, how to use it.
+- write the / screen that quickly explain the idea of gl transition & how the repository works.
 
-- the transitions need be pulled from a glsl-transitions lib. We should not recompile them as we assume it's correct.
+- import in "UniformsEditor" and no longer use the lib
 
-- should just import in the "UniformsEditor" and no longer use the lib
-
-- improve design. font size, paddings, fonts
-
-- open the old issues, see if things to pick from.
+- better support of sampler2D params. today it works but it's not straightforward and don't help that you can set an Image url.
 
 - expandable EditorStatusBar
 
@@ -29,31 +26,8 @@
 
 - make a ratio preserving shader
 
-
 # glsl-transition -> gl-transition
 
-glsl-transition is the v1 format, that was a full shader. the v2 is now gl-transition that is a simpler part, more focused on the essential and that solve issues like handling the ratio.
+glsl-transition was the "v1" format, it was a full fragment shader. the v2 is now called gl-transition and is more essential: just a transition(uv) color function to implement, decoupling solving issues like handling the from/to ratio.
 
-github: rename all repo that are "glsl-transition*" to "gl-transition*"
-npm: release a new lib for each "gl-transition*"
-npm: all the "glsl-transition*" will become DEPRECATED in favor of the new gl-transition*
-
-
-# release workflow
-
-people see the website, do a transition, submit it on Github via PR.
-the PR is tested on Travis.
-when merged, Travis runs to effectively compile & deploy it on NPM.
-
-## scripts
-
-- test: for all files, run the transformer AND the webgl compiler
-- compile: for all files, run the transformer, generate individual `transitions/*.js` entry but also a single index.js and a browser build transitions.js – this browser build can be used by the editor itself through npmcdn.
-- deploy: compile && deploy on NPM
-
-- a way for travis to autocomment on github? :o
-
-
-## PR workflow
-
-- travis doing the full build on a PR is one thing. but what would be neat is to also comment on that PR with feedback for the user. the potential errors/warns but also with, let's say, a preview of the transition in a GIF 😱
+all the old "glsl-transition*" libs will become DEPRECATED in favor of the new gl-transition* versions.
