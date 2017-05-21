@@ -1,5 +1,6 @@
 //@flow
-import React, { Component } from "react";
+import React, { Component, PropTypes } from "react";
+import querystring from "querystring";
 import GlslUniformsEditor from "glsl-uniforms-editor";
 import Vignette from "./Vignette";
 import GlslContextualHelp from "./GlslContextualHelp";
@@ -18,6 +19,8 @@ type Transition = {
 };
 
 type Props = {
+  history: *,
+  location: *,
   errors: Array<*>,
   transition: Transition,
   compilation: *,
@@ -26,40 +29,36 @@ type Props = {
 };
 
 type State = {
-  transitionParams: Object,
   token: *,
 };
+
+function getQuery({ location }) {
+  if (!location.search) return {};
+  const obj = querystring.parse(location.search.slice(1));
+  const query = {};
+  Object.keys(obj).forEach(key => {
+    try {
+      query[key] = JSON.parse(obj[key]);
+    } catch (e) {}
+  });
+  return query;
+}
+function setQuery({ location, history }, query) {
+  const obj = {};
+  Object.keys(query).forEach(key => {
+    obj[key] = JSON.stringify(query[key]);
+  });
+  history.replace({
+    pathname: location.pathname,
+    search: querystring.stringify(obj),
+  });
+}
 
 export default class Editor extends Component {
   props: Props;
   state: State = {
-    transitionParams: this.props.transition.defaultParams,
     token: null,
   };
-
-  componentWillReceiveProps(props: Props) {
-    if (!props.errors.some(e => e.code === "WebGL_error")) {
-      const newDefaultParams = props.transition.defaultParams;
-      const oldDefaultParams = this.props.transition.defaultParams;
-      if (newDefaultParams !== oldDefaultParams) {
-        // synchronise the params
-        const transitionParams = { ...this.state.transitionParams };
-        for (let key in oldDefaultParams) {
-          if (!(key in newDefaultParams)) {
-            // key was removed !
-            delete transitionParams[key];
-          }
-        }
-        for (let key in newDefaultParams) {
-          if (!(key in oldDefaultParams)) {
-            // key was added !
-            transitionParams[key] = newDefaultParams[key];
-          }
-        }
-        this.setState({ transitionParams });
-      }
-    }
-  }
 
   renderNoUniforms = () => {
     return (
@@ -78,11 +77,15 @@ export default class Editor extends Component {
   };
 
   onTransitionParamsChange = (transitionParams: *) => {
-    this.setState({ transitionParams });
+    this.setTransitionParams(transitionParams);
   };
 
   onCursorTokenChange = (token: *) => {
     this.setState({ token });
+  };
+
+  setTransitionParams = (transitionParams: *) => {
+    setQuery(this.props, transitionParams);
   };
 
   labelStyle = (highlight: boolean, hover: boolean) => ({
@@ -114,9 +117,15 @@ export default class Editor extends Component {
       compilation,
       onFragChange,
     } = this.props;
-    const { transitionParams, token } = this.state;
+    const { token } = this.state;
+    const transitionParams = {
+      ...transition.defaultParams,
+      ...getQuery(this.props),
+    };
 
     const shaderCompiles = !errors.some(e => e.code === "WebGL_error");
+
+    if (!shaderCompiles) console.log(errors);
 
     return (
       <div className="Editor">

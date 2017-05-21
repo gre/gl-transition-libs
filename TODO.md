@@ -6,6 +6,7 @@
 
 # editor features
 
+- write a new transform util function that port an old gl transition to a new one and suggest user to use it in case someone drop old code. (we just detect if there is a main function ?)
 - gallery pagination
 - auto start the transition when not hovered & if shader compiles. (make it stop if window not focused xD)
 - make a ratio preserving shader

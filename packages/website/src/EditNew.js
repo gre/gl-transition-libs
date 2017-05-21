@@ -35,6 +35,10 @@ vec4 transition (vec2 uv) {
 );
 
 export default class EditNew extends Component {
+  props: {
+    location: *,
+    history: *,
+  };
   state = {
     transitionResult: initialTransitionResult,
   };
@@ -58,6 +62,7 @@ export default class EditNew extends Component {
   };
 
   render() {
+    const { location, history } = this.props;
     const { transitionResult } = this.state;
     const invalidFilename = transitionResult.errors.some(
       e => e.code === "GLT_invalid_filename"
@@ -65,6 +70,8 @@ export default class EditNew extends Component {
     const { name } = transitionResult.data.transition;
     return (
       <Editor
+        location={location}
+        history={history}
         errors={transitionResult.errors}
         transition={transitionResult.data.transition}
         compilation={transitionResult.data.compilation}

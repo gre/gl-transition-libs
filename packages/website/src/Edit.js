@@ -9,6 +9,8 @@ import { transitionsByName } from "./data";
 export default class Edit extends Component {
   props: {
     name: string,
+    location: *,
+    history: *,
   };
 
   state = {
@@ -28,7 +30,7 @@ export default class Edit extends Component {
   };
 
   render() {
-    const { name } = this.props;
+    const { name, location, history } = this.props;
     const { transitionResult } = this.state;
     const transition = transitionsByName[name];
     const submitPatchHref = URL.format({
@@ -51,6 +53,8 @@ export default class Edit extends Component {
     });
     return (
       <Editor
+        location={location}
+        history={history}
         errors={transitionResult.errors}
         transition={transitionResult.data.transition}
         compilation={transitionResult.data.compilation}

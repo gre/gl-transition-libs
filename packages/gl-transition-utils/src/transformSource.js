@@ -355,6 +355,8 @@ export default function transformSource(
       }
     }
 
+    console.log(valueNode);
+
     if (valueNode.type === "call") {
       const values = [];
       for (let c = 0; c < valueNode.children.length; c++) {
@@ -400,7 +402,7 @@ export default function transformSource(
         });
         return;
       }
-    } else if (valueNode.type === "literal") {
+    } else if (valueNode.type === "literal" || valueNode.type === "keyword") {
       if (arity !== 1) {
         errors.push({
           type: "error",
