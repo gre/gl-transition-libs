@@ -199,7 +199,7 @@ function typeCheckTransitionFunction(node) {
     return false;
   }
   const [identNode] = decllist.children;
-  if (identNode.type !== "ident" || identNode.token.data !== "uv") {
+  if (identNode.type !== "ident") {
     return false;
   }
   return true;
@@ -542,11 +542,11 @@ export default function transformSource(
   }
 
   whitelistMeta.forEach(key => {
-    if (!(key in data)) {
+    if (!data[key]) {
       errors.push({
         type: "error",
         code: "GLT_meta_missing",
-        message: `a '${key}' is missing. Please define it in a '// ${key}: ...' comment`,
+        message: `'${key}' is missing. Please define it in a '// ${key}: ...' comment`,
       });
     }
   });

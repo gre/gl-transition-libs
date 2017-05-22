@@ -31,7 +31,7 @@ vec4 transition (vec2 uv) {
   `;
   const res = transformSource("burn-2.glsl", glsl);
   expect(res.data).toMatchSnapshot();
-  expect(res.errors.filter(e => e.type === "error").length).toBe(0);
+  expect(res.errors.filter(e => e.type === "error")).toEqual([]);
   expect(res.errors.filter(e => e.type === "warn").length).toBe(1);
 });
 
@@ -80,23 +80,40 @@ test("must define the transition function", () => {
   expect(res.errors.length).toBeGreaterThan(0);
 });
 
-test("just the transition function is fine", () => {
+test("must define metas", () => {
   const res = transformSource(
     "test.glsl",
     `
+    vec4 transition (vec2 uv) {
+      return vec4(0.0);
+    }
+`
+  );
+  expect(res).toMatchSnapshot();
+  expect(res.errors.length).toBeGreaterThan(0);
+});
+
+test("simple transition function is fine", () => {
+  const res = transformSource(
+    "test.glsl",
+    `
+      // Author: gre
+      // License: MIT
       vec4 transition (vec2 uv) {
         return vec4(0.0);
       }
   `
   );
   expect(res).toMatchSnapshot();
-  expect(res.errors.length).toBe(0);
+  expect(res.errors).toEqual([]);
 });
 
-test("you must define uv params", () => {
+test("must define uv params", () => {
   const res = transformSource(
     "test.glsl",
     `
+      // Author: gre
+      // License: MIT
       vec4 transition () {
         return vec4(0.0);
       }
@@ -106,8 +123,29 @@ test("you must define uv params", () => {
   expect(res.errors.length).toBeGreaterThan(0);
 });
 
-test("you must define the correct signature", () => {
-  const res = transformSource("test.glsl", `void transition (vec2 uv) {}`);
+test("renaming param is fine", () => {
+  const res = transformSource(
+    "test.glsl",
+    `
+      // Author: gre
+      // License: MIT
+      vec4 transition (vec2 p) {
+        return vec4(p, 1.0, 1.0);
+      }
+  `
+  );
+  expect(res).toMatchSnapshot();
+  expect(res.errors).toEqual([]);
+});
+
+test("must define the correct signature", () => {
+  const res = transformSource(
+    "test.glsl",
+    `
+    // Author: gre
+    // License: MIT
+    void transition (vec2 uv) {}`
+  );
   expect(res).toMatchSnapshot();
   expect(res.errors.length).toBeGreaterThan(0);
 });

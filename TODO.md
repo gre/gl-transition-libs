@@ -1,11 +1,15 @@
 # general
 
-- write short blog post.
 - travis should tag the releases on NPM too.
+- write short blog post.
 - review the old issues, see if we miss anything.
+- address the ratio problem in shaders.
+- pinging people that have some old gl transitions and ask them if they could port them and give feedback
 
 # editor features
 
+- reorder the errors: probably should be on Editor.js side for more customization? we need to move errors mentioning line out of scope at the end.
+- add a footer that includes a "report a bug" link
 - write a new transform util function that port an old gl transition to a new one and suggest user to use it in case someone drop old code. (we just detect if there is a main function ?)
 - gallery pagination
 - auto start the transition when not hovered & if shader compiles. (make it stop if window not focused xD)
@@ -20,6 +24,7 @@
   - better support of sampler2D params. today it works but it's not straightforward and don't help that you can set an Image url.
 - show a link to the license.
 - more responsive editor. check it works on mobile.
+- each error should be documented somewhere so we can link them in a FAQ kind of doc.
 - experiment with video
 - expandable EditorStatusBar
 

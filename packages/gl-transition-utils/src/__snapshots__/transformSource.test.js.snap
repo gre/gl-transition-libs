@@ -1,20 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`just the transition function is fine 1`] = `
+exports[`must define metas 1`] = `
 Object {
   "data": Object {
     "author": null,
     "defaultParams": Object {},
     "glsl": "
-      vec4 transition (vec2 uv) {
-        return vec4(0.0);
-      }
-  ",
+    vec4 transition (vec2 uv) {
+      return vec4(0.0);
+    }
+",
     "license": null,
     "name": "test",
     "paramsTypes": Object {},
   },
-  "errors": Array [],
+  "errors": Array [
+    Object {
+      "code": "GLT_meta_missing",
+      "message": "'author' is missing. Please define it in a '// author: ...' comment",
+      "type": "error",
+    },
+    Object {
+      "code": "GLT_meta_missing",
+      "message": "'license' is missing. Please define it in a '// license: ...' comment",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`must define the correct signature 1`] = `
+Object {
+  "data": Object {
+    "author": "gre",
+    "defaultParams": Object {},
+    "glsl": "
+    // Author: gre
+    // License: MIT
+    void transition (vec2 uv) {}",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": Object {},
+  },
+  "errors": Array [
+    Object {
+      "code": "GLT_GLSL_error",
+      "line": 4,
+      "message": "GLSL code error: expected \`{\`, got {}
+{} at line 4",
+      "type": "error",
+    },
+  ],
 }
 `;
 
@@ -32,8 +68,46 @@ Object {
   },
   "errors": Array [
     Object {
+      "code": "GLT_meta_missing",
+      "message": "'author' is missing. Please define it in a '// author: ...' comment",
+      "type": "error",
+    },
+    Object {
+      "code": "GLT_meta_missing",
+      "message": "'license' is missing. Please define it in a '// license: ...' comment",
+      "type": "error",
+    },
+    Object {
       "code": "GLT_transition_no_impl",
       "message": "'vec4 transition(vec2 uv)' function is not implemented",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`must define uv params 1`] = `
+Object {
+  "data": Object {
+    "author": "gre",
+    "defaultParams": Object {},
+    "glsl": "
+      // Author: gre
+      // License: MIT
+      vec4 transition () {
+        return vec4(0.0);
+      }
+  ",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": Object {},
+  },
+  "errors": Array [
+    Object {
+      "code": "GLT_transition_wrong_type",
+      "column": 21,
+      "line": 4,
+      "message": "transition must be a function with following signature: 'vec4 transition(vec2 uv)'",
       "type": "error",
     },
   ],
@@ -61,6 +135,16 @@ vec4 transition (vec2 uv) {}
     },
   },
   "errors": Array [
+    Object {
+      "code": "GLT_meta_missing",
+      "message": "'author' is missing. Please define it in a '// author: ...' comment",
+      "type": "error",
+    },
+    Object {
+      "code": "GLT_meta_missing",
+      "message": "'license' is missing. Please define it in a '// license: ...' comment",
+      "type": "error",
+    },
     Object {
       "code": "GLT_reserved_variable_used",
       "column": 18,
@@ -180,50 +264,42 @@ vec4 transition (vec2 uv) {
 }
 `;
 
-exports[`you must define the correct signature 1`] = `
+exports[`renaming param is fine 1`] = `
 Object {
   "data": Object {
-    "author": null,
+    "author": "gre",
     "defaultParams": Object {},
-    "glsl": "void transition (vec2 uv) {}",
-    "license": null,
+    "glsl": "
+      // Author: gre
+      // License: MIT
+      vec4 transition (vec2 p) {
+        return vec4(p, 1.0, 1.0);
+      }
+  ",
+    "license": "MIT",
     "name": "test",
     "paramsTypes": Object {},
   },
-  "errors": Array [
-    Object {
-      "code": "GLT_GLSL_error",
-      "line": 1,
-      "message": "GLSL code error: expected \`{\`, got {}
-{} at line 1",
-      "type": "error",
-    },
-  ],
+  "errors": Array [],
 }
 `;
 
-exports[`you must define uv params 1`] = `
+exports[`simple transition function is fine 1`] = `
 Object {
   "data": Object {
-    "author": null,
+    "author": "gre",
     "defaultParams": Object {},
     "glsl": "
-      vec4 transition () {
+      // Author: gre
+      // License: MIT
+      vec4 transition (vec2 uv) {
         return vec4(0.0);
       }
   ",
-    "license": null,
+    "license": "MIT",
     "name": "test",
     "paramsTypes": Object {},
   },
-  "errors": Array [
-    Object {
-      "code": "GLT_transition_wrong_type",
-      "column": 21,
-      "line": 2,
-      "message": "transition must be a function with following signature: 'vec4 transition(vec2 uv)'",
-      "type": "error",
-    },
-  ],
+  "errors": Array [],
 }
 `;
