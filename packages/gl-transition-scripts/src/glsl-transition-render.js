@@ -11,35 +11,62 @@ import getPixels from "./getPixels";
 import readFile from "./readFile";
 import transformSource from "gl-transition-utils/lib/transformSource";
 
+function list(val) {
+  return val.split(",");
+}
+
 program
   .version("0.0.1")
-  .option("-t, --transition <file.glsl>")
-  .option("--from <in.png>", "from image")
-  .option("--to <out.png>", "to image")
+  .option(
+    "-t, --transition <file.glsl>",
+    "transition or comma-separated list of transitions to use",
+    list
+  )
+  .option(
+    "-i, --images <images>",
+    "comma-separated list of images to use for the transition",
+    list
+  )
   .option("-w, --width <width>", "width in pixels", parseInt)
   .option("-h, --height <height>", "height in pixels", parseInt)
-  .option("-f, --frames [nb]", "number of frames to render", parseInt)
+  .option(
+    "-f, --frames [nb]",
+    "number of frames to render for each transition",
+    parseInt
+  )
+  .option(
+    "-d, --delay [nb]",
+    "number of frames to pause after each transition",
+    parseInt,
+    0
+  )
   .option("-p, --progress [p]", "only render one frame", parseInt, 0.4)
-  .option("-P, --params [json object of trnansition params]", JSON.parse)
   .option(
     "-o, --out <directory|out.png>",
-    "a folder to create with the images OR the path of the image to save (if using progress)"
+    "a folder to create with the images OR the path of the image to save (if using progress). use '-' for stdout"
   )
   .parse(process.argv);
 
 const {
   frames,
+  delay,
   progress,
-  params,
   transition,
   out,
   width,
   height,
-  from,
-  to,
+  images,
 } = program;
 
-if (!width || !height || !from || !to || !transition || !out) {
+if (
+  !width ||
+  !height ||
+  !images ||
+  images.length === 0 ||
+  !transition ||
+  transition.length === 0 ||
+  !out
+) {
   program.outputHelp();
   process.exit(1);
 }
@@ -57,18 +84,23 @@ gl_Position = vec4(_p,0.0,1.0);
 uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
 }`;
 
-Promise.all([readFile(transition), getPixels(from), getPixels(to)])
-  .then(([glsl, fromPixels, toPixels]) => {
-    const { errors, data: { defaultParams } } = transformSource(
-      "file.glsl",
-      glsl
-    );
-    if (errors.length > 0) {
+function readTransition(file) {
+  return readFile(file).then(glsl => {
+    const res = transformSource("file.glsl", glsl);
+    if (res.errors.length > 0) {
       throw new Error(
-        "transition have errors:\n" + errors.map(e => e.message).join("\n")
+        "transition have errors:\n" + res.errors.map(e => e.message).join("\n")
       );
     }
+    return res;
+  });
+}
 
+Promise.all([
+  Promise.all(transition.map(readTransition)),
+  Promise.all(images.map(getPixels)),
+])
+  .then(([transitions, images]) => {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(
@@ -78,31 +110,37 @@ Promise.all([readFile(transition), getPixels(from), getPixels(to)])
     );
     gl.viewport(0, 0, width, height);
 
-    const shader = createShader(
-      gl,
-      VERTEX_SHADER,
-      `\
-precision highp float;
-varying vec2 uv;
-uniform sampler2D from, to;
-uniform float progress, ratio;
-vec4 getFromColor (vec2 uv) { return texture2D(from, uv); }
-vec4 getToColor (vec2 uv) { return texture2D(to, uv); }
-${glsl}
-void main () {
-  gl_FragColor = transition(uv);
-}`
-    );
-    const fromTexture = createTexture(gl, fromPixels);
-    const toTexture = createTexture(gl, toPixels);
+    const shaders = transitions.map(t => {
+      const shader = createShader(
+        gl,
+        VERTEX_SHADER,
+        `\
+  precision highp float;
+  varying vec2 uv;
+  uniform sampler2D from, to;
+  uniform float progress, ratio;
+  vec4 getFromColor (vec2 uv) { return texture2D(from, uv); }
+  vec4 getToColor (vec2 uv) { return texture2D(to, uv); }
+  ${t.data.glsl}
+  void main () {
+    gl_FragColor = transition(uv);
+  }`
+      );
+      shader.bind();
+      shader.attributes._p.pointer();
+      shader.uniforms.ratio = width / height;
+      Object.assign(shader.uniforms, t.data.defaultParams);
+      return shader;
+    });
 
-    shader.bind();
-    shader.attributes._p.pointer();
-    Object.assign(shader.uniforms, defaultParams, params);
-    shader.uniforms.ratio = width / height;
-    shader.uniforms.from = fromTexture.bind(0);
-    shader.uniforms.to = toTexture.bind(1);
+    const textures = images.map(pixels => {
+      const t = createTexture(gl, pixels);
+      t.minFilter = gl.LINEAR;
+      t.magFilter = gl.LINEAR;
+      return t;
+    });
 
+    let shader;
     const draw = (progress, outStream) =>
       new Promise(success => {
         shader.uniforms.progress = progress;
@@ -112,18 +150,39 @@ void main () {
         stream.on("finish", success);
       });
 
-    if (frames > 1) {
-      fs.mkdirSync(out);
-      const incr = 1 / (frames - 1);
-      const framesArray = [];
-      for (let progress = 0, i = 1; i <= frames; (progress += incr), i++) {
-        framesArray.push([i, progress]);
-      }
-      return framesArray.reduce(
-        (promise, [i, progress]) =>
-          promise.then(() =>
-            draw(progress, fs.createWriteStream(path.join(out, `${i}.png`)))
-          ),
+    const nbTransitions = Math.max(textures.length - 1, shaders.length);
+    if (frames * nbTransitions > 1) {
+      if (out !== "-") fs.mkdirSync(out);
+      let frameIndex = 1;
+      return Array(nbTransitions).fill(null).map((_, i) => i).reduce(
+        (promise, i) =>
+          promise.then(() => {
+            const fromTexture = textures[i % textures.length];
+            const toTexture = textures[(i + 1) % textures.length];
+            shader = shaders[i % shaders.length];
+            shader.bind();
+            shader.uniforms.from = fromTexture.bind(0);
+            shader.uniforms.to = toTexture.bind(1);
+            const incr = 1 / (frames - 1);
+            const framesArray = Array(delay || 0).fill(0);
+            for (let progress = 0; progress <= 1; progress += incr) {
+              framesArray.push(progress);
+            }
+            return framesArray.reduce(
+              (promise, progress) =>
+                promise.then(() =>
+                  draw(
+                    progress,
+                    out === "-"
+                      ? process.stdout
+                      : fs.createWriteStream(
+                          path.join(out, `${frameIndex++}.png`)
+                        )
+                  )
+                ),
+              Promise.resolve()
+            );
+          }),
         Promise.resolve()
       );
     } else {
