@@ -69,7 +69,7 @@ exec('git diff --name-only master | grep "transitions/.*\.glsl$"')
       .map(line => "- " + line)
       .join("\n");
 
-    results
+    return results
       .filter(r => r.errors.length === 0)
       .reduce(
         (promise, r) =>
