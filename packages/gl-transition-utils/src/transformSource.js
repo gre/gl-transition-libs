@@ -17,13 +17,12 @@ type UniformDefaultValue =
 
 export type TransformResult = {
   data: {
-    // TODO wrap in a transition object
+    author: string,
+    license: string,
     name: string,
     glsl: string,
     defaultParams: { [_: string]: UniformDefaultValue },
     paramsTypes: { [_: string]: string },
-    author: ?string,
-    license: ?string,
   },
   errors: Array<{
     type: "error" | "warn",

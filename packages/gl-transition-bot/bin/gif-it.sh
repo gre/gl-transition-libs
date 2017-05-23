@@ -1,4 +1,10 @@
 
+IMGSDIR=`dirname $0`/images
+
+echo $IMGSDIR
+
+exit
+
 set -e
 
 tname=$1
@@ -12,7 +18,7 @@ gif="/tmp/gl-transition.gif"
 rm -rf $tmpimgs $palette $gif
 
 gl-transition-render -t $tname -o $tmpimgs \
-  -i scripts/1.jpg,scripts/2.jpg,scripts/3.jpg,scripts/1.jpg \
+  -i $IMGSDIR/1.jpg,$IMGSDIR/2.jpg,$IMGSDIR/3.jpg,$IMGSDIR/1.jpg \
   -f 50 -d 12 -w 512 -h 400
 
 filters="scale=256:-1:flags=lanczos"
