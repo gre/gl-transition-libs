@@ -1,10 +1,3 @@
-
-IMGSDIR=`dirname $0`/images
-
-echo $IMGSDIR
-
-exit
-
 set -e
 
 tname=$1
@@ -13,7 +6,7 @@ imgurkey=$IMGUR_KEY
 tmpimgs="/tmp/gl-transition-imgs"
 palette="/tmp/gl-transition-palette.png"
 gif="/tmp/gl-transition.gif"
-
+IMGSDIR=`dirname $0`/images
 
 rm -rf $tmpimgs $palette $gif
 

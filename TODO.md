@@ -1,16 +1,15 @@
 # general
 
 - travis should tag the releases on NPM too.
-- write short blog post.
 - review the old issues, see if we miss anything.
 - address the ratio problem in shaders.
+- write short blog post.
 - pinging people that have some old gl transitions and ask them if they could port them and give feedback
 
 # editor features
 
 - reorder the errors: probably should be on Editor.js side for more customization? we need to move errors mentioning line out of scope at the end.
 - add a footer that includes a "report a bug" link
-- write a new transform util function that port an old gl transition to a new one and suggest user to use it in case someone drop old code. (we just detect if there is a main function ?)
 - gallery pagination
 - auto start the transition when not hovered & if shader compiles. (make it stop if window not focused xD)
 - make a ratio preserving shader
@@ -27,6 +26,7 @@
 - each error should be documented somewhere so we can link them in a FAQ kind of doc.
 - experiment with video
 - expandable EditorStatusBar
+- write a new transform util function that port an old gl transition to a new one and suggest user to use it in case someone drop old code. (we just detect if there is a main function ?)
 
 # glsl-transition -> gl-transition
 
