@@ -4,6 +4,8 @@
   flex-wrap: wrap;
   justify-content: center;
   padding: 10px 0;
+  margin: 0 auto;
+  max-width: 1280px;
 }
 
 .gallery .transitions > * {
@@ -11,7 +13,6 @@
 }
 
 .gallery .pager {
-  height: 100px;
   display: flex;
   flex-direction: row;
   align-items: center;

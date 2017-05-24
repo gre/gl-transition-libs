@@ -40,7 +40,7 @@ exec('git diff --name-only master | grep "transitions/.*\.glsl$"')
         ? path
         : path.match(/.*\/([^\/]+)/)[1];
       const glsl = fs.readFileSync(path);
-      return Object.assign({ path }, transform(filename, glsl));
+      return Object.assign({ path }, transform(filename, glsl, path));
     });
 
     const haveErrors = results.filter(r => r.errors.length > 0).length > 0;

@@ -33,6 +33,14 @@ class EditorVignette extends PureComponent {
   }
 }
 
+class VignettePlaceholder extends PureComponent {
+  render() {
+    return (
+      <div style={{ width: 300, height: 200, background: "rgba(0,0,0,0.1)" }} />
+    );
+  }
+}
+
 class PageLink extends PureComponent {
   props: {
     page: number,
@@ -53,6 +61,16 @@ class PageLink extends PureComponent {
 
 const pageSize = 12;
 
+function getPage(page) {
+  const arr = [];
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize;
+  for (let i = from; i < to; i++) {
+    arr.push(transitions[i] || null);
+  }
+  return arr;
+}
+
 export default class Gallery extends Component {
   props: {
     location: *,
@@ -66,11 +84,15 @@ export default class Gallery extends Component {
     return (
       <div className="gallery">
         <div className="transitions">
-          {transitions
-            .slice((page - 1) * pageSize, pageSize)
-            .map(transition => (
-              <EditorVignette key={transition.name} transition={transition} />
-            ))}
+          {getPage(page).map(
+            (transition, i) =>
+              transition
+                ? <EditorVignette
+                    key={transition.name}
+                    transition={transition}
+                  />
+                : <VignettePlaceholder key={i} />
+          )}
         </div>
         <div className="pager">
           {/* the time we have too much pages we refactor this xD */}

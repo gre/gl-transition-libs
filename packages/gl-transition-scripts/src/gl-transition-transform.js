@@ -10,41 +10,56 @@ program
   .option("-d, --glsl-dir <dir>", "a folder containing *.glsl files")
   .option(
     "-o, --json-out <jsonOutputFile>",
-    "a JSON file to save with all transitions"
+    "a JSON file to save with all transitions",
+    "-"
   )
   .parse(process.argv);
 
 const { glslDir, jsonOut } = program;
 
+if (!glslDir || !jsonOut) {
+  program.outputHelp();
+  process.exit(1);
+}
+
 const ms = (n: number) => (n < 1 ? n.toFixed(2) : Math.round(n)) + "ms";
 
 const files = fs.readdirSync(glslDir).filter(n => n.match(/^.*\.glsl$/));
 const transitions = [];
-console.log(files.length + " transitions to transform...");
-console.log("");
+console.error(files.length + " transitions to transform...");
+console.error("");
 files.forEach(filename => {
-  const glsl = fs.readFileSync(path.join(glslDir, filename), "utf-8");
-  const result = transform(filename, glsl);
+  const fullPath = path.join(glslDir, filename);
+  const glsl = fs.readFileSync(fullPath, "utf-8");
+  const result = transform(filename, glsl, fullPath);
   if (result.errors.length > 0) {
-    console.log(` ✕ ${result.data.transition.name}`);
-    console.log("");
+    console.error(` ✕ ${result.data.transition.name}`);
+    console.error("");
     result.errors.forEach(e => {
       console.error(`   ${e.message}`);
     });
-    console.log("");
+    console.error("");
   } else {
-    console.log(
+    console.error(
       ` ✔︎ ${result.data.transition.name} (compile in ${ms(result.data.compilation.compileTime)}, draw in ${ms(result.data.compilation.drawTime)})`
     );
-    transitions.push(result.data.transition);
+    transitions.push({
+      ...result.data.transition,
+      ...result.data.gitFileMeta,
+    });
   }
   return result;
 });
-console.log("");
+console.error("");
 if (transitions.length === files.length) {
   // all pass!
-  fs.writeFileSync(jsonOut, JSON.stringify(transitions));
-  console.log(transitions.length + " transitions exported in " + jsonOut);
+  const json = JSON.stringify(transitions);
+  if (jsonOut === "-") {
+    console.log(json);
+  } else {
+    fs.writeFileSync(jsonOut, json);
+  }
+  console.error(transitions.length + " transitions exported in " + jsonOut);
   process.exit(0);
 } else {
   console.error(
