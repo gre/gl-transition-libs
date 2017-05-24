@@ -56,7 +56,7 @@ const blacklistScope = [
 
 const reservedTransitionNames = ["new"];
 
-const typeInfos = {
+export const typeInfos = {
   float: {
     primitiveType: "float",
     exampleValue: "0.7",

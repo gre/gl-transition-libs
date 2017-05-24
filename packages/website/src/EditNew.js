@@ -102,7 +102,6 @@ export default class EditNew extends Component {
   };
 
   render() {
-    const { location, history } = this.props;
     const { transitionResult, transitionParams } = this.state;
     const invalidFilename = transitionResult.errors.some(
       e => e.code === "GLT_invalid_filename"

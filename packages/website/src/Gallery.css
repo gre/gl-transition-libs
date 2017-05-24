@@ -11,6 +11,14 @@
 .gallery .transitions > * {
   margin: 10px;
 }
+.gallery .transitions .vignette footer .dateago {
+  position: absolute;
+  right: 4px;
+  bottom: 0px;
+  font-size: 1em;
+  font-style: italic;
+  color: #000;
+}
 
 .gallery .pager {
   display: flex;

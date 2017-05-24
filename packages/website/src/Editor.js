@@ -1,15 +1,18 @@
 //@flow
-import React, { Component, PropTypes } from "react";
-import GlslUniformsEditor from "glsl-uniforms-editor";
-import Vignette from "./Vignette";
+import React, { Component } from "react";
+import UniformsEditor from "./UniformsEditor";
+import AnimatedVignette from "./AnimatedVignette";
 import GlslContextualHelp from "./GlslContextualHelp";
 import GlslEditor from "./GlslEditor";
 import EditorStatusBar from "./EditorStatusBar";
 import CompilationStats from "./CompilationStats";
 import GlslCode from "./GlslCode";
-import fromImage from "./images/512x400/barley.jpg";
-import toImage from "./images/512x400/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg";
+import img1 from "./images/512x400/barley.jpg";
+import img2 from "./images/512x400/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg";
+import img3 from "./images/512x400/bigbuckbunny_snapshot1.jpg";
 import "./Editor.css";
+
+const images = [img1, img2, img3];
 
 type Transition = {
   glsl: string,
@@ -82,7 +85,6 @@ export default class Editor extends Component {
 
   render() {
     const {
-      children,
       errors,
       transition,
       compilation,
@@ -109,16 +111,17 @@ export default class Editor extends Component {
               <div className="stats">
                 <CompilationStats compilation={compilation} />
               </div>
-              <Vignette
-                transition={transition}
-                from={fromImage}
-                to={toImage}
-                transitionParams={transitionParams}
+              <AnimatedVignette
+                transitions={[transition]}
+                transitionsParams={[transitionParams]}
+                images={images}
                 width={256}
                 height={200}
+                duration={4000}
+                delay={500}
               />
               {shaderCompiles
-                ? <GlslUniformsEditor
+                ? <UniformsEditor
                     className="uniforms-editor"
                     style={{ margin: "20px 0 20px -100px" }}
                     types={transition.paramsTypes}

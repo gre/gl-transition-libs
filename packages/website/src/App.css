@@ -12,10 +12,15 @@
   height: 40px;
 }
 
+.App > header .logo {
+  margin: 0 0.8em;
+}
+
 .App .logo {
   align-self: center;
   font-weight: bold;
-  padding: 0 1em;
+  padding: 0 0.2em;
+  font-size: 1.6em;
 }
 
 .App .logo span:first-child {

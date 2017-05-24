@@ -2,19 +2,41 @@
 import React, { Component, PureComponent } from "react";
 import querystring from "querystring";
 import { Link } from "react-router-dom";
-import { transitions } from "./data";
+import { transitionsByCreatedAt, transitionsByUpdatedAt } from "./data";
 import Vignette from "./Vignette";
+import dateAgo from "./dateAgo";
 import "./Gallery.css";
 
 const fromImage = require("./images/600x400/barley.jpg");
-const toImage = require("./images/600x400/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg");
+const toImage = require("./images/600x400/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg");
+
+const footerForOrder = (getDate: *) =>
+  class EditorVignetteFooter extends PureComponent {
+    props: {
+      transition: *,
+    };
+    render() {
+      const { transition } = this.props;
+      return (
+        <footer>
+          <strong>{transition.name}</strong> by <em>{transition.author}</em>
+          <span className="dateago">
+            {dateAgo(getDate(transition))}
+          </span>
+        </footer>
+      );
+    }
+  };
+const UpdatedFooter = footerForOrder(t => t.updatedAt);
+const CreatedFooter = footerForOrder(t => t.createdAt);
 
 class EditorVignette extends PureComponent {
   props: {
     transition: *,
+    order: *,
   };
   render() {
-    const { transition } = this.props;
+    const { transition, order } = this.props;
     return (
       <Link to={"/transition/" + transition.name}>
         <Vignette
@@ -23,11 +45,8 @@ class EditorVignette extends PureComponent {
           to={toImage}
           width={300}
           height={200}
-        >
-          <footer>
-            <strong>{transition.name}</strong> by <em>{transition.author}</em>
-          </footer>
-        </Vignette>
+          Footer={order === "updated" ? UpdatedFooter : CreatedFooter}
+        />
       </Link>
     );
   }
@@ -60,8 +79,7 @@ class PageLink extends PureComponent {
 }
 
 const pageSize = 12;
-
-function getPage(page) {
+function getPage(page, transitions) {
   const arr = [];
   const from = (page - 1) * pageSize;
   const to = from + pageSize;
@@ -81,15 +99,20 @@ export default class Gallery extends Component {
       ? querystring.parse(location.search.slice(1))
       : {};
     const page = !isNaN(query.page) ? parseInt(query.page, 10) : 1;
+    const order = query.order;
+    const transitions = order === "updated"
+      ? transitionsByUpdatedAt
+      : transitionsByCreatedAt;
     return (
       <div className="gallery">
         <div className="transitions">
-          {getPage(page).map(
+          {getPage(page, transitions).map(
             (transition, i) =>
               transition
                 ? <EditorVignette
                     key={transition.name}
                     transition={transition}
+                    order={order}
                   />
                 : <VignettePlaceholder key={i} />
           )}
@@ -100,7 +123,7 @@ export default class Gallery extends Component {
             .fill(null)
             .map((_, i) => i + 1)
             .map(p => (
-              <PageLink page={p} current={page}>
+              <PageLink key={p} page={p} current={page}>
                 {p}
               </PageLink>
             ))}

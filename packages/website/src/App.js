@@ -5,7 +5,7 @@ import "./App.css";
 import Gallery from "./Gallery";
 import Edit from "./Edit";
 import EditNew from "./EditNew";
-//import About from "./About";
+import About from "./About";
 import NotFound from "./NotFound";
 import { transitionsByName } from "./data";
 
@@ -27,8 +27,8 @@ class App extends Component {
     return (
       <div className="App">
         <header>
-          <Link className="logo" to="/">
-            <h1>
+          <Link to="/">
+            <h1 className="logo">
               <span>GL</span>
               <span>Transitions</span>
             </h1>
@@ -39,11 +39,19 @@ class App extends Component {
           </nav>
           <div style={{ flex: 1 }} />
           <div className="external">
-            <a href="https://github.com/gltransitions/gl-transitions">
+            <a
+              href="https://github.com/gltransitions/gl-transitions"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="fa fa-github" />
               <span> gl-transitions</span>
             </a>
-            <a href="https://github.com/gre/gl-transition-libs/issues">
+            <a
+              href="https://github.com/gre/gl-transition-libs/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <i className="fa fa-bug" />
               <span> Found a Bug?</span>
             </a>
@@ -51,7 +59,7 @@ class App extends Component {
         </header>
         <main>
           <Switch>
-            <Route exact path="/" component={notImpl /*About*/} />
+            <Route exact path="/" component={About} />
             <Route path="/gallery" component={Gallery} />
             <Route path="/transition/new" component={renderEditor} />
             <Route path="/transition/:name" component={renderEditor} />

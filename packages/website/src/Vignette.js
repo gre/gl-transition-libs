@@ -5,8 +5,6 @@ import { Surface } from "gl-react-dom";
 import GLTransition from "react-gl-transition";
 import "./Vignette.css";
 
-const initialProgress = 0.4;
-
 class SurfaceVisitor extends Visitor {
   vignette: Vignette;
   constructor(vignette: *) {
@@ -26,6 +24,11 @@ class SurfaceVisitor extends Visitor {
   }
 }
 
+const hoverValueFromEvent = (e: *) => {
+  const rect = e.target.getBoundingClientRect();
+  return (e.clientX - rect.left) / rect.width;
+};
+
 export default class Vignette extends Component {
   props: {
     transition: *,
@@ -35,41 +38,68 @@ export default class Vignette extends Component {
     width: number,
     height: number,
     children?: *,
+    Footer?: *,
+    onHoverIn?: Function,
+    onHoverOut?: Function,
+    interaction?: boolean,
   };
   visitor = new SurfaceVisitor(this);
   static defaultProps = {
     width: 300,
     height: 200,
+    interaction: true,
   };
   state: {
-    progress: number,
+    hoverValue: number,
     hover: boolean,
     failing: ?Object,
   } = {
-    progress: initialProgress,
+    hoverValue: 0,
     hover: false,
     failing: null,
   };
-  progressFromEvent = (e: *) => {
-    const rect = e.target.getBoundingClientRect();
-    return (e.clientX - rect.left) / rect.width;
+
+  componentWillReceiveProps({ onHoverOut, interaction }: *, { hover }: *) {
+    if (interaction && hover) {
+      this.setState({ hover: false });
+      if (onHoverOut) onHoverOut();
+    }
+  }
+
+  _setProgress: ?(progress: number) => void = null;
+  onRef = (glt: GLTransition) => {
+    this._setProgress = glt && glt.getComponent().setProgress;
   };
+
+  _cachedProgress: number = 0.3;
+  getProgress = () => this._cachedProgress;
+  setProgress = (progress: number) => {
+    if (this._cachedProgress === progress) return;
+    this._cachedProgress = progress;
+    if (this._setProgress && !this.state.failing) {
+      this._setProgress(progress);
+    }
+  };
+
   onMouseEnter = (e: *) => {
     this.setState({
-      progress: this.progressFromEvent(e),
+      hoverValue: hoverValueFromEvent(e),
       hover: true,
     });
+    const { onHoverIn } = this.props;
+    if (onHoverIn) onHoverIn();
   };
   onMouseMove = (e: *) => {
-    this.setState({
-      progress: this.progressFromEvent(e),
-    });
+    const hoverValue = hoverValueFromEvent(e);
+    this._cachedProgress = Math.max(0, Math.min(-0.1 + hoverValue / 0.8, 1));
+    this.setState({ hoverValue });
   };
   onMouseLeave = () => {
     this.setState({
-      progress: initialProgress,
       hover: false,
     });
+    const { onHoverOut } = this.props;
+    if (onHoverOut) onHoverOut();
   };
   render() {
     const {
@@ -79,14 +109,16 @@ export default class Vignette extends Component {
       to,
       width,
       height,
-      children,
+      Footer,
+      interaction,
     } = this.props;
-    const { hover, progress, failing } = this.state;
+    const { hover, hoverValue, failing } = this.state;
+    const progress = this.getProgress();
     return (
       <div
-        onMouseMove={this.onMouseMove}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
+        onMouseMove={interaction ? this.onMouseMove : null}
+        onMouseEnter={interaction ? this.onMouseEnter : null}
+        onMouseLeave={interaction ? this.onMouseLeave : null}
         className={[
           "vignette",
           hover ? "hover" : "",
@@ -96,6 +128,7 @@ export default class Vignette extends Component {
       >
         <Surface width={width} height={height} visitor={this.visitor}>
           <GLTransition
+            ref={this.onRef}
             transition={transition}
             transitionParams={transitionParams}
             from={from}
@@ -103,10 +136,10 @@ export default class Vignette extends Component {
             progress={progress}
           />
         </Surface>
-        {children}
+        {Footer ? <Footer transition={transition} /> : null}
         <div
           className="cursor"
-          style={{ left: (progress * 100).toFixed(2) + "%" }}
+          style={{ left: (hoverValue * 100).toFixed(2) + "%" }}
         />
         {failing
           ? <div className="failing">

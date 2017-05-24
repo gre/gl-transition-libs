@@ -17,18 +17,34 @@ export default connectSize(
       width: number,
       height: number,
     };
-    render() {
+    getUniformsWithProgress(progress: number) {
       const {
-        transition: { defaultParams, glsl },
+        transition: { defaultParams },
         transitionParams,
-        progress,
         from,
         to,
         width,
         height,
       } = this.props;
+      return {
+        ...defaultParams,
+        ...transitionParams,
+        progress,
+        from,
+        to,
+        ratio: width / height,
+      };
+    }
+    setProgress = (progress: number) => {
+      this.refs.node.setDrawProps({
+        uniforms: this.getUniformsWithProgress(progress),
+      });
+    };
+    render() {
+      const { transition: { glsl }, progress } = this.props;
       return (
         <Node
+          ref="node"
           shader={{
             frag: `
     precision highp float;
@@ -47,14 +63,7 @@ export default connectSize(
     gl_FragColor = transition(uv);
     }`,
           }}
-          uniforms={{
-            progress,
-            from,
-            to,
-            ratio: width / height,
-            ...defaultParams,
-            ...transitionParams,
-          }}
+          uniforms={this.getUniformsWithProgress(progress)}
         />
       );
     }

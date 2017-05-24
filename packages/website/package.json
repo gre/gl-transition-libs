@@ -1,13 +1,12 @@
 {
   "dependencies": {
     "flow-bin": "^0.46.0",
-    "gl-react": "next",
-    "gl-react-dom": "next",
+    "gl-react": "^3.6.0",
+    "gl-react-dom": "^3.6.0",
     "gl-shader": "^4.2.1",
     "gl-transition-utils": "^1.4.0",
     "glsl-parser": "^2.0.0",
     "glsl-tokenizer": "^2.1.2",
-    "glsl-uniforms-editor": "^0.5.0",
     "glsldoc": "^0.0.4",
     "highlight.js": "^9.11.0",
     "performance-now": "^2.1.0",
