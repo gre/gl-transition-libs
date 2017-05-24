@@ -1,5 +1,6 @@
 //@flow
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
+import querystring from "querystring";
 import { Link } from "react-router-dom";
 import { transitions } from "./data";
 import Vignette from "./Vignette";
@@ -8,7 +9,7 @@ import "./Gallery.css";
 const fromImage = require("./images/600x400/barley.jpg");
 const toImage = require("./images/600x400/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg");
 
-class EditorVignette extends Component {
+class EditorVignette extends PureComponent {
   props: {
     transition: *,
   };
@@ -32,16 +33,55 @@ class EditorVignette extends Component {
   }
 }
 
-export default class Editor extends Component {
+class PageLink extends PureComponent {
+  props: {
+    page: number,
+    current: number,
+  };
   render() {
-    const page = transitions.slice(0, 12);
+    const { page, current } = this.props;
     return (
-      <div>
-        <div className="toolbar" />
+      <Link
+        className={page === current ? "active" : ""}
+        to={page === 1 ? "/gallery" : "/gallery?page=" + page}
+      >
+        {page}
+      </Link>
+    );
+  }
+}
+
+const pageSize = 12;
+
+export default class Gallery extends Component {
+  props: {
+    location: *,
+  };
+  render() {
+    const { location } = this.props;
+    const query = location.search
+      ? querystring.parse(location.search.slice(1))
+      : {};
+    const page = !isNaN(query.page) ? parseInt(query.page, 10) : 1;
+    return (
+      <div className="gallery">
         <div className="transitions">
-          {page.map(transition => (
-            <EditorVignette key={transition.name} transition={transition} />
-          ))}
+          {transitions
+            .slice((page - 1) * pageSize, pageSize)
+            .map(transition => (
+              <EditorVignette key={transition.name} transition={transition} />
+            ))}
+        </div>
+        <div className="pager">
+          {/* the time we have too much pages we refactor this xD */}
+          {Array(Math.ceil(transitions.length / pageSize))
+            .fill(null)
+            .map((_, i) => i + 1)
+            .map(p => (
+              <PageLink page={p} current={page}>
+                {p}
+              </PageLink>
+            ))}
         </div>
       </div>
     );

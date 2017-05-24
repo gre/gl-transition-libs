@@ -34,27 +34,6 @@ a:active, a:hover {
   font-family: Monoid;
 }
 
-a.primary-btn {
-  background: #000;
-  color: #fff;
-  padding: 0.5em 1em;
-  border-radius: 0.4em;
-  opacity: 0.8;
-}
-a.primary-btn:hover {
-  opacity: 1;
-}
-
-input {
-  border: 2px solid transparent;
-}
-input:focus {
-  outline: none;
-}
-input.error {
-  border-color: #f00;
-}
-
 blockquote {
   border-left: 2px solid #fc6;
   background: #222;

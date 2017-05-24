@@ -1,0 +1,20 @@
+
+
+a.primary-btn {
+  background: #3C6;
+  color: #000;
+  padding: 0.5em 1em;
+  border-radius: 0.4em;
+  white-space: nowrap;
+}
+a.primary-btn:hover {
+  background: #3E8;
+  color: #000;
+}
+
+a.primary-btn.disabled, a.primary-btn.disabled:hover {
+  pointer-events: none;
+  background: transparent;
+  color: #000;
+  opacity: 0.3;
+}

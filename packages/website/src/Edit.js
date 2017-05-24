@@ -1,10 +1,25 @@
 //@flow
 import React, { Component } from "react";
 import URL from "url";
+import TransitionQueryString
+  from "gl-transition-utils/lib/TransitionQueryString";
+import acceptedLicenses from "gl-transition-utils/lib/acceptedLicenses";
 import Editor from "./Editor";
 import transform from "./transform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
 import { transitionsByName } from "./data";
+import PrimaryBtn from "./PrimaryBtn";
+
+function getTransitionParams({ location }) {
+  if (!location.search) return {};
+  return TransitionQueryString.parse(location.search.slice(1));
+}
+function setTransitionParams({ location, history }, params) {
+  history.replace({
+    pathname: location.pathname,
+    search: TransitionQueryString.stringify(params),
+  });
+}
 
 export default class Edit extends Component {
   props: {
@@ -29,10 +44,15 @@ export default class Edit extends Component {
     }));
   };
 
+  onTransitionParamsChange = (params: *) => {
+    setTransitionParams(this.props, params);
+  };
+
   render() {
-    const { name, location, history } = this.props;
+    const { name } = this.props;
     const { transitionResult } = this.state;
     const transition = transitionsByName[name];
+    const transitionParams = getTransitionParams(this.props);
     const submitPatchHref = URL.format({
       pathname: "https://github.com/" +
         githubRepoPath +
@@ -51,35 +71,46 @@ export default class Edit extends Component {
         name +
         ".glsl",
     });
+    const hasChanged =
+      transition.glsl !== transitionResult.data.transition.glsl;
+
     return (
       <Editor
-        location={location}
-        history={history}
         errors={transitionResult.errors}
         transition={transitionResult.data.transition}
         compilation={transitionResult.data.compilation}
         onFragChange={this.onFragChange}
-      >
-        <div className="toolbar">
-          <h2 style={{ marginLeft: 366 }}>
+        transitionParams={transitionParams}
+        onTransitionParamsChange={this.onTransitionParamsChange}
+        asideHead={
+          <h2 className="tname">
+            <a
+              className="license"
+              href={acceptedLicenses[transition.license]}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {transition.license}
+            </a>
+            <div style={{ flex: 1 }} />
             <a href={fileHref} target="_blank" rel="noopener noreferrer">
               <i className="fa fa-github" />
               {" "}
               <strong>{transition.name}</strong> by <em>{transition.author}</em>
             </a>
           </h2>
-          <a
-            className="primary-btn"
-            target="_blank"
-            rel="noopener noreferrer"
+        }
+        actionBtn={
+          <PrimaryBtn
+            disabled={transitionResult.errors.length > 0 || !hasChanged}
             href={submitPatchHref}
           >
             <i className="fa fa-github" />
             {" "}
-            Submit Patch on Github
-          </a>
-        </div>
-      </Editor>
+            Patch {transition.name}.glsl on Github
+          </PrimaryBtn>
+        }
+      />
     );
   }
 }

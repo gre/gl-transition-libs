@@ -1,4 +1,4 @@
-.transitions {
+.gallery .transitions {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -6,6 +6,26 @@
   padding: 10px 0;
 }
 
-.transitions > * {
+.gallery .transitions > * {
   margin: 10px;
+}
+
+.gallery .pager {
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.gallery .pager a {
+  color: #666;
+  font-size: 2em;
+  padding: 0.2em 0.6em;
+}
+.gallery .pager a:hover:not(.active) {
+  color: #999;
+}
+.gallery .pager a.active {
+  color: #fff;
+  font-weight: bold;
 }

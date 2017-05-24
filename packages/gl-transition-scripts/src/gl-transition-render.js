@@ -10,22 +10,27 @@ import savePixels from "save-pixels";
 import getPixels from "./getPixels";
 import readFile from "./readFile";
 import transformSource from "gl-transition-utils/lib/transformSource";
+import TransitionQueryString
+  from "gl-transition-utils/lib/TransitionQueryString";
 
-function list(val) {
-  return val.split(",");
+function collect(val, memo) {
+  memo.push(val);
+  return memo;
 }
 
 program
   .version("0.0.1")
   .option(
     "-t, --transition <file.glsl>",
-    "transition or comma-separated list of transitions to use",
-    list
+    "add a transition to use (can be used multiple times)",
+    collect,
+    []
   )
   .option(
     "-i, --images <images>",
-    "comma-separated list of images to use for the transition",
-    list
+    "add an image to use for the transition (use multiple times)",
+    collect,
+    []
   )
   .option("-w, --width <width>", "width in pixels", parseInt)
   .option("-h, --height <height>", "height in pixels", parseInt)
@@ -40,7 +45,7 @@ program
     parseInt,
     0
   )
-  .option("-p, --progress [p]", "only render one frame", parseInt, 0.4)
+  .option("-p, --progress [p]", "only render one frame", parseFloat, 0.4)
   .option(
     "-o, --out <directory|out.png>",
     "a folder to create with the images OR the path of the image to save (if using progress). use '-' for stdout"
@@ -84,15 +89,17 @@ gl_Position = vec4(_p,0.0,1.0);
 uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
 }`;
 
-function readTransition(file) {
-  return readFile(file).then(glsl => {
+function readTransition(str) {
+  const [filename, query] = str.split("?");
+  const params = query ? TransitionQueryString.parse(query) : {};
+  return readFile(filename).then(glsl => {
     const res = transformSource("file.glsl", glsl);
     if (res.errors.length > 0) {
       throw new Error(
         "transition have errors:\n" + res.errors.map(e => e.message).join("\n")
       );
     }
-    return res;
+    return { params, ...res };
   });
 }
 
@@ -129,7 +136,9 @@ Promise.all([
       shader.bind();
       shader.attributes._p.pointer();
       shader.uniforms.ratio = width / height;
-      Object.assign(shader.uniforms, t.data.defaultParams);
+      const params = { ...t.data.defaultParams, ...t.params };
+      Object.assign(shader.uniforms, params);
+      // ^ FIXME need support of sampler2D 😱
       return shader;
     });
 
@@ -186,6 +195,12 @@ Promise.all([
         Promise.resolve()
       );
     } else {
+      shader = shaders[0];
+      shader.bind();
+      const fromTexture = textures[0];
+      const toTexture = textures[1 % textures.length];
+      shader.uniforms.from = fromTexture.bind(0);
+      shader.uniforms.to = toTexture.bind(1);
       return draw(
         progress,
         out === "-" ? process.stdout : fs.createWriteStream(out)
@@ -193,6 +208,6 @@ Promise.all([
     }
   })
   .catch(e => {
-    console.error(e.message);
+    console.error(e);
     process.exit(1);
   });

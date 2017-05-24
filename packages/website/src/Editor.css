@@ -2,6 +2,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .Editor-body {
   display: flex;
@@ -9,18 +10,19 @@
   flex: 1;
   position: relative;
 }
-.Editor-body > .stats {
-  position: absolute;
-  left: 4px;
-  top: 4px;
-}
 .Editor .leftpanel {
-  width: 276px;
+  position: relative;
+  width: 376px;
+  margin: 0 auto;
   padding-left: 10px;
   padding-right: 10px;
-  margin-left: 100px;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
+}
+.Editor-body .leftpanel .stats {
+  position: absolute;
+  left: 4px;
 }
 .Editor .leftpanel .section {
   flex: 1;
@@ -30,8 +32,11 @@
   display: flex;
   flex-direction: column;
 }
-.Editor .main {
-
+.Editor .editor-action {
+  position: absolute;
+  top: 15px;
+  right: 8px;
+  z-index: 10;
 }
 
 .Editor .no-uniforms {
@@ -58,4 +63,45 @@
 
 .Editor .links  a i {
   margin-right: 4px;
+}
+
+.Editor .tname {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 256px;
+  margin: 0.5em 0;
+  font-size: 14px;
+}
+.Editor .tname .license {
+  opacity: 0.5;
+  font-weight: lighter;
+  letter-spacing: 0.1em;
+}
+.Editor .transition-name {
+  width: 230px;
+  height: 28px;
+  padding: 0 0.4em;
+  font-size: inherit;
+  text-align: right;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+}
+.Editor .transition-name:focus {
+  outline: none;
+  color: #0F0;
+  border-color: #0F0;
+}
+.Editor .transition-name.error,
+.Editor .transition-name.error:focus {
+  color: #f00;
+  border-color: #f00;
+}
+
+.Editor .transition-name-extension {
+  width: 26px;
+  display: inline-block;
+  text-align: right;
 }

@@ -13,11 +13,20 @@ const browserWebGLCompiler = createWebGLCompiler(gl);
 export default (
   filename: string,
   glsl: string,
-  extraErrorsForTransitionResult: * = () => []
+  extraErrorsForTransitionResult: * = (data: *) => []
 ) => {
   const compilationRes = browserWebGLCompiler(glsl);
   const transitionRes = transformSource(filename, glsl);
   const extraErrors = extraErrorsForTransitionResult(transitionRes);
+  function priority(e) {
+    if (typeof e.line === "number") {
+      return e.line > glsl.length ? glsl.length + 1 : e.line;
+    }
+    return glsl.length + 1;
+  }
+  function sortErrors(a, b) {
+    return priority(a) - priority(b);
+  }
   return {
     data: {
       transition: transitionRes.data,
@@ -25,6 +34,7 @@ export default (
     },
     errors: compilationRes.errors
       .concat(transitionRes.errors)
-      .concat(extraErrors),
+      .concat(extraErrors)
+      .sort(sortErrors),
   };
 };

@@ -10,9 +10,17 @@ IMGSDIR=`dirname $0`/images
 
 rm -rf $tmpimgs $palette $gif
 
-gl-transition-render -t $tname -o $tmpimgs \
-  -i $IMGSDIR/1.jpg,$IMGSDIR/2.jpg,$IMGSDIR/3.jpg,$IMGSDIR/1.jpg \
-  -f 50 -d 12 -w 512 -h 400
+gl-transition-render \
+  -t $tname \
+  -o $tmpimgs \
+  -i $IMGSDIR/1.jpg \
+  -i $IMGSDIR/2.jpg \
+  -i $IMGSDIR/3.jpg \
+  -i $IMGSDIR/1.jpg \
+  -f 50 \
+  -d 12 \
+  -w 512 \
+  -h 400
 
 filters="scale=256:-1:flags=lanczos"
 ffmpeg -v fatal -framerate 30 -i $tmpimgs/%d.png -vf "$filters,palettegen" -y $palette

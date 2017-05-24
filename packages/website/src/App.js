@@ -37,6 +37,17 @@ class App extends Component {
             <NavLink exact to="/gallery">Gallery</NavLink>
             <NavLink to="/transition/new">Editor</NavLink>
           </nav>
+          <div style={{ flex: 1 }} />
+          <div className="external">
+            <a href="https://github.com/gltransitions/gl-transitions">
+              <i className="fa fa-github" />
+              <span> gl-transitions</span>
+            </a>
+            <a href="https://github.com/gre/gl-transition-libs/issues">
+              <i className="fa fa-bug" />
+              <span> Found a Bug?</span>
+            </a>
+          </div>
         </header>
         <main>
           <Switch>

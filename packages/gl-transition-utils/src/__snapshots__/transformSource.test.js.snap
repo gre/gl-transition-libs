@@ -68,6 +68,11 @@ Object {
   },
   "errors": Array [
     Object {
+      "code": "GLT_transition_no_impl",
+      "message": "'vec4 transition(vec2 uv)' function is not implemented",
+      "type": "error",
+    },
+    Object {
       "code": "GLT_meta_missing",
       "message": "'author' is missing. Please define it in a '// author: ...' comment",
       "type": "error",
@@ -75,11 +80,6 @@ Object {
     Object {
       "code": "GLT_meta_missing",
       "message": "'license' is missing. Please define it in a '// license: ...' comment",
-      "type": "error",
-    },
-    Object {
-      "code": "GLT_transition_no_impl",
-      "message": "'vec4 transition(vec2 uv)' function is not implemented",
       "type": "error",
     },
   ],
@@ -136,16 +136,6 @@ vec4 transition (vec2 uv) {}
   },
   "errors": Array [
     Object {
-      "code": "GLT_meta_missing",
-      "message": "'author' is missing. Please define it in a '// author: ...' comment",
-      "type": "error",
-    },
-    Object {
-      "code": "GLT_meta_missing",
-      "message": "'license' is missing. Please define it in a '// license: ...' comment",
-      "type": "error",
-    },
-    Object {
       "code": "GLT_reserved_variable_used",
       "column": 18,
       "line": 2,
@@ -157,6 +147,16 @@ vec4 transition (vec2 uv) {}
       "column": 16,
       "line": 3,
       "message": "You have defined these forbidden variables in the scope: to. They are reserved for the wrapping code.",
+      "type": "error",
+    },
+    Object {
+      "code": "GLT_meta_missing",
+      "message": "'author' is missing. Please define it in a '// author: ...' comment",
+      "type": "error",
+    },
+    Object {
+      "code": "GLT_meta_missing",
+      "message": "'license' is missing. Please define it in a '// license: ...' comment",
       "type": "error",
     },
   ],

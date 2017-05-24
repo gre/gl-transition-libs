@@ -1,6 +1,5 @@
 //@flow
 import React, { Component, PropTypes } from "react";
-import querystring from "querystring";
 import GlslUniformsEditor from "glsl-uniforms-editor";
 import Vignette from "./Vignette";
 import GlslContextualHelp from "./GlslContextualHelp";
@@ -19,40 +18,20 @@ type Transition = {
 };
 
 type Props = {
-  history: *,
-  location: *,
   errors: Array<*>,
   transition: Transition,
   compilation: *,
+  transitionParams: *,
   onFragChange: (glsl: string) => void,
+  onTransitionParamsChange: (params: *) => void,
   children?: *,
+  actionBtn: *,
+  asideHead: *,
 };
 
 type State = {
   token: *,
 };
-
-function getQuery({ location }) {
-  if (!location.search) return {};
-  const obj = querystring.parse(location.search.slice(1));
-  const query = {};
-  Object.keys(obj).forEach(key => {
-    try {
-      query[key] = JSON.parse(obj[key]);
-    } catch (e) {}
-  });
-  return query;
-}
-function setQuery({ location, history }, query) {
-  const obj = {};
-  Object.keys(query).forEach(key => {
-    obj[key] = JSON.stringify(query[key]);
-  });
-  history.replace({
-    pathname: location.pathname,
-    search: querystring.stringify(obj),
-  });
-}
 
 export default class Editor extends Component {
   props: Props;
@@ -76,16 +55,8 @@ export default class Editor extends Component {
     );
   };
 
-  onTransitionParamsChange = (transitionParams: *) => {
-    this.setTransitionParams(transitionParams);
-  };
-
   onCursorTokenChange = (token: *) => {
     this.setState({ token });
-  };
-
-  setTransitionParams = (transitionParams: *) => {
-    setQuery(this.props, transitionParams);
   };
 
   labelStyle = (highlight: boolean, hover: boolean) => ({
@@ -116,12 +87,12 @@ export default class Editor extends Component {
       transition,
       compilation,
       onFragChange,
+      transitionParams,
+      onTransitionParamsChange,
+      asideHead,
+      actionBtn,
     } = this.props;
     const { token } = this.state;
-    const transitionParams = {
-      ...transition.defaultParams,
-      ...getQuery(this.props),
-    };
 
     const shaderCompiles = !errors.some(e => e.code === "WebGL_error");
 
@@ -129,13 +100,15 @@ export default class Editor extends Component {
 
     return (
       <div className="Editor">
-        {children}
         <div className="Editor-body">
-          <div className="stats">
-            <CompilationStats compilation={compilation} />
-          </div>
           <div className="leftpanel">
+            <div className="head">
+              {asideHead}
+            </div>
             <div className="section">
+              <div className="stats">
+                <CompilationStats compilation={compilation} />
+              </div>
               <Vignette
                 transition={transition}
                 from={fromImage}
@@ -149,8 +122,11 @@ export default class Editor extends Component {
                     className="uniforms-editor"
                     style={{ margin: "20px 0 20px -100px" }}
                     types={transition.paramsTypes}
-                    values={transitionParams}
-                    onChange={this.onTransitionParamsChange}
+                    values={{
+                      ...transition.defaultParams,
+                      ...transitionParams,
+                    }}
+                    onChange={onTransitionParamsChange}
                     width={356}
                     renderNoUniforms={this.renderNoUniforms}
                     labelStyle={this.labelStyle}
@@ -181,6 +157,9 @@ export default class Editor extends Component {
             </div>
           </div>
           <div className="main">
+            <div className="editor-action">
+              {actionBtn}
+            </div>
             <GlslEditor
               value={transition.glsl}
               errors={errors}

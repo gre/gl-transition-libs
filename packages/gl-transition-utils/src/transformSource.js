@@ -10,8 +10,8 @@ type Token = {
   column?: number,
 };
 
-type UniformDefaultLiteralValue = number | boolean | null;
-type UniformDefaultValue =
+export type UniformDefaultLiteralValue = number | boolean | null;
+export type UniformDefaultValue =
   | Array<UniformDefaultLiteralValue>
   | UniformDefaultLiteralValue;
 
@@ -217,45 +217,59 @@ export default function transformSource(
     glsl,
   };
   const errors: Array<*> = [];
-  const m = filename.match(/^(.*).glsl$/);
-  if (m) {
-    const name = m[1];
-    data.name = name;
-    if (!name) {
-      errors.push({
-        type: "error",
-        code: "GLT_invalid_filename",
-        message: `A transition filename is required!`,
-      });
-    } else if (name.length > 40) {
-      errors.push({
-        type: "error",
-        code: "GLT_invalid_filename",
-        message: `filename is too long`,
-      });
-    } else if (!name.match(/^[a-zA-Z0-9-_]+$/)) {
-      errors.push({
-        type: "error",
-        code: "GLT_invalid_filename",
-        message: `filename can only contains letters, numbers or - and _ characters. Got '${filename}'`,
-      });
-    } else if (reservedTransitionNames.includes(name)) {
-      errors.push({
-        type: "error",
-        code: "GLT_invalid_filename",
-        message: `filename cannot be called '${name}'.`,
-      });
+
+  const tokens: Array<Token> = TokenString(glsl);
+
+  let ast;
+  try {
+    ast = ParseTokens(tokens);
+  } catch (e) {
+    const { message } = e;
+    const r = message.split(" at line ");
+    let line = 0;
+    if (r.length === 2) {
+      line = parseInt(r[1], 10);
     }
-  } else {
-    data.name = filename;
     errors.push({
       type: "error",
-      code: "GLT_invalid_filename",
-      message: `filename needs to ends with '.glsl'. Got '${filename}'`,
+      code: "GLT_GLSL_error",
+      message: "GLSL code error: " + e.message,
+      line,
     });
   }
 
-  const tokens: Array<Token> = TokenString(glsl);
+  if (ast) {
+    const forbiddenScopes = Object.keys(ast.scope).filter(key =>
+      blacklistScope.includes(key)
+    );
+    forbiddenScopes.forEach(id => {
+      // $FlowFixMe
+      const token = ast.scope[id].token;
+      errors.push({
+        type: "error",
+        code: "GLT_reserved_variable_used",
+        message: `You have defined these forbidden variables in the scope: ${id}. They are reserved for the wrapping code.`,
+        ...extraPositionFromToken(token),
+      });
+    });
+
+    if (!ast.scope.transition) {
+      errors.push({
+        type: "error",
+        code: "GLT_transition_no_impl",
+        message: "'vec4 transition(vec2 uv)' function is not implemented",
+      });
+    } else {
+      if (!typeCheckTransitionFunction(ast.scope.transition)) {
+        errors.push({
+          type: "error",
+          code: "GLT_transition_wrong_type",
+          message: "transition must be a function with following signature: 'vec4 transition(vec2 uv)'",
+          ...extraPositionFromToken(ast.scope.transition.token),
+        });
+      }
+    }
+  }
 
   function parseUniformCommentDefault(
     comment: string,
@@ -526,14 +540,6 @@ export default function transformSource(
         value = value.trim();
         if (whitelistMeta.indexOf(key) !== -1) {
           data[key] = value;
-          if (!value) {
-            errors.push({
-              type: "error",
-              code: "GLT_meta_invalid",
-              message: `Please define a '${key}' in '// ${key}: ...' comment`,
-              ...extraPositionFromToken(token),
-            });
-          }
         }
       }
       continue;
@@ -558,55 +564,42 @@ export default function transformSource(
     });
   }
 
-  let ast;
-  try {
-    ast = ParseTokens(tokens);
-  } catch (e) {
-    const { message } = e;
-    const r = message.split(" at line ");
-    let line = 0;
-    if (r.length === 2) {
-      line = parseInt(r[1], 10);
+  const m = filename.match(/^(.*).glsl$/);
+  if (m) {
+    const name = m[1];
+    data.name = name;
+    if (!name) {
+      errors.push({
+        type: "error",
+        code: "GLT_invalid_filename",
+        message: `A transition filename is required!`,
+      });
+    } else if (name.length > 40) {
+      errors.push({
+        type: "error",
+        code: "GLT_invalid_filename",
+        message: `filename is too long`,
+      });
+    } else if (!name.match(/^[a-zA-Z0-9-_]+$/)) {
+      errors.push({
+        type: "error",
+        code: "GLT_invalid_filename",
+        message: `filename can only contains letters, numbers or - and _ characters. Got '${filename}'`,
+      });
+    } else if (reservedTransitionNames.includes(name)) {
+      errors.push({
+        type: "error",
+        code: "GLT_invalid_filename",
+        message: `filename cannot be called '${name}'.`,
+      });
     }
+  } else {
+    data.name = filename;
     errors.push({
       type: "error",
-      code: "GLT_GLSL_error",
-      message: "GLSL code error: " + e.message,
-      line,
+      code: "GLT_invalid_filename",
+      message: `filename needs to ends with '.glsl'. Got '${filename}'`,
     });
-  }
-
-  if (ast) {
-    const forbiddenScopes = Object.keys(ast.scope).filter(key =>
-      blacklistScope.includes(key)
-    );
-    forbiddenScopes.forEach(id => {
-      // $FlowFixMe
-      const token = ast.scope[id].token;
-      errors.push({
-        type: "error",
-        code: "GLT_reserved_variable_used",
-        message: `You have defined these forbidden variables in the scope: ${id}. They are reserved for the wrapping code.`,
-        ...extraPositionFromToken(token),
-      });
-    });
-
-    if (!ast.scope.transition) {
-      errors.push({
-        type: "error",
-        code: "GLT_transition_no_impl",
-        message: "'vec4 transition(vec2 uv)' function is not implemented",
-      });
-    } else {
-      if (!typeCheckTransitionFunction(ast.scope.transition)) {
-        errors.push({
-          type: "error",
-          code: "GLT_transition_wrong_type",
-          message: "transition must be a function with following signature: 'vec4 transition(vec2 uv)'",
-          ...extraPositionFromToken(ast.scope.transition.token),
-        });
-      }
-    }
   }
 
   return {

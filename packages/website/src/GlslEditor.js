@@ -28,6 +28,7 @@ export default class GlslEditor extends Component {
     editor.setFontSize("14px");
     editor.setShowPrintMargin(false);
     editor.setTheme("ace/theme/solarized_light");
+    editor.commands.removeCommands(["gotoline"]);
 
     const session = editor.getSession();
     session.setTabSize(2);
