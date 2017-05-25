@@ -18,12 +18,17 @@ const footerForOrder = (getDate: *) =>
     render() {
       const { transition } = this.props;
       return (
-        <footer>
-          <strong>{transition.name}</strong> by <em>{transition.author}</em>
-          <span className="dateago">
-            {dateAgo(getDate(transition))}
-          </span>
-        </footer>
+        <div>
+          <Link className="expand" to={"/transition/" + transition.name}>
+            <i className="fa fa-expand" />
+          </Link>
+          <footer>
+            <strong>{transition.name}</strong> by <em>{transition.author}</em>
+            <span className="dateago">
+              {dateAgo(getDate(transition))}
+            </span>
+          </footer>
+        </div>
       );
     }
   };
@@ -38,7 +43,7 @@ class EditorVignette extends PureComponent {
   render() {
     const { transition, order } = this.props;
     return (
-      <Link to={"/transition/" + transition.name}>
+      <Link to={"/editor/" + transition.name}>
         <Vignette
           transition={transition}
           from={fromImage}

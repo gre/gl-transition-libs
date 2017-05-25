@@ -33,7 +33,7 @@ class VignetteFooter extends PureComponent {
   render() {
     const { transition } = this.props;
     return (
-      <Link to={`/transition/${transition.name}`}>
+      <Link to={`/editor/${transition.name}`}>
         <footer>
           <strong>{transition.name}</strong> by <em>{transition.author}</em>
         </footer>
@@ -300,7 +300,7 @@ vec4 transition (vec2 uv) {
               />
             </div>
             <footer>
-              <Link className="btn" to="/transition/new">
+              <Link className="btn" to="/editor">
                 Experiment with this code
               </Link>
             </footer>
@@ -470,7 +470,7 @@ vec4 transition (vec2 uv) {
 
         <header>That's it folks! Get to your shader code ❤️</header>
 
-        <Link className="btn" to="/transition/new">
+        <Link className="btn" to="/editor">
           Create a new Transition
         </Link>
 

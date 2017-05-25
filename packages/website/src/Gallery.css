@@ -19,6 +19,12 @@
   font-style: italic;
   color: #000;
 }
+.gallery .vignette .expand {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 4px;
+}
 
 .gallery .pager {
   display: flex;

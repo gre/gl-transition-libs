@@ -4,11 +4,20 @@ import { Route, NavLink, Switch, Link } from "react-router-dom";
 import "./App.css";
 import Gallery from "./Gallery";
 import Edit from "./Edit";
+import Preview from "./Preview";
 import EditNew from "./EditNew";
 import Intro from "./Intro";
 import NotFound from "./NotFound";
 import { transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
+
+const renderPreview = (props: *) => {
+  const { name } = props.match.params;
+  if (name in transitionsByName) {
+    return <Preview {...props} name={name} />;
+  }
+  return <NotFound {...props} />;
+};
 
 const renderEditor = (props: *) => {
   const { name } = props.match.params;
@@ -34,7 +43,7 @@ class App extends Component {
           </Link>
           <nav>
             <NavLink exact to="/gallery">Gallery</NavLink>
-            <NavLink to="/transition/new">Editor</NavLink>
+            <NavLink to="/editor">Editor</NavLink>
           </nav>
           <div style={{ flex: 1 }} />
           <div className="external">
@@ -61,8 +70,9 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Intro} />
             <Route path="/gallery" component={Gallery} />
-            <Route path="/transition/new" component={renderEditor} />
-            <Route path="/transition/:name" component={renderEditor} />
+            <Route path="/editor" exact component={renderEditor} />
+            <Route path="/editor/:name" component={renderEditor} />
+            <Route path="/transition/:name" component={renderPreview} />
             <Route component={NotFound} />
           </Switch>
         </main>

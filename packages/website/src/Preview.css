@@ -1,0 +1,22 @@
+.Preview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Preview header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 512px;
+}
+
+.Preview footer {
+  padding: 1em 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 512px;
+}
