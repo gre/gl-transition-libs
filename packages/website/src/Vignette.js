@@ -43,6 +43,7 @@ export default class Vignette extends Component {
     onHoverIn?: Function,
     onHoverOut?: Function,
     interaction?: boolean,
+    onDrawWithProgress?: (x: number) => void,
   };
   visitor = new SurfaceVisitor(this);
   static defaultProps = {
@@ -60,11 +61,21 @@ export default class Vignette extends Component {
     failing: null,
   };
 
+  componentDidMount() {
+    const { onDrawWithProgress } = this.props;
+    if (onDrawWithProgress) onDrawWithProgress(this.getProgress());
+  }
+
   componentWillReceiveProps({ onHoverOut, interaction }: *, { hover }: *) {
     if (interaction && hover) {
       this.setState({ hover: false });
       if (onHoverOut) onHoverOut();
     }
+  }
+
+  componentDidUpdate() {
+    const { onDrawWithProgress } = this.props;
+    if (onDrawWithProgress) onDrawWithProgress(this.getProgress());
   }
 
   _setProgress: ?(progress: number) => void = null;
@@ -79,8 +90,9 @@ export default class Vignette extends Component {
     this._cachedProgress = value;
     const { _setProgress } = this;
     if (_setProgress && !this.state.failing) {
-      const { easing } = this.props;
+      const { easing, onDrawWithProgress } = this.props;
       _setProgress(easing ? easing(value) : value);
+      if (onDrawWithProgress) onDrawWithProgress(value);
     }
   };
 

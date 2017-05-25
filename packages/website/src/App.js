@@ -1,6 +1,6 @@
 //@flow
 import React, { Component } from "react";
-import { Redirect, Route, NavLink, Switch, Link } from "react-router-dom";
+import { Route, NavLink, Switch, Link } from "react-router-dom";
 import "./App.css";
 import Gallery from "./Gallery";
 import Edit from "./Edit";

@@ -42,6 +42,20 @@ class VignetteFooter extends PureComponent {
   }
 }
 
+class BezierEasingEditorWithProgressSetter extends Component {
+  state = {
+    progress: 0,
+  };
+  setProgress(progress: number) {
+    this.setState({ progress });
+  }
+  render() {
+    return (
+      <BezierEasingEditor {...this.props} progress={this.state.progress} />
+    );
+  }
+}
+
 class ConfigurableExample extends PureComponent {
   state = {
     easing: [0.5, 0, 0.8, 0.8],
@@ -70,14 +84,16 @@ class ConfigurableExample extends PureComponent {
       },
     });
   };
+  onBezierEditorRef = ref => {
+    this.bezierEditor = ref;
+  };
+  onDrawWithProgress = progress => {
+    const { bezierEditor } = this;
+    if (!bezierEditor) return;
+    bezierEditor.setProgress(progress);
+  };
   render() {
-    const {
-      easing,
-      easingFunction,
-      duration,
-      delay,
-      transitionParams,
-    } = this.state;
+    const { easing, duration, delay, transitionParams } = this.state;
     return (
       <section>
         <div>
@@ -91,6 +107,7 @@ class ConfigurableExample extends PureComponent {
             duration={duration}
             delay={delay}
             Footer={VignetteFooter}
+            onDrawWithProgress={this.onDrawWithProgress}
           />
         </div>
         <div>
@@ -101,7 +118,8 @@ class ConfigurableExample extends PureComponent {
               justifyContent: "space-between",
             }}
           >
-            <BezierEasingEditor
+            <BezierEasingEditorWithProgressSetter
+              ref={this.onBezierEditorRef}
               value={easing}
               onChange={this.onEasingChange}
               width={300}
@@ -278,9 +296,11 @@ vec4 transition (vec2 uv) {
 }`}
               />
             </div>
-            <Link className="btn" to="/transition/new">
-              Experiment with this code
-            </Link>
+            <footer>
+              <Link className="btn" to="/transition/new">
+                Experiment with this code
+              </Link>
+            </footer>
           </div>
           <div>
             <p>
@@ -327,7 +347,7 @@ vec4 transition (vec2 uv) {
         </header>
         <section>
           <div>
-            <img className="full" src={require("./github.gif")} />
+            <img alt="" className="full" src={require("./github.gif")} />
           </div>
           <div>
             <p>

@@ -18,6 +18,10 @@
   margin-bottom: 80px;;
 }
 
+.Intro header, .Intro footer {
+  text-align: center;
+}
+
 .Intro > header {
   padding: 1em 0;
 }
@@ -26,8 +30,6 @@
   box-sizing: content-box;
   width: 512px;
   padding: 20px 40px;
-  display: flex;
-  flex-direction: column;
 }
 
 .Intro strong {
@@ -55,10 +57,6 @@
 .Intro img.full {
   border: 1px solid #000;
   width: 100%;
-}
-
-.Intro header {
-  text-align: center;
 }
 
 .Intro .vignette footer {
