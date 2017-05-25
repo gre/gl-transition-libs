@@ -5,6 +5,7 @@ import BezierEasingEditor from "bezier-easing-editor";
 import AnimatedVignette from "./AnimatedVignette";
 import { transitionsByCreatedAt, transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
+import GlslCode from "./GlslCode";
 import "./Intro.css";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
@@ -80,9 +81,6 @@ class ConfigurableExample extends PureComponent {
     return (
       <section>
         <div>
-          <header>
-            <Logo /> are configurable
-          </header>
           <AnimatedVignette
             transitions={[transitionsByName.doorway]}
             transitionsParams={[transitionParams]}
@@ -96,54 +94,6 @@ class ConfigurableExample extends PureComponent {
           />
         </div>
         <div>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <label>
-              reflection
-              <input
-                style={{ width: "100%" }}
-                type="range"
-                name="reflection"
-                value={transitionParams.reflection}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={this.onTransitionParamsChange}
-              />
-            </label>
-            <label>
-              depth
-              <input
-                style={{ width: "100%" }}
-                type="range"
-                name="depth"
-                value={transitionParams.depth}
-                min={1}
-                max={20}
-                step={0.1}
-                onChange={this.onTransitionParamsChange}
-              />
-            </label>
-            <label>
-              perspective
-              <input
-                style={{ width: "100%" }}
-                type="range"
-                name="perspective"
-                value={transitionParams.perspective}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={this.onTransitionParamsChange}
-              />
-            </label>
-          </div>
           <div
             style={{
               display: "flex",
@@ -154,7 +104,9 @@ class ConfigurableExample extends PureComponent {
             <BezierEasingEditor
               value={easing}
               onChange={this.onEasingChange}
-              padding={[50, 50, 50, 50]}
+              width={300}
+              height={300}
+              padding={[60, 60, 60, 60]}
               background="transparent"
               gridColor="#444"
               curveColor="#b82"
@@ -178,7 +130,7 @@ class ConfigurableExample extends PureComponent {
                   type="number"
                   value={duration}
                   min={100}
-                  max={5000}
+                  max={6000}
                   step={100}
                   onChange={this.onDurationChange}
                 />
@@ -201,6 +153,53 @@ class ConfigurableExample extends PureComponent {
               </label>
             </div>
           </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <label style={{ display: "flex", flexDirection: "row" }}>
+              reflection
+              <input
+                style={{ flex: 1 }}
+                type="range"
+                name="reflection"
+                value={transitionParams.reflection}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={this.onTransitionParamsChange}
+              />
+            </label>
+            <label style={{ display: "flex", flexDirection: "row" }}>
+              depth
+              <input
+                style={{ flex: 1 }}
+                type="range"
+                name="depth"
+                value={transitionParams.depth}
+                min={1}
+                max={20}
+                step={0.1}
+                onChange={this.onTransitionParamsChange}
+              />
+            </label>
+            <label style={{ display: "flex", flexDirection: "row" }}>
+              perspective
+              <input
+                style={{ flex: 1 }}
+                type="range"
+                name="perspective"
+                value={transitionParams.perspective}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={this.onTransitionParamsChange}
+              />
+            </label>
+          </div>
         </div>
       </section>
     );
@@ -212,13 +211,13 @@ export default class Intro extends Component {
     return (
       <div className="Intro">
 
+        <header>
+          The Open Collection of
+          {" "}
+          <Logo />
+        </header>
         <section>
           <div className="preview">
-            <header>
-              The Open Collection of
-              {" "}
-              <Logo />
-            </header>
 
             <AnimatedVignette
               transitions={transitionsByCreatedAt}
@@ -263,16 +262,16 @@ export default class Intro extends Component {
           </div>
         </section>
 
+        <header>
+          <a href={"https://github.com/" + githubRepoPath}>
+            <Logo />
+            are on
+            {" "}
+            <i className="fa fa-github" /> Github
+          </a>
+        </header>
         <section>
           <div>
-            <a href={"https://github.com/" + githubRepoPath}>
-              <header>
-                <Logo />
-                are on
-                {" "}
-                <i className="fa fa-github" /> Github
-              </header>
-            </a>
             <img className="full" src={require("./github.gif")} />
           </div>
           <div>
@@ -329,7 +328,64 @@ export default class Intro extends Component {
           </div>
         </section>
 
+        <header>
+          <Logo /> are configurable
+        </header>
+
         <ConfigurableExample />
+
+        <header>What are <Logo />?</header>
+
+        <section>
+          <div>
+            <div>
+              <GlslCode
+                code={`\
+// transition of a simple fade.
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv),
+    getToColor(uv),
+    progress
+  );
+}`}
+              />
+            </div>
+          </div>
+          <div>
+            <p>
+              A GL Transition is a partial GLSL shader code that implements a
+              {" "}
+              <code>transition</code> coloring function:
+              {" "}
+              For a given
+              {" "}
+              <code>uv</code>
+              {" "}
+              pixel position, returns a
+              {" "}
+              color representing the mix of the
+              {" "}
+              <strong>source</strong>
+              {" "}
+              to the
+              {" "}
+              <strong>destination</strong>
+              {" "}
+              textures based on the variation of a contextual
+              {" "}
+              <code>progress</code>
+              {" "}
+              value from
+              {" "}
+              <code>0.0</code>
+              {" "}
+              to
+              {" "}
+              <code>1.0</code>.
+            </p>
+          </div>
+        </section>
 
       </div>
     );

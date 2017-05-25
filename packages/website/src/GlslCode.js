@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import escapeTextContentForBrowser
   from "react-dom/lib/escapeTextContentForBrowser";
 import hljs from "highlight.js";
@@ -11,7 +11,7 @@ const highlightGlslHTML = glsl => {
   }
 };
 
-export default class GlslCode extends Component {
+export default class GlslCode extends PureComponent {
   props: {
     code: string,
   };
@@ -19,7 +19,7 @@ export default class GlslCode extends Component {
   render() {
     const { code } = this.props;
     return (
-      <div
+      <pre
         className="glsl-token-usage hljs"
         dangerouslySetInnerHTML={{
           __html: highlightGlslHTML(code),
