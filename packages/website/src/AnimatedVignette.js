@@ -7,6 +7,7 @@ export default class AnimatedVignette extends Component {
   props: {
     transitions: Array<*>,
     transitionsParams?: Array<*>,
+    easings?: Array<(x: number) => number>,
     images: Array<string>,
     delay: number,
     duration: number, // in ms
@@ -65,6 +66,7 @@ export default class AnimatedVignette extends Component {
       images,
       transitions,
       transitionsParams,
+      easings,
       delay,
       duration,
       ...rest
@@ -75,6 +77,7 @@ export default class AnimatedVignette extends Component {
       transitionsParams && transitionsParams[i % transitions.length];
     const fromImage = images[i % images.length];
     const toImage = images[(i + 1) % images.length];
+    const easing = easings && easings[i % easings.length];
     return (
       <Vignette
         ref={this.onRef}
@@ -84,6 +87,7 @@ export default class AnimatedVignette extends Component {
         onHoverOut={this.onHoverOut}
         transition={transition}
         transitionParams={transitionParams}
+        easing={easing}
         {...rest}
       />
     );

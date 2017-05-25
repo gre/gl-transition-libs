@@ -10,8 +10,6 @@ import NotFound from "./NotFound";
 import { transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
 
-const notImpl = () => <Redirect to={{ pathname: "/gallery" }} />;
-
 const renderEditor = (props: *) => {
   const { name } = props.match.params;
   if (name in transitionsByName) {

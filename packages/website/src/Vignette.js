@@ -37,6 +37,7 @@ export default class Vignette extends Component {
     to: string,
     width: number,
     height: number,
+    easing?: (x: number) => number,
     children?: *,
     Footer?: *,
     onHoverIn?: Function,
@@ -72,12 +73,14 @@ export default class Vignette extends Component {
   };
 
   _cachedProgress: number = 0.3;
-  getProgress = () => this._cachedProgress;
-  setProgress = (progress: number) => {
-    if (this._cachedProgress === progress) return;
-    this._cachedProgress = progress;
-    if (this._setProgress && !this.state.failing) {
-      this._setProgress(progress);
+  getProgress = (): number => this._cachedProgress;
+  setProgress = (value: number) => {
+    if (this._cachedProgress === value) return;
+    this._cachedProgress = value;
+    const { _setProgress } = this;
+    if (_setProgress && !this.state.failing) {
+      const { easing } = this.props;
+      _setProgress(easing ? easing(value) : value);
     }
   };
 
@@ -105,6 +108,7 @@ export default class Vignette extends Component {
     const {
       transition,
       transitionParams,
+      easing,
       from,
       to,
       width,
@@ -113,12 +117,10 @@ export default class Vignette extends Component {
       interaction,
     } = this.props;
     const { hover, hoverValue, failing } = this.state;
-    const progress = this.getProgress();
+    const pvalue = this.getProgress();
+    const progress = easing ? easing(pvalue) : pvalue;
     return (
       <div
-        onMouseMove={interaction ? this.onMouseMove : null}
-        onMouseEnter={interaction ? this.onMouseEnter : null}
-        onMouseLeave={interaction ? this.onMouseLeave : null}
         className={[
           "vignette",
           hover ? "hover" : "",
@@ -126,7 +128,14 @@ export default class Vignette extends Component {
         ].join(" ")}
         style={{ width, height }}
       >
-        <Surface width={width} height={height} visitor={this.visitor}>
+        <Surface
+          onMouseMove={interaction ? this.onMouseMove : null}
+          onMouseEnter={interaction ? this.onMouseEnter : null}
+          onMouseLeave={interaction ? this.onMouseLeave : null}
+          width={width}
+          height={height}
+          visitor={this.visitor}
+        >
           <GLTransition
             ref={this.onRef}
             transition={transition}

@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "bezier-easing": "^2.0.3",
+    "bezier-easing-editor": "^0.7.0",
     "flow-bin": "^0.46.0",
     "gl-react": "^3.6.0",
     "gl-react-dom": "^3.6.0",
@@ -17,7 +19,7 @@
     "react-router-dom": "^4.1.1"
   },
   "devDependencies": {
-    "react-scripts": "1.0.2"
+    "react-scripts": "1.0.6"
   },
   "scripts": {
     "prepare": "./src/images/generate.sh",
