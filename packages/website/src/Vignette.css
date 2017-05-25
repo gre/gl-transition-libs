@@ -1,6 +1,5 @@
 .vignette {
   position: relative;
-  outline: 1px solid #000;
 }
 
 .vignette .failing {
@@ -30,7 +29,10 @@
   overflow: hidden;
 }
 
-.vignette.hover {
+.vignette canvas {
+  outline: 1px solid #000;
+}
+.vignette.hover canvas {
   outline-color: #fc6;
 }
 

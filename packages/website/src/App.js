@@ -5,9 +5,10 @@ import "./App.css";
 import Gallery from "./Gallery";
 import Edit from "./Edit";
 import EditNew from "./EditNew";
-import About from "./About";
+import Intro from "./Intro";
 import NotFound from "./NotFound";
 import { transitionsByName } from "./data";
+import { githubRepoPath } from "./conf";
 
 const notImpl = () => <Redirect to={{ pathname: "/gallery" }} />;
 
@@ -39,8 +40,9 @@ class App extends Component {
           </nav>
           <div style={{ flex: 1 }} />
           <div className="external">
+
             <a
-              href="https://github.com/gltransitions/gl-transitions"
+              href={"https://github.com/" + githubRepoPath}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -59,7 +61,7 @@ class App extends Component {
         </header>
         <main>
           <Switch>
-            <Route exact path="/" component={About} />
+            <Route exact path="/" component={Intro} />
             <Route path="/gallery" component={Gallery} />
             <Route path="/transition/new" component={renderEditor} />
             <Route path="/transition/:name" component={renderEditor} />

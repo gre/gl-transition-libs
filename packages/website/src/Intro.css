@@ -1,0 +1,54 @@
+.Intro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 1.4em;
+}
+
+.Intro section {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.Intro section > * {
+  width: 550px;
+  padding: 50px 40px;
+}
+
+.Intro strong {
+  color: #fff;
+}
+
+.Intro img.full {
+  border: 1px solid #000;
+  width: 100%;
+}
+
+.Intro header {
+  text-align: center;
+}
+
+.Intro .vignette footer {
+  pointer-events: all;
+  bottom: -30px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.Intro a.small {
+  font-size: 0.6em;
+}
+
+.Intro a {
+  color: #ccc;
+}
+.Intro a:hover {
+  color: #fff;
+}
