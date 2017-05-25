@@ -307,7 +307,7 @@ vec4 transition (vec2 uv) {
           </div>
           <div>
             <p>
-              A GL Transition is a partial GLSL shader code that implements a
+              A GL Transition is a GLSL code that implements a
               {" "}
               <code>transition</code> coloring function:
               {" "}
