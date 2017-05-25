@@ -7,7 +7,6 @@
 
 # editor features
 
-- write the / screen that quickly explain the idea of gl transition & how the repository works.
 - expand a transition in bigger screen (like in the previous website)
 - improve the input to be more "number inputs" ?
 - better support of sampler2D params. today it works but it's not straightforward and don't help that you can set an Image url.

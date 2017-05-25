@@ -277,6 +277,9 @@ export default class Intro extends Component {
               {" "}
               and can be run over any pixel source like images, videos, canvas,...
             </p>
+            <p>
+              This Open Source initiative aims to establish an universal collection of transitions that various softwares can use (including Movie Editors).
+            </p>
           </div>
         </section>
         <header>What are <Logo />?</header>
@@ -334,6 +337,15 @@ vec4 transition (vec2 uv) {
               {" "}
               <code>1.0</code>.
             </p>
+            <p>
+              <a href={"https://github.com/" + githubRepoPath}>
+                More specification can be found on
+                {" "}
+                <i className="fa fa-github" />
+                {" "}
+                Github
+              </a>.
+            </p>
           </div>
         </section>
 
@@ -370,6 +382,25 @@ vec4 transition (vec2 uv) {
               </a>. PRs are reviewed and validated by a 🤖bot.
             </p>
             <p>
+              <strong>You can directly send PRs from this website!</strong>
+            </p>
+          </div>
+        </section>
+
+        <header>
+          <Logo /> are configurable
+        </header>
+
+        <ConfigurableExample />
+
+        <header>
+          <Logo /> ecosystem
+        </header>
+
+        <section>
+          <div>
+
+            <p>
               <a href="https://www.npmjs.com/package/gl-transitions">
                 <code>gl-transitions</code>
               </a>
@@ -401,13 +432,43 @@ vec4 transition (vec2 uv) {
               </ul>
             </p>
           </div>
+          <div>
+            It's possible to use Vanilla WebGL code to run the transitions and in various environments.
+            There are also libraries to help you on that.
+
+            <ul>
+              <li>
+                With
+                {" "}
+                <code>gl-react</code>
+                {" "}
+                you can painlessly use the library
+                {" "}
+                <code>react-gl-transition</code>.
+                {" "}
+                This is what this website uses heavily.
+              </li>
+              <li>
+                In a node.js server you can use
+                {" "}
+                <code>headless-gl</code>
+                {" "}
+                to render a transition on server side.
+                {" "}
+                Our bot uses that to render a GIF and put it in the PRs!
+                {" "}
+                Travis also validates the transitions that gets committed.
+              </li>
+              <li>
+                <strong>
+                  More helpers will come and supporting more environments are welcome to contributions.
+                </strong>
+              </li>
+            </ul>
+          </div>
         </section>
 
-        <header>
-          <Logo /> are configurable
-        </header>
-
-        <ConfigurableExample />
+        <header>That's it folks! Get to your shader code ❤️</header>
 
         <Link className="btn" to="/transition/new">
           Create a new Transition
