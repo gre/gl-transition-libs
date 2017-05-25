@@ -261,6 +261,61 @@ export default class Intro extends Component {
             </p>
           </div>
         </section>
+        <header>What are <Logo />?</header>
+
+        <section>
+          <div>
+            <div>
+              <GlslCode
+                code={`\
+// transition of a simple fade.
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv),
+    getToColor(uv),
+    progress
+  );
+}`}
+              />
+            </div>
+            <Link className="btn" to="/transition/new">
+              Experiment with this code
+            </Link>
+          </div>
+          <div>
+            <p>
+              A GL Transition is a partial GLSL shader code that implements a
+              {" "}
+              <code>transition</code> coloring function:
+              {" "}
+              For a given
+              {" "}
+              <code>uv</code>
+              {" "}
+              pixel position, returns a
+              {" "}
+              color representing the mix of the
+              {" "}
+              <strong>source</strong>
+              {" "}
+              to the
+              {" "}
+              <strong>destination</strong>
+              {" "}
+              textures based on the variation of a contextual
+              {" "}
+              <code>progress</code>
+              {" "}
+              value from
+              {" "}
+              <code>0.0</code>
+              {" "}
+              to
+              {" "}
+              <code>1.0</code>.
+            </p>
+          </div>
+        </section>
 
         <header>
           <a href={"https://github.com/" + githubRepoPath}>
@@ -334,58 +389,9 @@ export default class Intro extends Component {
 
         <ConfigurableExample />
 
-        <header>What are <Logo />?</header>
-
-        <section>
-          <div>
-            <div>
-              <GlslCode
-                code={`\
-// transition of a simple fade.
-vec4 transition (vec2 uv) {
-  return mix(
-    getFromColor(uv),
-    getToColor(uv),
-    progress
-  );
-}`}
-              />
-            </div>
-          </div>
-          <div>
-            <p>
-              A GL Transition is a partial GLSL shader code that implements a
-              {" "}
-              <code>transition</code> coloring function:
-              {" "}
-              For a given
-              {" "}
-              <code>uv</code>
-              {" "}
-              pixel position, returns a
-              {" "}
-              color representing the mix of the
-              {" "}
-              <strong>source</strong>
-              {" "}
-              to the
-              {" "}
-              <strong>destination</strong>
-              {" "}
-              textures based on the variation of a contextual
-              {" "}
-              <code>progress</code>
-              {" "}
-              value from
-              {" "}
-              <code>0.0</code>
-              {" "}
-              to
-              {" "}
-              <code>1.0</code>.
-            </p>
-          </div>
-        </section>
+        <Link className="btn" to="/transition/new">
+          Create a new Transition
+        </Link>
 
       </div>
     );

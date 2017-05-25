@@ -6,6 +6,7 @@
   justify-content: center;
   color: #aaa;
   font-size: 1.4em;
+  padding: 60px 0;
 }
 
 .Intro section {
@@ -14,11 +15,10 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 80px;;
 }
 
 .Intro > header {
-  margin-top: 1em;
   padding: 1em 0;
 }
 
@@ -26,10 +26,25 @@
   box-sizing: content-box;
   width: 512px;
   padding: 20px 40px;
+  display: flex;
+  flex-direction: column;
 }
 
 .Intro strong {
   color: #fff;
+}
+
+.Intro .btn {
+  align-self: center;
+  background: #fc6;
+  color: #000;
+  padding: 0.3em 1em;
+  margin: 1em 0;
+  border-radius: 0.1em;
+}
+.Intro .btn:hover {
+  background: rgb(253, 246, 227);
+  color: #000;
 }
 
 .Intro code {
