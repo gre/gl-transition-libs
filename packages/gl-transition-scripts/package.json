@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-scripts",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "description": "Utility for generating gl-transition",
   "bin": {
     "gl-transition-transform": "bin/gl-transition-transform.js",
@@ -23,7 +23,7 @@
     "gl": "^4.0.3",
     "gl-shader": "^4.2.1",
     "gl-texture2d": "^2.1.0",
-    "gl-transition-utils": "^1.6.3",
+    "gl-transition-utils": "^1.6.4",
     "ndarray": "^1.0.18",
     "save-pixels": "^2.3.4"
   },
