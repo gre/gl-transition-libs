@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const sys = require("sys");
 const child_process = require("child_process");
+const URL = require("url");
 const transform = require("gl-transition-scripts/lib/transform").default;
 
 const exec = (cmd, opts) =>
@@ -53,9 +54,13 @@ exec('git diff --name-only master | grep "transitions/.*\.glsl$"')
 
     const summaryDetails = results
       .map(({ data, errors }) => {
-        const { name } = data.transition;
+        const { name, glsl } = data.transition;
         const success = errors.length === 0;
-        const head = `<strong>${success ? "✔︎" : "✕"} ${name}<strong>`;
+        const link = URL.stringify({
+          pathname: "https://gl-transitions.netlify.com/editor",
+          query: { glsl, name },
+        });
+        const head = `<a href="${link}"><strong>${success ? "✔︎" : "✕"} ${name}<strong></a>`;
         if (success) {
           return `${head} (compile in ${ms(data.compilation.compileTime)}, draw in ${ms(data.compilation.drawTime)})`;
         }
