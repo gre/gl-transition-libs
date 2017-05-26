@@ -377,7 +377,6 @@ export default function transformSource(
 
     if (valueNode.type === "call") {
       const values = [];
-      console.log(valueNode.children);
       for (let c = 0; c < valueNode.children.length; c++) {
         const node = valueNode.children[c];
         switch (node.type) {
