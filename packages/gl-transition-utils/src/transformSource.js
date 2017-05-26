@@ -317,7 +317,14 @@ export default function transformSource(
     }
     const { arity, primitiveType } = typeInfos[type];
 
-    function literalToJSValue(literalNode: *): ?UniformDefaultLiteralValue {
+    function literalToJSValue(node: *): ?UniformDefaultLiteralValue {
+      let literalNode, unary;
+      if (node.type === "unary") {
+        literalNode = node.children[0];
+        unary = node.data;
+      } else {
+        literalNode = node;
+      }
       switch (primitiveType) {
         case "float": {
           const f = parseFloat(literalNode.data, 10);
@@ -330,7 +337,7 @@ export default function transformSource(
             });
             return;
           }
-          return f;
+          return unary === "-" ? -f : f;
         }
         case "int": {
           const i = parseInt(literalNode.data, 10);
@@ -343,7 +350,7 @@ export default function transformSource(
             });
             return;
           }
-          return i;
+          return unary === "-" ? -i : i;
         }
         case "bool": {
           switch (literalNode.data) {
@@ -370,6 +377,7 @@ export default function transformSource(
 
     if (valueNode.type === "call") {
       const values = [];
+      console.log(valueNode.children);
       for (let c = 0; c < valueNode.children.length; c++) {
         const node = valueNode.children[c];
         switch (node.type) {
@@ -384,16 +392,18 @@ export default function transformSource(
               return;
             }
             break;
-          case "literal":
+          case "unary":
+          case "literal": {
             const v = literalToJSValue(node);
             if (v === undefined) return;
             values.push(v);
             break;
+          }
           default:
             errors.push({
               type: "error",
               code: "GLT_invalid_default_value",
-              message: `uniform '${uniformId}' has invalid format for default value: unsupported synthax. Got: '${comment}'.\nExample: uniform ${type} ${uniformId}; // = ${typeInfos[type].exampleValue}`,
+              message: `uniform '${uniformId}' has invalid format for default value: unsupported syntax. Got: '${comment}'.\nExample: uniform ${type} ${uniformId}; // = ${typeInfos[type].exampleValue}`,
               ...extraPositionFromToken(uniformToken),
             });
             return;
@@ -413,7 +423,11 @@ export default function transformSource(
         });
         return;
       }
-    } else if (valueNode.type === "literal" || valueNode.type === "keyword") {
+    } else if (
+      valueNode.type === "literal" ||
+      valueNode.type === "keyword" ||
+      valueNode.type === "unary"
+    ) {
       if (arity !== 1) {
         errors.push({
           type: "error",
