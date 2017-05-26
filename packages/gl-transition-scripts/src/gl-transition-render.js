@@ -79,8 +79,12 @@ if (
 const gl = createGL(width, height, { preserveDrawingBuffer: true });
 if (!gl) throw new Error("GL validation context could not be created");
 
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
 const data = new Uint8Array(width * height * 4);
-const pixels = ndarray(data, [height, width, 4]).transpose(1, 0, 2);
+const pixels = ndarray(data, [height, width, 4])
+  .transpose(1, 0, 2)
+  .step(1, -1, 1);
 
 const VERTEX_SHADER = `attribute vec2 _p;
 varying vec2 uv;
