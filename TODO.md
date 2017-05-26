@@ -14,6 +14,7 @@
 - each error should be documented somewhere so we can link them in a FAQ kind of doc.
 - experiment with video
 - expandable EditorStatusBar
+- should prevent nav and ask if should leave screen when you: create a new shader. edit an existing one. (if any changes in the GLSL)
 - write a new transform util function that port an old gl transition to a new one and suggest user to use it in case someone drop old code. (we just detect if there is a main function ?)
 
 # glsl-transition -> gl-transition

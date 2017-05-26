@@ -29,7 +29,9 @@ if (!pass) {
   process.exit(1);
 }
 
-exec('git diff --name-only master | grep "transitions/.*\.glsl$"')
+exec(
+  'git diff --name-only --diff-filter=AM master | grep "transitions/.*\.glsl$"'
+)
   .then(r => r.split("\n").filter(r => r))
   .then(files => {
     if (files.length === 0) {
