@@ -42,7 +42,7 @@ exec(
       const filename = path.indexOf("/") === -1
         ? path
         : path.match(/.*\/([^\/]+)/)[1];
-      const glsl = fs.readFileSync(path);
+      const glsl = fs.readFileSync(path, "utf-8");
       return Object.assign({ path }, transform(filename, glsl, path));
     });
 
@@ -58,7 +58,7 @@ exec(
       .map(({ data, errors }) => {
         const { name, glsl } = data.transition;
         const success = errors.length === 0;
-        const link = URL.stringify({
+        const link = URL.format({
           pathname: "https://gl-transitions.netlify.com/editor",
           query: { glsl, name },
         });
