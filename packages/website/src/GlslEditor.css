@@ -3,6 +3,9 @@
   height: 100%;
   flex: 1;
 }
+.glsl-editor.ace_editor {
+  font-family: Monoid, 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
 
 .glsl-editor .ace_step.error {
   background: rgba(255, 0, 0, 0.3) !important;
