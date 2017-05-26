@@ -1,6 +1,8 @@
 //@flow
 import createShader from "gl-shader";
+import createTexture from "gl-texture2d";
 import now from "performance-now";
+import ndarray from "ndarray";
 
 type Color = [number, number, number, number];
 
@@ -55,6 +57,16 @@ export default (gl: WebGLRenderingContext) => {
   );
   gl.viewport(0, 0, w, h);
 
+  const genericTexture = createTexture(
+    gl,
+    ndarray(
+      [0.1, 0.1, 0.1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.9, 0.9, 0.9],
+      [2, 2, 3]
+    )
+  );
+  genericTexture.minFilter = gl.LINEAR;
+  genericTexture.magFilter = gl.LINEAR;
+
   return (glsl: string): CompilerResult => {
     let data = {
       compileTime: 0,
@@ -81,6 +93,13 @@ export default (gl: WebGLRenderingContext) => {
 
       shader.bind();
       shader.attributes._p.pointer();
+
+      Object.keys(shader.types.uniforms).forEach(key => {
+        if (shader.types.uniforms[key] === "sampler2D") {
+          shader.uniforms[key] = genericTexture.bind();
+        }
+      });
+
       shader.uniforms.ratio = w / h;
 
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels); // this is just to force trigger a flush

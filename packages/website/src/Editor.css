@@ -12,6 +12,7 @@
 }
 .Editor .leftpanel {
   position: relative;
+  z-index: 100;
   width: 376px;
   margin: 0 auto;
   padding-left: 10px;

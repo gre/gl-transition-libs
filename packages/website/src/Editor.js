@@ -7,6 +7,7 @@ import GlslEditor from "./GlslEditor";
 import EditorStatusBar from "./EditorStatusBar";
 import CompilationStats from "./CompilationStats";
 import GlslCode from "./GlslCode";
+import TexturePicker from "./TexturePicker";
 import img1 from "./images/512x400/barley.jpg";
 import img2 from "./images/512x400/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg";
 import img3 from "./images/512x400/bigbuckbunny_snapshot1.jpg";
@@ -41,6 +42,10 @@ export default class Editor extends Component {
   state: State = {
     token: null,
   };
+
+  renderSampler2DInput = ({ id, value, onChange }: *) => (
+    <TexturePicker key={id} onChange={onChange} value={value} />
+  );
 
   renderNoUniforms = () => {
     return (
@@ -132,6 +137,7 @@ export default class Editor extends Component {
                     }}
                     onChange={onTransitionParamsChange}
                     width={356}
+                    renderSampler2DInput={this.renderSampler2DInput}
                     renderNoUniforms={this.renderNoUniforms}
                     labelStyle={this.labelStyle}
                     inputStyle={this.inputStyle}

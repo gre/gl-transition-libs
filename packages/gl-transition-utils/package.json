@@ -15,9 +15,11 @@
   ],
   "dependencies": {
     "gl-shader": "^4.2.1",
+    "gl-texture2d": "^2.1.0",
     "glsl-parser": "^2.0.0",
     "glsl-token-string": "^1.0.1",
     "glsl-tokenizer": "^2.1.2",
+    "ndarray": "^1.0.18",
     "performance-now": "^2.1.0"
   },
   "devDependencies": {

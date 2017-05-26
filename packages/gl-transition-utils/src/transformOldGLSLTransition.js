@@ -2,6 +2,11 @@
 import tokenize from "glsl-tokenizer/string";
 import print from "glsl-token-string";
 
+type Token = {
+  type: string,
+  data: string,
+};
+
 type Result = {
   data: ?{
     glsl: string,
@@ -9,9 +14,15 @@ type Result = {
   errors: Array<*>,
 };
 
-const tokenWithType = (token, type) => token.type === type;
-const tokenWithTypeAndData = (token, type, data) =>
-  token.type === type && token.data === data;
+const tokenWithType = (token: Token, type: string): boolean =>
+  token.type === type;
+
+const tokenWithTypeAndData = (
+  token: Token,
+  type: string,
+  data: string
+): boolean => token.type === type && token.data === data;
+
 const isMainFunctionDefinitionAt = (tokens: Array<*>, i: number): boolean => {
   if (!tokenWithTypeAndData(tokens[i], "keyword", "void")) return false;
   for (
@@ -23,6 +34,7 @@ const isMainFunctionDefinitionAt = (tokens: Array<*>, i: number): boolean => {
   if (!tokenWithTypeAndData(tokens[i], "ident", "main")) return false;
   return true;
 };
+
 const isFromOrToTexture2DCallAt = (tokens: Array<*>, i: number): boolean => {
   if (!tokenWithTypeAndData(tokens[i], "builtin", "texture2D")) return false;
   for (
@@ -30,7 +42,7 @@ const isFromOrToTexture2DCallAt = (tokens: Array<*>, i: number): boolean => {
     i < tokens.length && tokenWithType(tokens[i], "whitespace");
     i++
   );
-  if (i >= tokens.length) return;
+  if (i >= tokens.length) return false;
   if (tokenWithType(tokens[i], "operator", "(")) {
     i++;
   }
@@ -40,10 +52,15 @@ const isFromOrToTexture2DCallAt = (tokens: Array<*>, i: number): boolean => {
     i++
   );
   if (i >= tokens.length) return false;
+  i--;
   const token = tokens[i];
-  if (token.type === "ident" && (token.data === "from" || token.data === "to"))
-    return false;
-  return true;
+  if (
+    token.type === "ident" &&
+    (token.data === "from" || token.data === "to")
+  ) {
+    return true;
+  }
+  return false;
 };
 
 const uniformsToRemove = ["from", "to", "progress", "resolution"];

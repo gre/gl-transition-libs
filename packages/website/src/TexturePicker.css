@@ -1,0 +1,69 @@
+.texture-picker {
+  vertical-align: middle;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+.texture-picker .bg-overlay {
+  background-color: rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 900;
+}
+.texture-picker .picker:not(.visible) {
+  display: none;
+}
+.texture-picker .picker:before {
+  content: " ";
+  position: absolute;
+  top: 67px;
+  left: -32px;
+  border: 16px solid;
+  border-color: transparent white transparent transparent;
+}
+.texture-picker .picker {
+  z-index: 901;
+  position: absolute;
+  left: calc(100% + 20px);
+  top: -72px;
+  width: 200px;
+  height: 150px;
+  color: #222;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+.texture-picker .picker .texture {
+  width: 44px;
+  height: 44px;
+  float: left;
+  border: 4px solid transparent;
+  cursor: pointer;
+}
+.texture-picker .picker .texture.current {
+  border-color: #fc6;
+}
+.texture-picker .picker .texture:not(.current):hover {
+  border-color: #fec;
+}
+
+
+.texture-picker .picker-input {
+  flex: 1;
+}
+
+.texture-picker .overview {
+  width: 20%;
+  margin-left: 8px;
+  width: 24px;
+  height: 24px;
+}

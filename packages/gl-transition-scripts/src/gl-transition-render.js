@@ -47,6 +47,10 @@ program
   )
   .option("-p, --progress [p]", "only render one frame", parseFloat, 0.4)
   .option(
+    "-g, --generic-texture [image.png]",
+    "provide a generic sampler2D image to use as default uniform sampler2D"
+  )
+  .option(
     "-o, --out <directory|out.png>",
     "a folder to create with the images OR the path of the image to save (if using progress). use '-' for stdout"
   )
@@ -61,6 +65,7 @@ const {
   width,
   height,
   images,
+  genericTexture,
 } = program;
 
 if (
@@ -93,11 +98,22 @@ gl_Position = vec4(_p,0.0,1.0);
 uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
 }`;
 
+const extraImages = genericTexture ? [genericTexture] : [];
+
 function readTransition(str) {
   const [filename, query] = str.split("?");
   const params = query ? TransitionQueryString.parse(query) : {};
   return readFile(filename).then(glsl => {
     const res = transformSource("file.glsl", glsl);
+    Object.keys(res.data.paramsTypes).forEach(key => {
+      if (
+        res.data.paramsTypes[key] === "sampler2D" &&
+        typeof params[key] === "string" &&
+        !extraImages.includes(params[key])
+      ) {
+        extraImages.push(params[key]);
+      }
+    });
     if (res.errors.length > 0) {
       throw new Error(
         "transition have errors:\n" + res.errors.map(e => e.message).join("\n")
@@ -110,8 +126,9 @@ function readTransition(str) {
 Promise.all([
   Promise.all(transition.map(readTransition)),
   Promise.all(images.map(getPixels)),
+  Promise.all(extraImages.map(getPixels)),
 ])
-  .then(([transitions, images]) => {
+  .then(([transitions, images, extraImages]) => {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(
@@ -121,36 +138,54 @@ Promise.all([
     );
     gl.viewport(0, 0, width, height);
 
-    const shaders = transitions.map(t => {
-      const shader = createShader(
-        gl,
-        VERTEX_SHADER,
-        `\
-  precision highp float;
-  varying vec2 uv;
-  uniform sampler2D from, to;
-  uniform float progress, ratio;
-  vec4 getFromColor (vec2 uv) { return texture2D(from, uv); }
-  vec4 getToColor (vec2 uv) { return texture2D(to, uv); }
-  ${t.data.glsl}
-  void main () {
-    gl_FragColor = transition(uv);
-  }`
-      );
-      shader.bind();
-      shader.attributes._p.pointer();
-      shader.uniforms.ratio = width / height;
-      const params = { ...t.data.defaultParams, ...t.params };
-      Object.assign(shader.uniforms, params);
-      // ^ FIXME need support of sampler2D 😱
-      return shader;
-    });
-
     const textures = images.map(pixels => {
       const t = createTexture(gl, pixels);
       t.minFilter = gl.LINEAR;
       t.magFilter = gl.LINEAR;
       return t;
+    });
+    const extraTextures = extraImages.map(pixels => {
+      const t = createTexture(gl, pixels);
+      t.minFilter = gl.LINEAR;
+      t.magFilter = gl.LINEAR;
+      return t;
+    });
+
+    function withoutSampler2D(params: *, types: *) {
+      const obj = {};
+      Object.keys(types).forEach(key => {
+        if (types[key] !== "sampler2D") {
+          obj[key] = params[key];
+        }
+      });
+      return obj;
+    }
+
+    const shaders = transitions.map(t => {
+      const shader = createShader(
+        gl,
+        VERTEX_SHADER,
+        `\
+    precision highp float;
+    varying vec2 uv;
+    uniform sampler2D from, to;
+    uniform float progress, ratio;
+    vec4 getFromColor (vec2 uv) { return texture2D(from, uv); }
+    vec4 getToColor (vec2 uv) { return texture2D(to, uv); }
+    ${t.data.glsl}
+    void main () {
+    gl_FragColor = transition(uv);
+    }`
+      );
+      shader.bind();
+      shader.attributes._p.pointer();
+      shader.uniforms.ratio = width / height;
+      const params = {
+        ...t.data.defaultParams,
+        ...withoutSampler2D(t.params, t.paramsTypes),
+      };
+      Object.assign(shader.uniforms, params);
+      return shader;
     });
 
     let shader;
@@ -172,10 +207,21 @@ Promise.all([
           promise.then(() => {
             const fromTexture = textures[i % textures.length];
             const toTexture = textures[(i + 1) % textures.length];
-            shader = shaders[i % shaders.length];
+            const tIndex = i % transitions.length;
+            const transition = transitions[tIndex];
+            shader = shaders[tIndex];
             shader.bind();
             shader.uniforms.from = fromTexture.bind(0);
             shader.uniforms.to = toTexture.bind(1);
+            let unit = 2;
+            Object.keys(transition.paramsTypes).forEach(key => {
+              if (transition.paramsTypes[key] === "sampler2D") {
+                const i = extraImages.indexOf(
+                  transition.params[key] || genericTexture
+                );
+                shader.uniforms[key] = extraTextures[i].bind(unit++);
+              }
+            });
             const incr = 1 / (frames - 1);
             const framesArray = Array(delay || 0).fill(0);
             for (let progress = 0; progress <= 1; progress += incr) {

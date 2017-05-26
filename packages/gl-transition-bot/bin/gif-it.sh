@@ -17,6 +17,7 @@ gl-transition-render \
   -i $IMGSDIR/2.jpg \
   -i $IMGSDIR/3.jpg \
   -i $IMGSDIR/1.jpg \
+  -g $IMGSDIR/spiral-2.png \
   -f 50 \
   -d 12 \
   -w 512 \

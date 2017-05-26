@@ -114,6 +114,53 @@ class ConfigurableExample extends PureComponent {
           <div
             style={{
               display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <label style={{ display: "flex", flexDirection: "row" }}>
+              reflection
+              <input
+                style={{ flex: 1 }}
+                type="range"
+                name="reflection"
+                value={transitionParams.reflection}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={this.onTransitionParamsChange}
+              />
+            </label>
+            <label style={{ display: "flex", flexDirection: "row" }}>
+              depth
+              <input
+                style={{ flex: 1 }}
+                type="range"
+                name="depth"
+                value={transitionParams.depth}
+                min={1}
+                max={20}
+                step={0.1}
+                onChange={this.onTransitionParamsChange}
+              />
+            </label>
+            <label style={{ display: "flex", flexDirection: "row" }}>
+              perspective
+              <input
+                style={{ flex: 1 }}
+                type="range"
+                name="perspective"
+                value={transitionParams.perspective}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={this.onTransitionParamsChange}
+              />
+            </label>
+          </div>
+          <div
+            style={{
+              display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
             }}
@@ -170,53 +217,6 @@ class ConfigurableExample extends PureComponent {
                 ms.
               </label>
             </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <label style={{ display: "flex", flexDirection: "row" }}>
-              reflection
-              <input
-                style={{ flex: 1 }}
-                type="range"
-                name="reflection"
-                value={transitionParams.reflection}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={this.onTransitionParamsChange}
-              />
-            </label>
-            <label style={{ display: "flex", flexDirection: "row" }}>
-              depth
-              <input
-                style={{ flex: 1 }}
-                type="range"
-                name="depth"
-                value={transitionParams.depth}
-                min={1}
-                max={20}
-                step={0.1}
-                onChange={this.onTransitionParamsChange}
-              />
-            </label>
-            <label style={{ display: "flex", flexDirection: "row" }}>
-              perspective
-              <input
-                style={{ flex: 1 }}
-                type="range"
-                name="perspective"
-                value={transitionParams.perspective}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={this.onTransitionParamsChange}
-              />
-            </label>
           </div>
         </div>
       </section>
@@ -367,8 +367,7 @@ vec4 transition (vec2 uv) {
               {" "}
               <strong>{transitionsByCreatedAt.length} transitions</strong>
               {" "}
-              created by many contributors❤️ and
-              released under a
+              created by many contributors ❤️ and released under a
               {" "}
               <strong>Free License</strong>.
             </p>

@@ -2,6 +2,18 @@
 import transformSource from "gl-transition-utils/lib/transformSource";
 import createWebGLCompiler from "gl-transition-utils/lib/createWebGLCompiler";
 
+const defaultSampler2D = require("./textures/luma/spiral-2.png");
+
+function supplyDefaultSampler2D(types: { [_: string]: string }) {
+  const res = {};
+  Object.keys(types).forEach(key => {
+    if (types[key] === "sampler2D") {
+      res[key] = defaultSampler2D;
+    }
+  });
+  return res;
+}
+
 const canvas = document.createElement("canvas");
 // the size need to be > 256 just so we can be accurate enough on colors
 canvas.width = 512;
@@ -29,7 +41,13 @@ export default (
   }
   return {
     data: {
-      transition: transitionRes.data,
+      transition: {
+        ...transitionRes.data,
+        defaultParams: {
+          ...transitionRes.data.defaultParams,
+          ...supplyDefaultSampler2D(transitionRes.data.paramsTypes),
+        },
+      },
       compilation: compilationRes.data,
     },
     errors: compilationRes.errors

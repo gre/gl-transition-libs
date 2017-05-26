@@ -1,11 +1,15 @@
 # general
 
 - review the old issues, see if we miss anything.
-- address the ratio problem in shaders.
+- address the ratio problem in shaders. the hard part about it is getting the size as a uniform. I'm considering having an utility in gl-react to get the size of a given texture "input".
 - write short blog post.
 - pinging people that have some old gl transitions and ask them if they could port them and give feedback
 
-# editor features
+# bot
+
+- it should mention people that contributed to a file when someone send a patch.
+
+# website
 
 - expand a transition in bigger screen (like in the previous website)
 - improve the input to be more "number inputs" ?

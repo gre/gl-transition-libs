@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`transform luma example 1`] = `
+Object {
+  "data": Object {
+    "glsl": "// Author:
+// License: MIT
+// Yo
+uniform sampler2D luma;
+
+vec4 transition(vec2 uv) {
+  vec2 p = uv.xy / vec2(1.0).xy;
+  return mix(
+    getFromColor(p),
+    getToColor(p),
+    step(texture2D(luma, p).r, progress)
+  );
+}",
+  },
+  "errors": Array [],
+}
+`;
+
 exports[`transform simple example 1`] = `
 Object {
   "data": Object {
