@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`transform simple example 1`] = `
+Object {
+  "data": Object {
+    "glsl": "// Author:
+// License: MIT
+vec4 transition(vec2 uv) {
+  vec2 p = uv.xy / vec2(1.0).xy;
+  return mix(getFromColor(p), getToColor(p), progress);
+}",
+  },
+  "errors": Array [],
+}
+`;

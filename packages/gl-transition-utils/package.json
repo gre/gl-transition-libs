@@ -16,6 +16,7 @@
   "dependencies": {
     "gl-shader": "^4.2.1",
     "glsl-parser": "^2.0.0",
+    "glsl-token-string": "^1.0.1",
     "glsl-tokenizer": "^2.1.2",
     "performance-now": "^2.1.0"
   },

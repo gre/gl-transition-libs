@@ -20,7 +20,7 @@ export default class GlslCode extends PureComponent {
     const { code } = this.props;
     return (
       <pre
-        className="glsl-token-usage hljs"
+        className="GlslCode glsl-token-usage hljs"
         dangerouslySetInnerHTML={{
           __html: highlightGlslHTML(code),
         }}

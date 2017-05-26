@@ -138,15 +138,17 @@ vec4 transition (vec2 uv) {}
     Object {
       "code": "GLT_reserved_variable_used",
       "column": 18,
+      "id": "from",
       "line": 2,
-      "message": "You have defined these forbidden variables in the scope: from. They are reserved for the wrapping code.",
+      "message": "'from' cannot be defined. It is reserved for the wrapping GLSL code.",
       "type": "error",
     },
     Object {
       "code": "GLT_reserved_variable_used",
       "column": 16,
+      "id": "to",
       "line": 3,
-      "message": "You have defined these forbidden variables in the scope: to. They are reserved for the wrapping code.",
+      "message": "'to' cannot be defined. It is reserved for the wrapping GLSL code.",
       "type": "error",
     },
     Object {

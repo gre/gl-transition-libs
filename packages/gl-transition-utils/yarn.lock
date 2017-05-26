@@ -1349,6 +1349,10 @@ glsl-shader-name@^1.0.0:
     atob-lite "^1.0.0"
     glsl-tokenizer "^2.0.2"
 
+glsl-token-string@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/glsl-token-string/-/glsl-token-string-1.0.1.tgz#59441d2f857de7c3449c945666021ece358e48ec"
+
 glsl-tokenizer@^2.0.0, glsl-tokenizer@^2.0.2, glsl-tokenizer@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/glsl-tokenizer/-/glsl-tokenizer-2.1.2.tgz#720307522e03c57af35c00551950c4a70ef2dfb9"

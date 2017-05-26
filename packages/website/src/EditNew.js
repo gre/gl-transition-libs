@@ -4,12 +4,24 @@ import querystring from "querystring";
 import URL from "url";
 import Editor from "./Editor";
 import transform from "./transform";
+import SuggestTransform from "./SuggestTransform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
 import { transitionsByName } from "./data";
 import PrimaryBtn from "./PrimaryBtn";
 
 function selectEventTarget(e: *) {
   e.target.select();
+}
+
+const reservedVariablesOfOldTransition = ["main", "from", "to", "progress"];
+function probablyOldTransitionCode({ errors }: *) {
+  return (
+    errors.filter(
+      e =>
+        e.code === "GLT_reserved_variable_used" &&
+        reservedVariablesOfOldTransition.includes(e.id)
+    ).length === reservedVariablesOfOldTransition.length
+  );
 }
 
 const transformWithoutNameCollision = (filename, glsl) =>
@@ -66,6 +78,7 @@ export default class EditNew extends Component {
   state: {
     transitionResult: *,
     transitionParams: *,
+    transformSuggestionDiscarded: boolean,
   };
 
   constructor(props: Props) {
@@ -76,16 +89,22 @@ export default class EditNew extends Component {
       glsl
     );
     const transitionParams = {};
-    this.state = { transitionResult, transitionParams };
+    this.state = {
+      transitionResult,
+      transitionParams,
+      transformSuggestionDiscarded: false,
+    };
   }
 
   componentWillReceiveProps(props: *) {
     const currentTransition = this.state.transitionResult.data.transition;
     const { glsl, name } = { ...currentTransition, ...getQuery(props) };
     if (glsl !== currentTransition.glsl || name !== currentTransition.name) {
-      this.setState({
-        transitionResult: transformWithoutNameCollision(name + ".glsl", glsl),
-      });
+      const transitionResult = transformWithoutNameCollision(
+        name + ".glsl",
+        glsl
+      );
+      this.setState({ transitionResult });
     }
   }
 
@@ -101,12 +120,20 @@ export default class EditNew extends Component {
     setQuery(this.props, { name });
   };
 
+  onDiscard = () => {
+    this.setState({ transformSuggestionDiscarded: true });
+  };
+
   render() {
-    const { transitionResult, transitionParams } = this.state;
+    const {
+      transitionResult,
+      transitionParams,
+      transformSuggestionDiscarded,
+    } = this.state;
     const invalidFilename = transitionResult.errors.some(
       e => e.code === "GLT_invalid_filename"
     );
-    const { name } = transitionResult.data.transition;
+    const { name, glsl } = transitionResult.data.transition;
     return (
       <Editor
         errors={transitionResult.errors}
@@ -152,7 +179,16 @@ export default class EditNew extends Component {
             Publish on Github
           </PrimaryBtn>
         }
-      />
+      >
+        {!transformSuggestionDiscarded &&
+          probablyOldTransitionCode(transitionResult)
+          ? <SuggestTransform
+              glsl={glsl}
+              onFragChange={this.onFragChange}
+              onDiscard={this.onDiscard}
+            />
+          : null}
+      </Editor>
     );
   }
 }

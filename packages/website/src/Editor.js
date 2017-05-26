@@ -27,9 +27,9 @@ type Props = {
   transitionParams: *,
   onFragChange: (glsl: string) => void,
   onTransitionParamsChange: (params: *) => void,
-  children?: *,
-  actionBtn: *,
   asideHead: *,
+  actionBtn: *,
+  children?: *,
 };
 
 type State = {
@@ -93,6 +93,7 @@ export default class Editor extends Component {
       onTransitionParamsChange,
       asideHead,
       actionBtn,
+      children,
     } = this.props;
     const { token } = this.state;
 
@@ -172,6 +173,7 @@ export default class Editor extends Component {
             <EditorStatusBar errors={errors} />
           </div>
         </div>
+        {children}
       </div>
     );
   }

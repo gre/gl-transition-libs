@@ -1,6 +1,6 @@
 //@flow
-import TokenString from "glsl-tokenizer/string";
-import ParseTokens from "glsl-parser/direct";
+import tokenize from "glsl-tokenizer/string";
+import parse from "glsl-parser/direct";
 import acceptedLicenses from "./acceptedLicenses";
 
 type Token = {
@@ -30,6 +30,7 @@ export type TransformResult = {
     code: string,
     line?: number,
     column?: number,
+    id?: string,
   }>,
 };
 
@@ -218,11 +219,11 @@ export default function transformSource(
   };
   const errors: Array<*> = [];
 
-  const tokens: Array<Token> = TokenString(glsl);
+  const tokens: Array<Token> = tokenize(glsl);
 
   let ast;
   try {
-    ast = ParseTokens(tokens);
+    ast = parse(tokens);
   } catch (e) {
     const { message } = e;
     const r = message.split(" at line ");
@@ -248,7 +249,8 @@ export default function transformSource(
       errors.push({
         type: "error",
         code: "GLT_reserved_variable_used",
-        message: `You have defined these forbidden variables in the scope: ${id}. They are reserved for the wrapping code.`,
+        id,
+        message: `'${id}' cannot be defined. It is reserved for the wrapping GLSL code.`,
         ...extraPositionFromToken(token),
       });
     });
@@ -281,12 +283,12 @@ export default function transformSource(
     if (comment.indexOf("=") !== 0) {
       return;
     }
-    const tokens: Array<Token> = TokenString(uniformId + " " + comment + ";");
+    const tokens: Array<Token> = tokenize(uniformId + " " + comment + ";");
     // wrap with a more "valid" glsl
 
     let ast;
     try {
-      ast = ParseTokens(tokens);
+      ast = parse(tokens);
     } catch (e) {
       errors.push({
         type: "error",
