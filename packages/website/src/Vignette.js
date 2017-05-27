@@ -44,6 +44,7 @@ export default class Vignette extends Component {
     onHoverOut?: Function,
     interaction?: boolean,
     onDrawWithProgress?: (x: number) => void,
+    preload?: Array<*>,
   };
   visitor = new SurfaceVisitor(this);
   static defaultProps = {
@@ -127,6 +128,7 @@ export default class Vignette extends Component {
       height,
       Footer,
       interaction,
+      preload,
     } = this.props;
     const { hover, hoverValue, failing } = this.state;
     const pvalue = this.getProgress();
@@ -147,6 +149,7 @@ export default class Vignette extends Component {
           width={width}
           height={height}
           visitor={this.visitor}
+          preload={preload}
         >
           <GLTransition
             ref={this.onRef}

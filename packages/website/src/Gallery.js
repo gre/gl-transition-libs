@@ -8,8 +8,8 @@ import dateAgo from "./dateAgo";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import "./Gallery.css";
 
-const fromImage = require("./images/600x400/barley.jpg");
-const toImage = require("./images/600x400/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg");
+export const fromImage = require("./images/600x400/barley.jpg");
+export const toImage = require("./images/600x400/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg");
 
 const footerForOrder = (getDate: *) =>
   class EditorVignetteFooter extends PureComponent {

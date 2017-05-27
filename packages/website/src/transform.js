@@ -2,7 +2,7 @@
 import transformSource from "gl-transition-utils/lib/transformSource";
 import createWebGLCompiler from "gl-transition-utils/lib/createWebGLCompiler";
 
-const defaultSampler2D = require("./textures/luma/spiral-2.png");
+export const defaultSampler2D = require("./textures/luma/spiral-2.png");
 
 export function defaultSampler2DParamsForType(types: { [_: string]: string }) {
   let res;

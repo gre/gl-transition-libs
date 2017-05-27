@@ -7,6 +7,8 @@ import { transitionsByCreatedAt, transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
 import GlslCode from "./GlslCode";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
+import { defaultSampler2D } from "./transform";
+import { fromImage, toImage } from "./Gallery";
 import "./Intro.css";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
@@ -19,6 +21,12 @@ const images = [
   require("./images/1024x768/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg"),
   require("./images/1024x768/wdXqHcTwSTmLuKOGz92L_Landscape.jpg"),
 ];
+
+const allImagesToPreload = images.concat([
+  defaultSampler2D,
+  fromImage,
+  toImage,
+]);
 
 const Logo = () => (
   <span className="logo">
@@ -241,6 +249,7 @@ export default class Intro extends Component {
             <AnimatedVignette
               transitions={transitionsByCreatedAt}
               images={images}
+              preload={allImagesToPreload}
               width={512}
               height={384}
               duration={3000}
