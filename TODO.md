@@ -3,7 +3,6 @@
 - review the old issues, see if we miss anything.
 - address the ratio problem in shaders. the hard part about it is getting the size as a uniform. I'm considering having an utility in gl-react to get the size of a given texture "input".
 - write short blog post.
-- pinging people that have some old gl transitions and ask them if they could port them and give feedback
 
 # bot
 
@@ -11,15 +10,12 @@
 
 # website
 
-- expand a transition in bigger screen (like in the previous website)
 - improve the input to be more "number inputs" ?
-- better support of sampler2D params. today it works but it's not straightforward and don't help that you can set an Image url.
 - more responsive editor. check it works on mobile.
 - each error should be documented somewhere so we can link them in a FAQ kind of doc.
 - experiment with video
 - expandable EditorStatusBar
-- should prevent nav and ask if should leave screen when you: create a new shader. edit an existing one. (if any changes in the GLSL)
-- write a new transform util function that port an old gl transition to a new one and suggest user to use it in case someone drop old code. (we just detect if there is a main function ?)
+- should prevent nav everytime we "lose" content like when editing an existing shader (if !=). for the creation it's probably ok to leave because a "back" would restore the state.
 
 # glsl-transition -> gl-transition
 

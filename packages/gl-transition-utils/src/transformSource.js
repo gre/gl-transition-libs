@@ -579,6 +579,14 @@ export default function transformSource(
     });
   }
 
+  if (data.author && data.author.length > 63) {
+    errors.push({
+      type: "error",
+      code: "GLT_unknown_license",
+      message: `The author field is too long. Got '${data.author}'`,
+    });
+  }
+
   const m = filename.match(/^(.*).glsl$/);
   if (m) {
     const name = m[1];

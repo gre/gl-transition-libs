@@ -6,6 +6,7 @@ import AnimatedVignette from "./AnimatedVignette";
 import { transitionsByCreatedAt, transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
 import GlslCode from "./GlslCode";
+import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import "./Intro.css";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
@@ -35,7 +36,7 @@ class VignetteFooter extends PureComponent {
     return (
       <Link to={`/editor/${transition.name}`}>
         <footer>
-          <strong>{transition.name}</strong> by <em>{transition.author}</em>
+          <TransitionAuthorAndName transition={transition} />
         </footer>
       </Link>
     );

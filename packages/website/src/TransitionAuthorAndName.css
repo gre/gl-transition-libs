@@ -1,0 +1,8 @@
+.TransitionAuthorAndName {
+  display: inline-block;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 0.4em;
+}

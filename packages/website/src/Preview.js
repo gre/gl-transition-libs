@@ -6,6 +6,7 @@ import { transitionsByName } from "./data";
 import acceptedLicenses from "gl-transition-utils/lib/acceptedLicenses";
 import { githubRepoFolder, githubRepoPath } from "./conf";
 import AnimatedVignette from "./AnimatedVignette";
+import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import "./Preview.css";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
@@ -53,11 +54,7 @@ export default class Preview extends Component {
             {transition.license}
           </a>
           <h2 className="tname">
-            <a href={fileHref} target="_blank" rel="noopener noreferrer">
-              <i className="fa fa-github" />
-              {" "}
-              <strong>{transition.name}</strong> by <em>{transition.author}</em>
-            </a>
+            <TransitionAuthorAndName withGithubLink transition={transition} />
           </h2>
           <Link to={"/editor/" + transition.name}>
             <i className="fa fa-edit" />

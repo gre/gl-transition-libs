@@ -98,7 +98,7 @@ gl_Position = vec4(_p,0.0,1.0);
 uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
 }`;
 
-const extraImages = genericTexture ? [genericTexture] : [];
+const extraImagesSrc = genericTexture ? [genericTexture] : [];
 
 function readTransition(str) {
   const [filename, query] = str.split("?");
@@ -109,9 +109,9 @@ function readTransition(str) {
       if (
         res.data.paramsTypes[key] === "sampler2D" &&
         typeof params[key] === "string" &&
-        !extraImages.includes(params[key])
+        !extraImagesSrc.includes(params[key])
       ) {
-        extraImages.push(params[key]);
+        extraImagesSrc.push(params[key]);
       }
     });
     if (res.errors.length > 0) {
@@ -126,7 +126,7 @@ function readTransition(str) {
 Promise.all([
   Promise.all(transition.map(readTransition)),
   Promise.all(images.map(getPixels)),
-  Promise.all(extraImages.map(getPixels)),
+  Promise.all(extraImagesSrc.map(getPixels)),
 ])
   .then(([transitions, images, extraImages]) => {
     const buffer = gl.createBuffer();
@@ -151,7 +151,10 @@ Promise.all([
       return t;
     });
 
-    function withoutSampler2D(params: *, types: *) {
+    function withoutSampler2D(
+      params: Object,
+      types: { [_: string]: string }
+    ): Object {
       const obj = {};
       Object.keys(types).forEach(key => {
         if (types[key] !== "sampler2D") {
@@ -182,13 +185,27 @@ Promise.all([
       shader.uniforms.ratio = width / height;
       const params = {
         ...t.data.defaultParams,
-        ...withoutSampler2D(t.params, t.paramsTypes),
+        ...withoutSampler2D(t.params, t.data.paramsTypes),
       };
       Object.assign(shader.uniforms, params);
       return shader;
     });
 
     let shader;
+    const prepareSampler2Ds = transition => {
+      let unit = 2;
+      Object.keys(transition.data.paramsTypes).forEach(key => {
+        if (transition.data.paramsTypes[key] === "sampler2D") {
+          const i = extraImagesSrc.indexOf(
+            transition.params[key] || genericTexture
+          );
+          shader.uniforms[key] = i === -1
+            ? null
+            : extraTextures[i].bind(unit++);
+        }
+      });
+    };
+
     const draw = (progress, outStream) =>
       new Promise(success => {
         shader.uniforms.progress = progress;
@@ -213,15 +230,7 @@ Promise.all([
             shader.bind();
             shader.uniforms.from = fromTexture.bind(0);
             shader.uniforms.to = toTexture.bind(1);
-            let unit = 2;
-            Object.keys(transition.paramsTypes).forEach(key => {
-              if (transition.paramsTypes[key] === "sampler2D") {
-                const i = extraImages.indexOf(
-                  transition.params[key] || genericTexture
-                );
-                shader.uniforms[key] = extraTextures[i].bind(unit++);
-              }
-            });
+            prepareSampler2Ds(transition);
             const incr = 1 / (frames - 1);
             const framesArray = Array(delay || 0).fill(0);
             for (let progress = 0; progress <= 1; progress += incr) {
@@ -251,6 +260,7 @@ Promise.all([
       const toTexture = textures[1 % textures.length];
       shader.uniforms.from = fromTexture.bind(0);
       shader.uniforms.to = toTexture.bind(1);
+      prepareSampler2Ds(transitions[0]);
       return draw(
         progress,
         out === "-" ? process.stdout : fs.createWriteStream(out)

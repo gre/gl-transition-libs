@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { transitionsByCreatedAt, transitionsByUpdatedAt } from "./data";
 import Vignette from "./Vignette";
 import dateAgo from "./dateAgo";
+import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import "./Gallery.css";
 
 const fromImage = require("./images/600x400/barley.jpg");
@@ -23,7 +24,7 @@ const footerForOrder = (getDate: *) =>
             <i className="fa fa-expand" />
           </Link>
           <footer>
-            <strong>{transition.name}</strong> by <em>{transition.author}</em>
+            <TransitionAuthorAndName transition={transition} />
             <span className="dateago">
               {dateAgo(getDate(transition))}
             </span>
@@ -115,7 +116,9 @@ export default class Gallery extends Component {
             (transition, i) =>
               transition
                 ? <EditorVignette
-                    key={transition.name}
+                    key={
+                      transition.name /* FIXME maybe using just `i` , can be a good idea because we would reuse the canvases :) */
+                    }
                     transition={transition}
                     order={order}
                   />

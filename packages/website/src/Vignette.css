@@ -59,4 +59,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   pointer-events: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.vignette footer .TransitionAuthorAndName {
+  flex: 1;
 }

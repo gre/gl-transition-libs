@@ -74,8 +74,12 @@
   min-width: 256px;
   margin: 0.5em 0;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .Editor .tname .license {
+  margin-right: 20px;
   opacity: 0.5;
   font-weight: lighter;
   letter-spacing: 0.1em;

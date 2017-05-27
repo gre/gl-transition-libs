@@ -9,6 +9,7 @@ import transform from "./transform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
 import { transitionsByName } from "./data";
 import PrimaryBtn from "./PrimaryBtn";
+import TransitionAuthorAndName from "./TransitionAuthorAndName";
 
 function getTransitionParams({ location }) {
   if (!location.search) return {};
@@ -62,15 +63,6 @@ export default class Edit extends Component {
         name +
         ".glsl",
     });
-    const fileHref = URL.format({
-      pathname: "https://github.com/" +
-        githubRepoPath +
-        "/tree/master" +
-        githubRepoFolder +
-        "/" +
-        name +
-        ".glsl",
-    });
     const hasChanged =
       transition.glsl !== transitionResult.data.transition.glsl;
 
@@ -93,11 +85,7 @@ export default class Edit extends Component {
               {transition.license}
             </a>
             <div style={{ flex: 1 }} />
-            <a href={fileHref} target="_blank" rel="noopener noreferrer">
-              <i className="fa fa-github" />
-              {" "}
-              <strong>{transition.name}</strong> by <em>{transition.author}</em>
-            </a>
+            <TransitionAuthorAndName withGithubLink transition={transition} />
           </h2>
         }
         actionBtn={

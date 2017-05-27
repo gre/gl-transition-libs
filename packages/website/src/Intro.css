@@ -64,6 +64,7 @@
   bottom: -30px;
   text-align: center;
   font-size: 12px;
+  justify-content: center;
 }
 
 .Intro a.small {
