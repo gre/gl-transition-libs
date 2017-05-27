@@ -4,14 +4,27 @@ import createWebGLCompiler from "gl-transition-utils/lib/createWebGLCompiler";
 
 const defaultSampler2D = require("./textures/luma/spiral-2.png");
 
-function supplyDefaultSampler2D(types: { [_: string]: string }) {
-  const res = {};
+export function defaultSampler2DParamsForType(types: { [_: string]: string }) {
+  let res;
   Object.keys(types).forEach(key => {
     if (types[key] === "sampler2D") {
+      if (!res) res = {};
       res[key] = defaultSampler2D;
     }
   });
   return res;
+}
+
+export function supplyDefaultSampler2DToTransition(transition: *) {
+  const sampler2DParams = defaultSampler2DParamsForType(transition.paramsTypes);
+  if (!sampler2DParams) return transition;
+  return {
+    ...transition,
+    defaultParams: {
+      ...transition.defaultParams,
+      ...sampler2DParams,
+    },
+  };
 }
 
 const canvas = document.createElement("canvas");
@@ -41,13 +54,7 @@ export default (
   }
   return {
     data: {
-      transition: {
-        ...transitionRes.data,
-        defaultParams: {
-          ...transitionRes.data.defaultParams,
-          ...supplyDefaultSampler2D(transitionRes.data.paramsTypes),
-        },
-      },
+      transition: supplyDefaultSampler2DToTransition(transitionRes.data),
       compilation: compilationRes.data,
     },
     errors: compilationRes.errors
