@@ -12,12 +12,10 @@
 }
 .compilation-stats-time .value {
   font-size: 1.4em;
-  font-family: Monoid;
 }
 .compilation-stats-time .unit {
   font-size: 0.6em;
   vertical-align: baseline;
-  font-family: Monoid;
 }
 .compilation-stats-time .color-green {
   color: #6F6;

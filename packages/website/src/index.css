@@ -21,8 +21,15 @@ h1 {
 h2, h3, h4, h5, h6 {
   font-size: 1.2em;
 }
-code {
-  font-family: Monoid, monospace;
+
+code,
+.hljs,
+.glsl-editor.ace_editor,
+.glsl-documentation .glsl-token-name,
+.editor-status-bar,
+.compilation-stats-time .value,
+.compilation-stats-time .unit {
+  font-family: Monoid, 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
 }
 
 a {
@@ -31,10 +38,6 @@ a {
 }
 a:active, a:hover {
   color: inherit;
-}
-
-.ace_editor, .hljs {
-  font-family: Monoid;
 }
 
 blockquote {

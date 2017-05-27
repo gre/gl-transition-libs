@@ -26,9 +26,6 @@
   padding: 1px 3px;
   border-radius: 2px;
 }
-.glsl-documentation .glsl-token-name {
-  font-family: monospace;
-}
 .glsl-documentation .glsl-token-usage {
   width: 100%;
   box-sizing: border-box;

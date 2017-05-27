@@ -19,7 +19,7 @@
 - should prevent nav everytime we "lose" content like when editing an existing shader (if !=). for the creation it's probably ok to leave because a "back" would restore the state.
 - editor: a button to reset the defaults & also visually see if you have diverged from the default.
 - nicely degrade screens when WebGL is not supported.
-- customize gallery/editor imgs? old idea: https://github.com/gre/transitions.glsl.io/issues/58 
+- customize gallery/editor imgs? old idea: https://github.com/gre/transitions.glsl.io/issues/58
 
 # glsl-transition -> gl-transition
 
