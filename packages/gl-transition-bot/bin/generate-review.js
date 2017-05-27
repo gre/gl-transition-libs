@@ -94,7 +94,12 @@ exec(
               })
               .catch(e => {
                 console.error("Failed to generate a gif: ", e);
-                return array;
+                return array.concat([
+                  {
+                    gif: null,
+                    stderr: e.message,
+                  },
+                ]);
               })
           ),
         Promise.resolve([])
