@@ -157,7 +157,7 @@ Promise.all([
     ): Object {
       const obj = {};
       Object.keys(types).forEach(key => {
-        if (types[key] !== "sampler2D") {
+        if (key in params && types[key] !== "sampler2D") {
           obj[key] = params[key];
         }
       });
@@ -183,10 +183,13 @@ Promise.all([
       shader.bind();
       shader.attributes._p.pointer();
       shader.uniforms.ratio = width / height;
-      const params = {
-        ...t.data.defaultParams,
-        ...withoutSampler2D(t.params, t.data.paramsTypes),
-      };
+      const params = withoutSampler2D(
+        {
+          ...t.data.defaultParams,
+          ...t.params,
+        },
+        t.data.paramsTypes
+      );
       Object.assign(shader.uniforms, params);
       return shader;
     });

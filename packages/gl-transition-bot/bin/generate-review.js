@@ -82,13 +82,11 @@ exec(
         (promise, r) =>
           promise.then(array =>
             exec(path.join(__dirname, "gif-it.sh") + " " + r.path)
-              .then(({ stdout, stderr }) => {
-                const lines = stdout.split("\n");
-                const gif = lines[lines.length - 1].trim();
+              .then(({ stdout: gif, stderr }) => {
                 return array.concat([
                   {
                     gif,
-                    stderr: stderr.trim(),
+                    stderr: stderr ? stderr.trim() : "",
                   },
                 ]);
               })
@@ -97,7 +95,7 @@ exec(
                 return array.concat([
                   {
                     gif: null,
-                    stderr: e.message,
+                    stderr: e.toString(),
                   },
                 ]);
               })
@@ -110,7 +108,7 @@ exec(
             ({ gif, stderr }) =>
               (gif ? `![](${gif})` : "") +
               (stderr
-                ? `\n**Errors during gif generation:**:\n\`\`\`${stderr}\`\`\`\n`
+                ? `\n**Errors during gif generation:**\n\`\`\`${stderr}\`\`\`\n`
                 : "")
           )
           .join("\n");
