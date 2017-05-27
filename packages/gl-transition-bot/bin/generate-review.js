@@ -11,7 +11,7 @@ const exec = (cmd, opts) =>
   new Promise((success, failure) => {
     child_process.exec(cmd, opts, (error, stdout, stderr) => {
       if (error) failure(error);
-      else success(stdout);
+      else success({ stdout, stdin });
     });
   });
 
@@ -82,9 +82,15 @@ exec(
         (promise, r) =>
           promise.then(array =>
             exec(path.join(__dirname, "gif-it.sh") + " " + r.path)
-              .then(gif => {
-                if (gif) return array.concat([gif]);
-                else return array;
+              .then(({ stdout, stderr }) => {
+                const lines = stdout.split("\n");
+                const gif = lines[lines.length - 1].trim();
+                return array.concat([
+                  {
+                    gif,
+                    stderr: stderr.trim(),
+                  },
+                ]);
               })
               .catch(e => {
                 console.error("Failed to generate a gif: ", e);
@@ -94,7 +100,15 @@ exec(
         Promise.resolve([])
       )
       .then(gifs => {
-        const previews = gifs.map(gif => `![](${gif})`).join("\n");
+        const previews = gifs
+          .map(
+            ({ gif, stderr }) =>
+              (gif ? `![](${gif})` : "") +
+              (stderr
+                ? `\n**Errors during gif generation:**:\n\`\`\`${stderr}\`\`\`\n`
+                : "")
+          )
+          .join("\n");
         const event = haveErrors ? "REQUEST_CHANGES" : "APPROVE";
         const body = `${headMessage}\n\n${summaryDetails}\n\n${previews}`;
         const comments = results
