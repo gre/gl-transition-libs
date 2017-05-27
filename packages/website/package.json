@@ -28,7 +28,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "version": "1.8.0",
+  "version": "1.8.1",
   "name": "website",
   "private": true
 }
