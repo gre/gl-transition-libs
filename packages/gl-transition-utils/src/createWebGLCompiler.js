@@ -60,8 +60,12 @@ export default (gl: WebGLRenderingContext) => {
   const genericTexture = createTexture(
     gl,
     ndarray(
-      [0.1, 0.1, 0.1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.9, 0.9, 0.9],
-      [2, 2, 3]
+      // prettier-ignore
+      [ 0.1, 0.1, 0.1, 1.0,
+        0.5, 0.5, 0.5, 1.0,
+        0.5, 0.5, 0.5, 1.0,
+        0.9, 0.9, 0.9, 1.0 ],
+      [2, 2, 4]
     )
   );
   genericTexture.minFilter = gl.LINEAR;
