@@ -59,7 +59,7 @@ exec(
         const { name, glsl } = data.transition;
         const success = errors.length === 0;
         const link = URL.format({
-          pathname: "https://gl-transitions.netlify.com/editor",
+          pathname: "https://gl-transitions.com/editor",
           query: { glsl, name },
         });
         const head = `<a href="${link}"><strong>${success ? "✔︎" : "✕"} ${name}<strong></a>`;

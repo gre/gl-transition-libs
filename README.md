@@ -6,7 +6,7 @@ This is a multi-packages repository for [gl-transitions](https://github.com/gltr
 
 ## Links
 
-- [GLTransitions website](https://gl-transitions.netlify.com), gallery and editor.
+- [GLTransitions website](https://gl-transitions.com), gallery and editor.
 - [gl-transitions repository](https://github.com/gltransitions/gl-transitions), collection of gl transitions.
 
 ## Run the website
@@ -18,7 +18,7 @@ yarn start
 
 if developing, also run in another tab `yarn run watch`.
 
-> The website is hosted on https://gl-transitions.netlify.com and automatically updated from `master` branch.
+> The website is hosted on https://gl-transitions.com and automatically updated from `master` branch.
 
 ## Kudos
 

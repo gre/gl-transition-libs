@@ -11,6 +11,7 @@
 
 # website
 
+- add a global loader because the site is weird if images aren't loaded.
 - improve the input to be more "number inputs" ?
 - more responsive editor. check it works on mobile.
 - each error should be documented somewhere so we can link them in a FAQ kind of doc.
