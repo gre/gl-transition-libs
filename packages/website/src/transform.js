@@ -31,8 +31,14 @@ const canvas = document.createElement("canvas");
 // the size need to be > 256 just so we can be accurate enough on colors
 canvas.width = 512;
 canvas.height = 256;
-const gl = canvas.getContext("webgl");
-if (!gl) throw new Error("GL validation context could not be created");
+const gl: ?WebGLRenderingContext = // $FlowFixMe
+  canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+if (!gl) {
+  alert(
+    "We're sorry, this webapp don't work without WebGL. Try a different browser or computer."
+  );
+  throw new Error("GL validation context could not be created");
+}
 const browserWebGLCompiler = createWebGLCompiler(gl);
 
 export default (
