@@ -11,7 +11,7 @@ const exec = (cmd, opts) =>
   new Promise((success, failure) => {
     child_process.exec(cmd, opts, (error, stdout, stderr) => {
       if (error) failure(error);
-      else success({ stdout, stdin });
+      else success({ stdout, stdout });
     });
   });
 
@@ -32,7 +32,7 @@ if (!pass) {
 exec(
   'git diff --name-only --diff-filter=AM master | grep "transitions/.*\.glsl$"'
 )
-  .then(r => r.split("\n").filter(r => r))
+  .then(r => r.stdout.split("\n").filter(r => r))
   .then(files => {
     if (files.length === 0) {
       console.error("No glsl file has changed in this PR.");
