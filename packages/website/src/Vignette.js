@@ -5,6 +5,8 @@ import { Surface } from "gl-react-dom";
 import GLTransition from "react-gl-transition";
 import "./Vignette.css";
 
+const defaultProgress = 0.3;
+
 class SurfaceVisitor extends Visitor {
   vignette: Vignette;
   constructor(vignette: *) {
@@ -84,7 +86,7 @@ export default class Vignette extends Component {
     this._setProgress = glt && glt.getComponent().setProgress;
   };
 
-  _cachedProgress: number = 0.3;
+  _cachedProgress: number = defaultProgress;
   getProgress = (): number => this._cachedProgress;
   setProgress = (value: number) => {
     if (this._cachedProgress === value) return;
@@ -115,7 +117,9 @@ export default class Vignette extends Component {
       hover: false,
     });
     const { onHoverOut } = this.props;
-    if (onHoverOut) onHoverOut();
+    if (!onHoverOut || onHoverOut() !== false) {
+      this.setProgress(defaultProgress);
+    }
   };
   render() {
     const {

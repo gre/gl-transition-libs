@@ -60,6 +60,7 @@ export default class AnimatedVignette extends Component {
   };
   onHoverOut = () => {
     this.hovered = false;
+    return false;
   };
   render() {
     const {
