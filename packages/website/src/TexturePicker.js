@@ -51,6 +51,7 @@ export default class TexturePicker extends Component {
           key="overview"
           className="overview"
           onClick={this.openPicker}
+          alt={value}
         />
         {opened
           ? <div className="bg-overlay" onClick={this.onPickerLeave} />
@@ -62,6 +63,7 @@ export default class TexturePicker extends Component {
               <img
                 key={url}
                 src={url}
+                alt={url}
                 className={"texture" + (isCurrent ? " current" : "")}
                 onClick={() => this.onPickerChoice(url)}
               />

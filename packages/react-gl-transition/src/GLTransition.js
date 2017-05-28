@@ -11,8 +11,9 @@ export default connectSize(
       },
       transitionParams?: Object,
       progress: number,
-      from: string,
-      to: string,
+      // from and to can be any value that are accepted by gl-react for textures.
+      from: any,
+      to: any,
       // provided by connectSize
       width: number,
       height: number,

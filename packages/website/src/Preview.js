@@ -1,10 +1,8 @@
 //@flow
 import React, { Component } from "react";
-import URL from "url";
 import { Link } from "react-router-dom";
 import { transitionsByName } from "./data";
 import acceptedLicenses from "gl-transition-utils/lib/acceptedLicenses";
-import { githubRepoFolder, githubRepoPath } from "./conf";
 import AnimatedVignette from "./AnimatedVignette";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import "./Preview.css";
@@ -32,16 +30,6 @@ export default class Preview extends Component {
     const transition = transitionsByName[this.props.name];
     const randomTransitionName =
       tnames[Math.floor(Math.random() * tnames.length)];
-
-    const fileHref = URL.format({
-      pathname: "https://github.com/" +
-        githubRepoPath +
-        "/tree/master" +
-        githubRepoFolder +
-        "/" +
-        transition.name +
-        ".glsl",
-    });
     return (
       <div className="Preview">
         <header>

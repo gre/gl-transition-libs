@@ -477,7 +477,11 @@ vec4 transition (vec2 uv) {
           </div>
         </section>
 
-        <header>That's it folks! Get to your shader code ❤️</header>
+        <header>
+          That's it folks! Get to your shader code
+          {" "}
+          <span role="img" aria-label="">❤️</span>
+        </header>
 
         <Link className="btn" to="/editor">
           Create a new Transition
