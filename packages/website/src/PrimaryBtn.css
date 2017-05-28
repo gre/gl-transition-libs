@@ -17,4 +17,5 @@ a.primary-btn.disabled, a.primary-btn.disabled:hover {
   background: transparent;
   color: #000;
   opacity: 0.3;
+  display: none;
 }

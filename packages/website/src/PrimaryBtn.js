@@ -1,8 +1,7 @@
 //@flow
 import React, { Component } from "react";
 import "./PrimaryBtn.css";
-
-export default class ActionBtn extends Component {
+export default class PrimaryBtn extends Component {
   render() {
     const { children, disabled, href } = this.props;
     return (
