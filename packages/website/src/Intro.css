@@ -1,12 +1,8 @@
+
 .Intro {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   color: #aaa;
   font-size: 1.4em;
-  padding: 80px 0 200px 0;
+  padding: 10vw 0 40vh 0;
 }
 
 .Intro section {
@@ -15,7 +11,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin-bottom: 80px;;
+  margin-bottom: 80px;
 }
 
 .Intro header, .Intro footer {
@@ -28,7 +24,7 @@
 
 .Intro section > * {
   box-sizing: content-box;
-  width: 512px;
+  max-width: 512px;
   padding: 20px 40px;
 }
 
@@ -76,4 +72,19 @@
 }
 .Intro a:hover {
   color: #fff;
+}
+
+@media screen and (max-width: 540px) {
+  .Intro {
+    font-size: 1em;
+  }
+  .Intro header {
+    font-size: 1.4em;
+  }
+  .Intro section > * {
+    padding: 20px 0;
+  }
+  .Intro section p {
+    padding: 0 20px;
+  }
 }

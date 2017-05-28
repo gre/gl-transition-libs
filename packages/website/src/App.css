@@ -1,5 +1,4 @@
 .App {
-  min-width: 480px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -10,10 +9,12 @@
   display: flex;
   flex-direction: row;
   height: 40px;
+  padding: 0 0.8em;
+  overflow: hidden;
 }
 
 .App > header .logo {
-  margin: 0 0.8em;
+  margin-right: 0.8em;
 }
 
 .App .logo {
@@ -35,7 +36,7 @@
   flex-direction: row;
 }
 .App > header > nav > a {
-  padding: 0.7em 1em;
+  padding: 0.6em;
   color: #ccc;
 }
 .App > header > nav > a:hover {
@@ -51,12 +52,17 @@
   flex-direction: row;
 }
 .App > header > .external > a {
-  padding: 0.7em 0.8em;
+  padding: 0.8em;
   color: #ccc;
 }
 
 @media screen and (max-width: 540px) {
   .App > header > .external > a > span {
+    display: none;
+  }
+}
+@media screen and (max-width: 360px) {
+  .App > header .logo .full {
     display: none;
   }
 }

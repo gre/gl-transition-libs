@@ -11,14 +11,11 @@
 
 # website
 
-- drop autofocus for filename because its not the important bit. Also the errors should probably be moved out of the editor status bar but under the input.
 - on mobile the gallery crash on Android, the gallery probably need to be smaller based on device size? Actually i think it should be a carousel and where we reuse the divs, anything on React for that? On mobile also don't show the expand https://github.com/akiran/react-slick
-- gallery needs to affect key with a relative index (the item index in the page) because we would be more efficient by reusing the canvas when paginating
 - bezier-easing-editor to implement touch events support
 - drop font awesome because its not loading nicely. Instead should use svg like material-ui do?
 - add a global loader because the site is weird if images aren't loaded.
 - improve the input to be more "number inputs" ?
-- more responsive editor. check it works on mobile.
 - each error should be documented somewhere so we can link them in a FAQ kind of doc.
 - experiment with video
 - expandable EditorStatusBar
@@ -27,6 +24,7 @@
 - nicely degrade screens when WebGL is not supported.
 - customize gallery/editor imgs? old idea: https://github.com/gre/transitions.glsl.io/issues/585
 - profile performance.
+- better handling of losing context. it shouldn't error like currently but just have a gray placeholder
 
 # glsl-transition -> gl-transition
 

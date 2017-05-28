@@ -33,12 +33,12 @@
   justify-content: center;
 }
 .gallery .pager a {
-  color: #666;
+  color: #999;
   font-size: 2em;
   padding: 0.2em 0.6em;
 }
 .gallery .pager a:hover:not(.active) {
-  color: #999;
+  color: #bbb;
 }
 .gallery .pager a.active {
   color: #fff;

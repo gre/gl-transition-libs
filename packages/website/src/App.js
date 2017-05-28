@@ -38,7 +38,7 @@ class App extends Component {
           <Link to="/">
             <h1 className="logo">
               <span>GL</span>
-              <span>Transitions</span>
+              <span>T<span className="full">ransitions</span></span>
             </h1>
           </Link>
           <nav>

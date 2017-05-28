@@ -9,6 +9,7 @@
   flex-direction: row;
   flex: 1;
   position: relative;
+  overflow: auto;
 }
 .Editor .leftpanel {
   position: relative;
@@ -32,6 +33,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
+  max-width: 100vw;
 }
 .Editor .editor-action {
   position: absolute;
@@ -109,4 +112,11 @@
   width: 26px;
   display: inline-block;
   text-align: right;
+}
+
+
+@media screen and (max-width: 540px) {
+  .Editor .main .glsl-editor {
+    width: 100vw;
+  }
 }

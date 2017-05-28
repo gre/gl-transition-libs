@@ -3,16 +3,19 @@ import React, { Component } from "react";
 import raf from "raf";
 import Vignette from "./Vignette";
 
+type Props = {
+  paused?: boolean,
+  transitions: Array<*>,
+  transitionsParams?: Array<*>,
+  easings?: Array<(x: number) => number>,
+  images: Array<string>,
+  delay: number,
+  duration: number, // in ms
+};
 export default class AnimatedVignette extends Component {
-  props: {
-    transitions: Array<*>,
-    transitionsParams?: Array<*>,
-    easings?: Array<(x: number) => number>,
-    images: Array<string>,
-    delay: number,
-    duration: number, // in ms
-  };
+  props: Props;
   static defaultProps = {
+    paused: false,
     delay: 0,
     duration: 5000,
   };
@@ -22,46 +25,79 @@ export default class AnimatedVignette extends Component {
   vignette: Vignette;
   _raf: *;
   hovered = false;
+  lastT = 0;
+  endReachedSince = 0;
+  loop = (t: number) => {
+    this._raf = raf(this.loop);
+    const dt = Math.min(t - this.lastT, 100);
+    this.lastT = t;
+    const { vignette, props: { duration, delay } } = this;
+    let progress = vignette.getProgress();
+    progress += dt / duration;
+    if (progress < 1) {
+      // animating...
+      vignette.setProgress(progress);
+    } else if (this.endReachedSince < delay) {
+      // nothing to do. pause for the delay.
+      this.endReachedSince += dt;
+      vignette.setProgress(1);
+    } else {
+      // schedule a new slide...
+      this.setState({ i: this.state.i + 1 });
+      this.endReachedSince = 0;
+      vignette.setProgress(0);
+    }
+  };
+  onStart = (t: number) => {
+    this.lastT = t;
+    this.loop(t);
+  };
+  running = false;
+  start = () => {
+    this.running = true;
+    raf.cancel(this._raf);
+    this._raf = raf(this.onStart);
+  };
+  stop = () => {
+    this.running = false;
+    raf.cancel(this._raf);
+  };
+
   componentDidMount() {
-    let lastT, endReachedSince = 0;
-    const loop = t => {
-      this._raf = raf(loop);
-      if (!lastT) lastT = t;
-      const dt = Math.min(t - lastT, 100);
-      lastT = t;
-      const { vignette, hovered } = this;
-      if (hovered || !vignette) return;
-      let progress = vignette.getProgress();
-      progress += dt / this.props.duration;
-      if (progress < 1) {
-        // animating...
-        vignette.setProgress(progress);
-      } else if (endReachedSince < this.props.delay) {
-        // nothing to do. pause for the delay.
-        endReachedSince += dt;
-        vignette.setProgress(1);
-      } else {
-        // schedule a new slide...
-        this.setState({ i: this.state.i + 1 });
-        endReachedSince = 0;
-        vignette.setProgress(0);
-      }
-    };
-    this._raf = raf(loop);
+    this.syncRunning(this.props);
   }
   componentWillUnmount() {
-    raf.cancel(this._raf);
+    this.start();
+  }
+  componentWillReceiveProps(props: Props) {
+    this.syncRunning(props);
   }
   onRef = (v: Vignette) => {
     this.vignette = v;
+    this.syncRunning(this.props);
   };
   onHoverIn = () => {
     this.hovered = true;
+    this.syncRunning(this.props);
   };
   onHoverOut = () => {
     this.hovered = false;
+    this.syncRunning(this.props);
     return false;
   };
+  conditionToRun({ paused }: Props) {
+    return !paused && !this.hovered && this.vignette;
+  }
+  syncRunning(props: Props) {
+    const shouldRun = this.conditionToRun(props);
+    if (shouldRun !== this.running) {
+      if (shouldRun) {
+        this.start();
+      } else {
+        this.stop();
+      }
+    }
+  }
   render() {
     const {
       images,

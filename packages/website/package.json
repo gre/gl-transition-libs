@@ -16,7 +16,8 @@
     "react-dom": "^15.5.4",
     "react-gl-transition": "^1.5.1",
     "react-router": "^4.1.1",
-    "react-router-dom": "^4.1.1"
+    "react-router-dom": "^4.1.1",
+    "react-waypoint": "^7.0.3"
   },
   "devDependencies": {
     "react-scripts": "1.0.6"

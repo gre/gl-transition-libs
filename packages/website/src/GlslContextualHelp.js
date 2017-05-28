@@ -59,7 +59,24 @@ export default class GlslContextualHelp extends Component {
     var documentation = token && findDocumentation(token);
 
     return !documentation
-      ? null
+      ? <div className="links">
+          <a
+            href="https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i className="fa fa-book" />
+            GLSL Spec.
+          </a>
+          <a
+            href="https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i className="fa fa-file-code-o" />
+            Quick Ref.
+          </a>
+        </div>
       : <div className="glsl-documentation">
           <p className="glsl-token-type-name">
             <span className="glsl-token-type">

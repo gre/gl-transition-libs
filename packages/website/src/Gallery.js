@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { transitionsByCreatedAt, transitionsByUpdatedAt } from "./data";
 import Vignette from "./Vignette";
 import dateAgo from "./dateAgo";
+import ScrollToTop from "./ScrollToTop";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import "./Gallery.css";
 
@@ -70,21 +71,24 @@ class PageLink extends PureComponent {
   props: {
     page: number,
     current: number,
+    children?: *,
   };
   render() {
-    const { page, current } = this.props;
+    const { page, current, children } = this.props;
     return (
       <Link
         className={page === current ? "active" : ""}
         to={page === 1 ? "/gallery" : "/gallery?page=" + page}
       >
-        {page}
+        {children}
       </Link>
     );
   }
 }
 
-const pageSize = 12;
+// Android does not look to support more than ~ 8 GL contexts
+const pageSize = (navigator.userAgent || "").includes("Android") ? 8 : 12;
+
 function getPage(page, transitions) {
   const arr = [];
   const from = (page - 1) * pageSize;
@@ -109,34 +113,40 @@ export default class Gallery extends Component {
     const transitions = order === "updated"
       ? transitionsByUpdatedAt
       : transitionsByCreatedAt;
+    const nbPages = Math.ceil(transitions.length / pageSize);
+    const pagination = Array(nbPages) // the time we have too much pages we refactor this xD
+      .fill(null)
+      .map((_, i) => i + 1)
+      .map(p => (
+        <PageLink key={p} page={p} current={page}>
+          {p}
+        </PageLink>
+      ));
     return (
-      <div className="gallery">
-        <div className="transitions">
-          {getPage(page, transitions).map(
-            (transition, i) =>
-              transition
-                ? <EditorVignette
-                    key={
-                      transition.name /* FIXME maybe using just `i` , can be a good idea because we would reuse the canvases :) */
-                    }
-                    transition={transition}
-                    order={order}
-                  />
-                : <VignettePlaceholder key={i} />
-          )}
+      <ScrollToTop>
+        <div className="gallery">
+          <div className="pager">
+            {pagination}
+          </div>
+          <div className="transitions">
+            {getPage(page, transitions).map(
+              (transition, i) =>
+                transition
+                  ? <EditorVignette
+                      key={i}
+                      transition={transition}
+                      order={order}
+                    />
+                  : <VignettePlaceholder key={i} />
+            )}
+          </div>
+          <div className="pager">
+            {page === nbPages && page !== 1
+              ? <PageLink page={1} current={page}>Back to First Page</PageLink>
+              : pagination}
+          </div>
         </div>
-        <div className="pager">
-          {/* the time we have too much pages we refactor this xD */}
-          {Array(Math.ceil(transitions.length / pageSize))
-            .fill(null)
-            .map((_, i) => i + 1)
-            .map(p => (
-              <PageLink key={p} page={p} current={page}>
-                {p}
-              </PageLink>
-            ))}
-        </div>
-      </div>
+      </ScrollToTop>
     );
   }
 }

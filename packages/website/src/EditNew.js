@@ -8,6 +8,7 @@ import SuggestTransform from "./SuggestTransform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
 import { transitionsByName } from "./data";
 import PrimaryBtn from "./PrimaryBtn";
+import "./EditNew.css";
 
 function selectEventTarget(e: *) {
   e.target.select();
@@ -130,32 +131,44 @@ export default class EditNew extends Component {
       transitionParams,
       transformSuggestionDiscarded,
     } = this.state;
-    const invalidFilename = transitionResult.errors.some(
-      e => e.code === "GLT_invalid_filename"
-    );
+    const filenameErrors = [];
+    const glslErrors = [];
+    transitionResult.errors.forEach(e => {
+      if (e.code === "GLT_invalid_filename") {
+        filenameErrors.push(e);
+      } else {
+        glslErrors.push(e);
+      }
+    });
     const { name, glsl } = transitionResult.data.transition;
     return (
       <Editor
-        errors={transitionResult.errors}
+        errors={glslErrors}
         transition={transitionResult.data.transition}
         compilation={transitionResult.data.compilation}
         onFragChange={this.onFragChange}
         transitionParams={transitionParams}
         onTransitionParamsChange={this.onTransitionParamsChange}
         asideHead={
-          <label className="tname">
-            <input
-              className={`transition-name ${invalidFilename ? "error" : ""}`}
-              type="text"
-              placeholder="Transition Name"
-              autoFocus={!!invalidFilename}
-              onFocus={selectEventTarget}
-              value={name}
-              onChange={this.onFileNameChange}
-              maxLength={40}
-            />
-            <span className="transition-name-extension">.glsl</span>
-          </label>
+          <div>
+            <label className="tname">
+              <input
+                className={`transition-name ${filenameErrors.length > 0 ? "error" : ""}`}
+                type="text"
+                placeholder="Transition Name"
+                onFocus={selectEventTarget}
+                value={name}
+                onChange={this.onFileNameChange}
+                maxLength={40}
+              />
+              <span className="transition-name-extension">.glsl</span>
+            </label>
+            {filenameErrors.map(e => (
+              <div className="filename-error">
+                {e.message}
+              </div>
+            ))}
+          </div>
         }
         actionBtn={
           <PrimaryBtn

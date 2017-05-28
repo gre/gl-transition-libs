@@ -51,14 +51,14 @@ export default class Editor extends Component {
     return (
       <blockquote className="no-uniforms">
         <strong>Want more customizable transition?</strong>
-        <p>
+        <div>
           <em>
             define transition parameters by declaring uniforms in the shader. Example:
           </em>
-        </p>
-        <p>
+        </div>
+        <div>
           <GlslCode code="uniform float value;" />
-        </p>
+        </div>
       </blockquote>
     );
   };
@@ -146,24 +146,6 @@ export default class Editor extends Component {
             </div>
             <div className="section">
               <GlslContextualHelp token={token} />
-              <div className="links">
-                <a
-                  href="https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fa fa-book" />
-                  GLSL Spec.
-                </a>
-                <a
-                  href="https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i className="fa fa-file-code-o" />
-                  Quick Ref.
-                </a>
-              </div>
             </div>
           </div>
           <div className="main">
