@@ -3,14 +3,12 @@
 exports[`must define metas 1`] = `
 Object {
   "data": Object {
-    "author": null,
     "defaultParams": Object {},
     "glsl": "
     vec4 transition (vec2 uv) {
       return vec4(0.0);
     }
 ",
-    "license": null,
     "name": "test",
     "paramsTypes": Object {},
   },
@@ -57,12 +55,10 @@ Object {
 exports[`must define the transition function 1`] = `
 Object {
   "data": Object {
-    "author": null,
     "defaultParams": Object {},
     "glsl": "
 
 ",
-    "license": null,
     "name": "test",
     "paramsTypes": Object {},
   },
@@ -117,7 +113,6 @@ Object {
 exports[`must not override existing things 1`] = `
 Object {
   "data": Object {
-    "author": null,
     "defaultParams": Object {
       "from": 42,
       "to": 42,
@@ -127,7 +122,6 @@ uniform float from; /* = 42. */
 uniform float to; /* = 42. */
 vec4 transition (vec2 uv) {}
 ",
-    "license": null,
     "name": "test",
     "paramsTypes": Object {
       "from": "float",

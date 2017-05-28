@@ -211,8 +211,6 @@ export default function transformSource(
 ): TransformResult {
   const data = {
     name: "",
-    author: null,
-    license: null,
     paramsTypes: {},
     defaultParams: {},
     glsl,
@@ -554,6 +552,28 @@ export default function transformSource(
         key = key.trim().toLowerCase();
         value = value.trim();
         if (whitelistMeta.indexOf(key) !== -1) {
+          if (!value) {
+            errors.push({
+              type: "error",
+              code: "GLT_meta_missing",
+              message: `'${key}' is empty. Please define a value in '// ${key}: ...' comment`,
+              ...extraPositionFromToken(token),
+            });
+          } else if (key === "license" && !(value in acceptedLicenses)) {
+            errors.push({
+              type: "error",
+              code: "GLT_unknown_license",
+              message: `'${value}' not found in supported licenses: ${Object.keys(acceptedLicenses).join(", ")}`,
+              ...extraPositionFromToken(token),
+            });
+          } else if (key === "author" && value.length > 63) {
+            errors.push({
+              type: "error",
+              code: "GLT_unknown_license",
+              message: `The author field is too long. Got '${value}'`,
+              ...extraPositionFromToken(token),
+            });
+          }
           data[key] = value;
         }
       }
@@ -562,7 +582,7 @@ export default function transformSource(
   }
 
   whitelistMeta.forEach(key => {
-    if (!data[key]) {
+    if (!(key in data)) {
       errors.push({
         type: "error",
         code: "GLT_meta_missing",
@@ -570,22 +590,6 @@ export default function transformSource(
       });
     }
   });
-
-  if (data.license && !(data.license in acceptedLicenses)) {
-    errors.push({
-      type: "error",
-      code: "GLT_unknown_license",
-      message: `'${data.license}' not found in supported licenses: ${Object.keys(acceptedLicenses).join(", ")}`,
-    });
-  }
-
-  if (data.author && data.author.length > 63) {
-    errors.push({
-      type: "error",
-      code: "GLT_unknown_license",
-      message: `The author field is too long. Got '${data.author}'`,
-    });
-  }
 
   const m = filename.match(/^(.*).glsl$/);
   if (m) {

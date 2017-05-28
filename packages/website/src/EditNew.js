@@ -20,6 +20,7 @@ function probablyOldTransitionCode({ errors }: *) {
     errors.filter(
       e =>
         e.code === "GLT_reserved_variable_used" &&
+        e.id &&
         reservedVariablesOfOldTransition.includes(e.id)
     ).length === reservedVariablesOfOldTransition.length
   );
@@ -163,8 +164,8 @@ export default class EditNew extends Component {
               />
               <span className="transition-name-extension">.glsl</span>
             </label>
-            {filenameErrors.map(e => (
-              <div className="filename-error">
+            {filenameErrors.map((e, i) => (
+              <div key={i} className="filename-error">
                 {e.message}
               </div>
             ))}
