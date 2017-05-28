@@ -536,9 +536,11 @@ vec4 transition (vec2 uv) {
           <span role="img" aria-label="">❤️</span>
         </header>
 
-        <Link className="btn" to="/editor">
-          Create a new Transition
-        </Link>
+        <footer>
+          <Link className="btn" to="/editor">
+            Create a new Transition
+          </Link>
+        </footer>
 
       </div>
     );
