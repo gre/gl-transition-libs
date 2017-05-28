@@ -12,7 +12,7 @@
 # website
 
 - drop autofocus for filename because its not the important bit. Also the errora should probably be moved out of the editor status bar but under rhe input.
-- on mobile the gallery crash on Android, the gallery probably needa to be smaller based on device size? Actually i think it should be a carousel and where we reuse the divs, anything on React for that? On mobile alao don't show the expand
+- on mobile the gallery crash on Android, the gallery probably needa to be smaller based on device size? Actually i think it should be a carousel and where we reuse the divs, anything on React for that? On mobile alao don't show the expand https://github.com/akiran/react-slick
 - gallery needs to affect key with a relative index (the item index in the page) because we would be more efficient by reusing the canvas when paginating
 - bezier-easing-editor to implement touch events support
 - drop font awesome because its not loading nicely. Instead should use svg like material-ui do?
