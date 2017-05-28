@@ -13,10 +13,9 @@
 
 - bezier-easing-editor to implement touch events support
 - Vignette touch events !!!!
-- drop font awesome because its not loading nicely. Instead should use svg like material-ui do?
-- add a global loader because the site is weird if images aren't loaded.
+- add a global loader because the site is weird if images aren't loaded. actually => https://github.com/gre/gl-react/issues/115
 - improve the input to be more "number inputs" ?
-- each error should be documented somewhere so we can link them in a FAQ kind of doc.
+- FAQ each error should be documented somewhere so we can link them in a FAQ kind of doc.
 - experiment with video
 - expandable EditorStatusBar
 - should prevent nav everytime we "lose" content like when editing an existing shader (if !=). for the creation it's probably ok to leave because a "back" would restore the state.
