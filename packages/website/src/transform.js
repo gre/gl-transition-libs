@@ -33,20 +33,35 @@ canvas.width = 512;
 canvas.height = 256;
 const gl: ?WebGLRenderingContext = // $FlowFixMe
   canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-if (!gl) {
-  alert(
-    "We're sorry, this webapp don't work without WebGL. Try a different browser or computer."
-  );
-  throw new Error("GL validation context could not be created");
-}
-const browserWebGLCompiler = createWebGLCompiler(gl);
+let browserWebGLCompiler = gl && createWebGLCompiler(gl);
+
+canvas.addEventListener("webglcontextlost", event => {
+  event.preventDefault();
+  browserWebGLCompiler = null;
+});
+canvas.addEventListener("restore", () => {
+  browserWebGLCompiler = gl && createWebGLCompiler(gl);
+});
 
 export default (
   filename: string,
   glsl: string,
   extraErrorsForTransitionResult: * = (data: *) => []
 ) => {
-  const compilationRes = browserWebGLCompiler(glsl);
+  const compilationRes = browserWebGLCompiler
+    ? browserWebGLCompiler(glsl)
+    : {
+        data: null,
+        errors: [
+          {
+            code: "WebGL_init_fail",
+            type: "error",
+            message: !gl
+              ? "WebGL validation context could not be created!"
+              : "WebGL validation context is lost!",
+          },
+        ],
+      };
   const transitionRes = transformSource(filename, glsl);
   const extraErrors = extraErrorsForTransitionResult(transitionRes);
   function priority(e) {
@@ -55,9 +70,7 @@ export default (
     }
     return glsl.length + 1;
   }
-  function sortErrors(a, b) {
-    return priority(a) - priority(b);
-  }
+
   return {
     data: {
       transition: supplyDefaultSampler2DToTransition(transitionRes.data),
@@ -66,6 +79,6 @@ export default (
     errors: compilationRes.errors
       .concat(transitionRes.errors)
       .concat(extraErrors)
-      .sort(sortErrors),
+      .sort((a, b) => priority(a) - priority(b)),
   };
 };

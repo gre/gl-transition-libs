@@ -11,8 +11,8 @@
 
 # website
 
-- on mobile the gallery crash on Android, the gallery probably need to be smaller based on device size? Actually i think it should be a carousel and where we reuse the divs, anything on React for that? On mobile also don't show the expand https://github.com/akiran/react-slick
 - bezier-easing-editor to implement touch events support
+- Vignette touch events !!!!
 - drop font awesome because its not loading nicely. Instead should use svg like material-ui do?
 - add a global loader because the site is weird if images aren't loaded.
 - improve the input to be more "number inputs" ?
