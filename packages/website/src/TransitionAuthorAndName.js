@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import URL from "url";
 import { githubRepoFolder, githubRepoPath } from "./conf";
+import FaGithub from "react-icons/lib/fa/github";
 import "./TransitionAuthorAndName.css";
 
 export default class TransitionAuthorAndName extends Component {
@@ -35,7 +36,7 @@ export default class TransitionAuthorAndName extends Component {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <i className="fa fa-github" />
+          <FaGithub />
           {" "}
           <strong>{name}</strong>
           {" "}

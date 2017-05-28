@@ -8,6 +8,7 @@ import SuggestTransform from "./SuggestTransform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
 import { transitionsByName } from "./data";
 import PrimaryBtn from "./PrimaryBtn";
+import FaGithub from "react-icons/lib/fa/github";
 import "./EditNew.css";
 
 function selectEventTarget(e: *) {
@@ -188,7 +189,7 @@ export default class EditNew extends Component {
               },
             })}
           >
-            <i className="fa fa-github" />
+            <FaGithub />
             {" "}
             Publish on Github
           </PrimaryBtn>

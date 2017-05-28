@@ -7,6 +7,7 @@ import Vignette from "./Vignette";
 import dateAgo from "./dateAgo";
 import ScrollToTop from "./ScrollToTop";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
+import FaExpand from "react-icons/lib/fa/expand";
 import "./Gallery.css";
 
 export const fromImage = require("./images/600x400/barley.jpg");
@@ -22,7 +23,7 @@ const footerForOrder = (getDate: *) =>
       return (
         <div>
           <Link className="expand" to={"/transition/" + transition.name}>
-            <i className="fa fa-expand" />
+            <FaExpand />
           </Link>
           <footer>
             <TransitionAuthorAndName transition={transition} />

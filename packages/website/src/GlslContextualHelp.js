@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import glsldoc from "glsldoc";
 import GlslCode from "./GlslCode";
 import "./GlslContextualHelp.css";
+import FaBook from "react-icons/lib/fa/book";
+import FaFileCodeO from "react-icons/lib/fa/file-code-o";
 
 const GlslDocumentation = glsldoc.concat([
   {
@@ -65,7 +67,7 @@ export default class GlslContextualHelp extends Component {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <i className="fa fa-book" />
+            <FaBook />
             GLSL Spec.
           </a>
           <a
@@ -73,7 +75,7 @@ export default class GlslContextualHelp extends Component {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <i className="fa fa-file-code-o" />
+            <FaFileCodeO />
             Quick Ref.
           </a>
         </div>

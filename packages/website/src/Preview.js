@@ -5,6 +5,8 @@ import { transitionsByName } from "./data";
 import acceptedLicenses from "gl-transition-utils/lib/acceptedLicenses";
 import AnimatedVignette from "./AnimatedVignette";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
+import FaEdit from "react-icons/lib/fa/edit";
+import FaRandom from "react-icons/lib/fa/random";
 import "./Preview.css";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
@@ -45,7 +47,7 @@ export default class Preview extends Component {
             <TransitionAuthorAndName withGithubLink transition={transition} />
           </h2>
           <Link to={"/editor/" + transition.name}>
-            <i className="fa fa-edit" />
+            <FaEdit />
           </Link>
         </header>
         <AnimatedVignette
@@ -58,7 +60,7 @@ export default class Preview extends Component {
         />
         <footer>
           <Link to={"/transition/" + randomTransitionName}>
-            <i className="fa fa-random" /> random
+            <FaRandom /> random
           </Link>
         </footer>
       </div>

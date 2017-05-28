@@ -10,6 +10,7 @@ import GlslCode from "./GlslCode";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import { defaultSampler2D } from "./transform";
 import { fromImage, toImage } from "./Gallery";
+import FaGithub from "react-icons/lib/fa/github";
 import "./Intro.css";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
@@ -407,7 +408,7 @@ vec4 transition (vec2 uv) {
               <a href={"https://github.com/" + githubRepoPath}>
                 More specification can be found on
                 {" "}
-                <i className="fa fa-github" />
+                <FaGithub />
                 {" "}
                 Github
               </a>.
@@ -420,7 +421,7 @@ vec4 transition (vec2 uv) {
             <Logo />
             are on
             {" "}
-            <i className="fa fa-github" /> Github
+            <FaGithub /> Github
           </a>
         </header>
         <section>

@@ -10,6 +10,7 @@ import { githubRepoFolder, githubRepoPath } from "./conf";
 import { transitionsByName } from "./data";
 import PrimaryBtn from "./PrimaryBtn";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
+import FaGithub from "react-icons/lib/fa/github";
 
 function getTransitionParams({ location }) {
   if (!location.search) return {};
@@ -93,7 +94,7 @@ export default class Edit extends Component {
             disabled={transitionResult.errors.length > 0 || !hasChanged}
             href={submitPatchHref}
           >
-            <i className="fa fa-github" />
+            <FaGithub />
             {" "}
             Patch {transition.name}.glsl on Github
           </PrimaryBtn>

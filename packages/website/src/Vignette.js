@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Visitor } from "gl-react";
 import { Surface } from "gl-react-dom";
 import GLTransition from "react-gl-transition";
+import FaExclamationTriangle from "react-icons/lib/fa/exclamation-triangle";
 import "./Vignette.css";
 
 const defaultProgress = 0.3;
@@ -171,7 +172,7 @@ export default class Vignette extends Component {
         />
         {failing
           ? <div className="failing">
-              <i className="fa fa-warning" />
+              <FaExclamationTriangle />
               <p>{failing.message}</p>
             </div>
           : null}

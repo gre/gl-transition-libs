@@ -10,6 +10,8 @@ import Intro from "./Intro";
 import NotFound from "./NotFound";
 import { transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
+import FaGithub from "react-icons/lib/fa/github";
+import FaBug from "react-icons/lib/fa/bug";
 
 const renderPreview = (props: *) => {
   const { name } = props.match.params;
@@ -53,7 +55,7 @@ class App extends Component {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <i className="fa fa-github" />
+              <FaGithub />
               <span> gl-transitions</span>
             </a>
             <a
@@ -61,7 +63,7 @@ class App extends Component {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <i className="fa fa-bug" />
+              <FaBug />
               <span> Found a Bug?</span>
             </a>
           </div>
