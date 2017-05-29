@@ -40,15 +40,13 @@ export default class TransitionAuthorAndName extends Component {
           {" "}
           <strong>{name}</strong>
           {" "}
-          by
-          {" "}
           <em title={transition.author}>{author}</em>
         </a>
       );
     } else {
       return (
         <span className="TransitionAuthorAndName">
-          <strong>{name}</strong> by <em>{author}</em>
+          <strong>{name}</strong> <em>{author}</em>
         </span>
       );
     }

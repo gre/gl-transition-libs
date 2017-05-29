@@ -14,7 +14,7 @@ export const fromImage = require("./images/600x400/barley.jpg");
 export const toImage = require("./images/600x400/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg");
 
 const footerForOrder = (getDate: *) =>
-  class EditorVignetteFooter extends PureComponent {
+  class GalleryVignetteFooter extends PureComponent {
     props: {
       transition: *,
     };
@@ -38,7 +38,7 @@ const footerForOrder = (getDate: *) =>
 const UpdatedFooter = footerForOrder(t => t.updatedAt);
 const CreatedFooter = footerForOrder(t => t.createdAt);
 
-class EditorVignette extends PureComponent {
+class GalleryVignette extends PureComponent {
   props: {
     transition: *,
     order: *,
@@ -133,7 +133,7 @@ export default class Gallery extends Component {
             {getPage(page, transitions).map(
               (transition, i) =>
                 transition
-                  ? <EditorVignette
+                  ? <GalleryVignette
                       key={i}
                       transition={transition}
                       order={order}
