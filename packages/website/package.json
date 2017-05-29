@@ -6,7 +6,7 @@
     "gl-react": "^3.6.0",
     "gl-react-dom": "^3.6.0",
     "gl-shader": "^4.2.1",
-    "gl-transition-utils": "^1.8.0",
+    "gl-transition-utils": "^1.9.0",
     "glsl-parser": "^2.0.0",
     "glsl-tokenizer": "^2.1.2",
     "glsldoc": "^0.0.4",
@@ -14,7 +14,7 @@
     "performance-now": "^2.1.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-gl-transition": "^1.5.1",
+    "react-gl-transition": "^1.9.0",
     "react-icons": "^2.2.5",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
@@ -30,7 +30,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "version": "1.8.1",
+  "version": "1.9.0",
   "name": "website",
   "private": true
 }
