@@ -12,7 +12,7 @@ function colorMatches(actual: Color, expected: Color): boolean {
   const db = actual[2] - expected[2];
   const da = actual[3] - expected[3];
   // we need to be fuzzy because implementation precision can differ
-  return dr * dr + dg * dg + db * db + da * da < 20; // euclidian distance < sqrt(20)
+  return dr * dr + dg * dg + db * db + da * da < 10; // euclidian distance < sqrt(10)
 }
 
 type CompilerResult = {
@@ -26,6 +26,28 @@ type CompilerResult = {
     code: string,
     line?: number,
   }>,
+};
+
+const expectedDraw1Picks = [
+  [0, 0, 0, 255],
+  [255, 0, 0, 255],
+  [0, 255, 0, 255],
+  [255, 255, 0, 255],
+];
+const expectedDraw2Picks = [
+  [0, 0, 255, 255],
+  [255, 0, 255, 255],
+  [0, 255, 255, 255],
+  [255, 255, 255, 255],
+];
+
+const debugColor = c => {
+  const [r, g, b, a] = c;
+  if (a === 255) {
+    return `[${[r, g, b].join(",")}]`;
+  } else {
+    return `[${[r, g, b, a].join(",")}]`;
+  }
 };
 
 const VERTEX_SHADER = `attribute vec2 _p;
@@ -112,38 +134,50 @@ export default (gl: WebGLRenderingContext) => {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels); // we need to put this in the scope because impl like Chrome are lazy and this really trigger the work.
       const afterDraw1 = now();
-      const draw1matches = [
-        colorMatches(colorAt(0, 0), [0, 0, 0, 255]),
-        colorMatches(colorAt(w - 1, 0), [255, 0, 0, 255]),
-        colorMatches(colorAt(0, h - 1), [0, 255, 0, 255]),
-        colorMatches(colorAt(w - 1, h - 1), [255, 255, 0, 255]),
+      const draw1PixelsPicks = [
+        colorAt(0, 0),
+        colorAt(w - 1, 0),
+        colorAt(0, h - 1),
+        colorAt(w - 1, h - 1),
       ];
+      const draw1isCorrect = draw1PixelsPicks
+        .map((pick, i) => colorMatches(pick, expectedDraw1Picks[i]))
+        .every(valid => valid);
 
       const beforeDraw2 = now();
       shader.uniforms.progress = 1;
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
       const afterDraw2 = now();
-      const draw2matches = [
-        colorMatches(colorAt(0, 0), [0, 0, 255, 255]),
-        colorMatches(colorAt(w - 1, 0), [255, 0, 255, 255]),
-        colorMatches(colorAt(0, h - 1), [0, 255, 255, 255]),
-        colorMatches(colorAt(w - 1, h - 1), [255, 255, 255, 255]),
+      const draw2PixelsPicks = [
+        colorAt(0, 0),
+        colorAt(w - 1, 0),
+        colorAt(0, h - 1),
+        colorAt(w - 1, h - 1),
       ];
+      const draw2isCorrect = draw2PixelsPicks
+        .map((pick, i) => colorMatches(pick, expectedDraw2Picks[i]))
+        .every(valid => valid);
 
       const drawErrorMessages = [];
-      if (draw1matches.some(t => !t)) {
+      const drawErrorDebug = [];
+      if (!draw1isCorrect) {
         drawErrorMessages.push("render getFromColor(uv) when progress=0.0");
+        drawErrorDebug.push(draw1PixelsPicks.map(debugColor).join(","));
       }
-      if (draw2matches.some(t => !t)) {
+      if (!draw2isCorrect) {
         drawErrorMessages.push("render getToColor(uv) when progress=1.0");
+        drawErrorDebug.push(draw2PixelsPicks.map(debugColor).join(","));
       }
       if (drawErrorMessages.length > 0) {
         errors.push({
           code: "Transition_draw_invalid",
           type: "error",
           message: "invalid transition, it must: " +
-            drawErrorMessages.join(", "),
+            drawErrorMessages.join(", ") +
+            " – " +
+            " DEBUG: " +
+            drawErrorDebug.join(";"),
         });
       }
 
