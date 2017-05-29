@@ -30,9 +30,9 @@ if (!pass) {
 }
 
 exec(
-  'git diff --name-only --diff-filter=AM master | grep "transitions/.*\.glsl$"'
+  'git --no-pager diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD master) | grep "transitions/.*\.glsl$"'
 )
-  .then(r => r.stdout.split("\n").filter(r => r))
+  .then(r => r.stdout.split("\n").filter(r => r && fs.existsSync(r)))
   .then(files => {
     if (files.length === 0) {
       console.error("No glsl file has changed in this PR.");
