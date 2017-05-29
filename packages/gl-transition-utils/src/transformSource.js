@@ -17,8 +17,8 @@ export type UniformDefaultValue =
 
 export type TransformResult = {
   data: {
-    author: string,
-    license: string,
+    author?: string,
+    license?: string,
     name: string,
     glsl: string,
     defaultParams: { [_: string]: UniformDefaultValue },
@@ -495,6 +495,15 @@ export default function transformSource(
 
       idents.forEach(ident => {
         const type = typeTokens.map(n => n.data).join("");
+        if (ident.slice(0, 1) === "_") {
+          errors.push({
+            type: "warn",
+            code: "GLT_no_underscore_start",
+            message: `uniform '${ident}': Do not start parameters with an underscore. Why not naming it '${ident.replace(/^_+/, "")}'?`,
+            ...extraPositionFromToken(uniformToken),
+          });
+        }
+
         if (typeof type !== "string" || !(type in typeInfos)) {
           errors.push({
             type: "error",
