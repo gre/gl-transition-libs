@@ -50,9 +50,7 @@ exec(
 
     const headMessage =
       "## " +
-      (haveErrors
-        ? "👇 Oops, I've found some things to fix!"
-        : "👌 All good to me!");
+      (haveErrors ? "👇 Oops, I've found some issues:" : "👌 All good to me!");
 
     const summaryDetails = results
       .map(({ data, errors }) => {
@@ -62,7 +60,7 @@ exec(
           pathname: "https://gl-transitions.com/editor",
           query: { glsl, name },
         });
-        const head = `<a href="${link}"><strong>${success ? "✔︎" : "✕"} ${name}<strong></a>`;
+        const head = `**![${success ? "✔︎" : "✕"} ${name}](${link})**`;
         if (success) {
           return `${head} (compile in ${ms(data.compilation.compileTime)}, draw in ${ms(data.compilation.drawTime)})`;
         }
@@ -70,7 +68,7 @@ exec(
           .filter(e => !e.line)
           .map(e => e.message);
         return errorMessagesWithoutLines.length > 0
-          ? `<details><summary>${head}</summary>${errorMessagesWithoutLines.join("<br/>")}</details>`
+          ? `${head}\n${errorMessagesWithoutLines.join("\n")}\n`
           : head;
       })
       .map(line => "- " + line)

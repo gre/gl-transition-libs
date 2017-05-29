@@ -12,7 +12,7 @@ function colorMatches(actual: Color, expected: Color): boolean {
   const db = actual[2] - expected[2];
   const da = actual[3] - expected[3];
   // we need to be fuzzy because implementation precision can differ
-  return dr * dr + dg * dg + db * db + da * da < 10; // euclidian distance < sqrt(10)
+  return dr * dr + dg * dg + db * db + da * da < 20; // euclidian distance < sqrt(20)
 }
 
 type CompilerResult = {
