@@ -128,7 +128,7 @@ exec(
           request(
             {
               method: "POST",
-              url: `https://api.github.com/repos/gltransitions/gl-transitions/pulls/${prNumber}/reviews`,
+              url: `https://api.github.com/repos/gl-transitions/gl-transitions/pulls/${prNumber}/reviews`,
               json: true,
               body: { event, body, comments },
               auth: {

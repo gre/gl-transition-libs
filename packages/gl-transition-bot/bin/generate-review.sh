@@ -4,7 +4,7 @@
 
 set -e
 rm -rf gl-transitions
-git clone https://github.com/gltransitions/gl-transitions.git
+git clone https://github.com/gl-transitions/gl-transitions.git
 cd gl-transitions
 git fetch origin pull/$PULL_REQUEST/head:pr
 git checkout pr

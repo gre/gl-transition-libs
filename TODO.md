@@ -4,15 +4,21 @@
   - I'm considering having an utility in gl-react to get the size of a given texture "input".
   - for gl-transition-render CLI, it should be easy as we have the pixels size.
 - write short blog post.
+- add a description, tags and a README for react-gl-transition
+- implement gl-transition for https://github.com/gre/gl-transition-libs/issues/20
 
 # bot
 
 - it should mention people that contributed to a file when someone send a patch.
 
-# website
+# website on mobile
 
 - bezier-easing-editor to implement touch events support
 - Vignette touch events !!!!
+
+# website
+
+- all css / async loads need to be killed.. they create kinda ugly glitch. they also wouldn't be good for server side rendering.
 - add a global loader because the site is weird if images aren't loaded. actually => https://github.com/gre/gl-react/issues/115
 - improve the input to be more "number inputs" ?
 - FAQ each error should be documented somewhere so we can link them in a FAQ kind of doc.
