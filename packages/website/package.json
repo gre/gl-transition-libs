@@ -6,7 +6,7 @@
     "gl-react": "^3.6.0",
     "gl-react-dom": "^3.6.0",
     "gl-shader": "^4.2.1",
-    "gl-transition-utils": "^1.9.2",
+    "gl-transition-utils": "^1.9.3",
     "glsl-parser": "^2.0.0",
     "glsl-tokenizer": "^2.1.2",
     "glsldoc": "^0.0.4",
@@ -30,7 +30,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "version": "1.9.2",
+  "version": "1.9.3",
   "name": "website",
   "private": true
 }
