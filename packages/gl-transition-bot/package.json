@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-bot",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "main": "lib/index.js",
   "license": "MIT",
   "bin": {
@@ -10,7 +10,7 @@
     "bin"
   ],
   "dependencies": {
-    "gl-transition-scripts": "^1.9.3",
+    "gl-transition-scripts": "^1.9.4",
     "json": "^9.0.6",
     "request": "^2.81.0"
   }

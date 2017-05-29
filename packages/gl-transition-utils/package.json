@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-utils",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
