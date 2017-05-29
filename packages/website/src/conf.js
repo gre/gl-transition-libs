@@ -1,2 +1,2 @@
-export const githubRepoPath = "gltransitions/gl-transitions";
+export const githubRepoPath = "gl-transitions/gl-transitions";
 export const githubRepoFolder = "/transitions";
