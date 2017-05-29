@@ -60,7 +60,7 @@ exec(
           pathname: "https://gl-transitions.com/editor",
           query: { glsl, name },
         });
-        const head = `**![${success ? "✔︎" : "✕"} ${name}](${link})**`;
+        const head = `**[${success ? "✔︎" : "✕"} ${name}](${link})**`;
         if (success) {
           return `${head} (compile in ${ms(data.compilation.compileTime)}, draw in ${ms(data.compilation.drawTime)})`;
         }
