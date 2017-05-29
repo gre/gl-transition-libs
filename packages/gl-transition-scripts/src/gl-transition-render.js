@@ -13,6 +13,14 @@ import transformSource from "gl-transition-utils/lib/transformSource";
 import TransitionQueryString
   from "gl-transition-utils/lib/TransitionQueryString";
 
+// these functions make a GLSL code that map the texture2D uv to preserve ratio for a given ${r} image ratio.
+// there are different modes:
+const resizeModes = {
+  cover: r => `.5+(uv-.5)*vec2(min(ratio/${r},1.),min(${r}/ratio,1.))`,
+  contain: r => `.5+(uv-.5)*vec2(max(ratio/${r},1.),max(${r}/ratio,1.))`,
+  stretch: () => "uv",
+};
+
 function collect(val, memo) {
   memo.push(val);
   return memo;
@@ -164,21 +172,16 @@ Promise.all([
       return obj;
     }
 
+    const resizeMode = resizeModes.cover;
+
     const shaders = transitions.map(t => {
       const shader = createShader(
         gl,
         VERTEX_SHADER,
         `\
-    precision highp float;
-    varying vec2 uv;
-    uniform sampler2D from, to;
-    uniform float progress, ratio;
-    vec4 getFromColor (vec2 uv) { return texture2D(from, uv); }
-    vec4 getToColor (vec2 uv) { return texture2D(to, uv); }
-    ${t.data.glsl}
-    void main () {
-    gl_FragColor = transition(uv);
-    }`
+precision highp float;varying vec2 uv;uniform sampler2D from, to;uniform float progress, ratio, _fromR, _toR;vec4 getFromColor(vec2 uv){return texture2D(from,${resizeMode("_fromR")});}vec4 getToColor(vec2 uv){return texture2D(to,${resizeMode("_toR")});}
+${t.data.glsl}
+void main(){gl_FragColor=transition(uv);}`
       );
       shader.bind();
       shader.attributes._p.pointer();
@@ -226,13 +229,17 @@ Promise.all([
         (promise, i) =>
           promise.then(() => {
             const fromTexture = textures[i % textures.length];
+            const fromImage = images[i % images.length];
             const toTexture = textures[(i + 1) % textures.length];
+            const toImage = images[(i + 1) % images.length];
             const tIndex = i % transitions.length;
             const transition = transitions[tIndex];
             shader = shaders[tIndex];
             shader.bind();
             shader.uniforms.from = fromTexture.bind(0);
+            shader.uniforms._fromR = fromImage.shape[0] / fromImage.shape[1];
             shader.uniforms.to = toTexture.bind(1);
+            shader.uniforms._toR = toImage.shape[0] / toImage.shape[1];
             prepareSampler2Ds(transition);
             const incr = 1 / (frames - 1);
             const framesArray = Array(delay || 0).fill(0);
@@ -260,9 +267,13 @@ Promise.all([
       shader = shaders[0];
       shader.bind();
       const fromTexture = textures[0];
+      const fromImage = images[0];
       const toTexture = textures[1 % textures.length];
+      const toImage = images[1 % images.length];
       shader.uniforms.from = fromTexture.bind(0);
+      shader.uniforms._fromR = fromImage.shape[0] / fromImage.shape[1];
       shader.uniforms.to = toTexture.bind(1);
+      shader.uniforms._toR = toImage.shape[0] / toImage.shape[1];
       prepareSampler2Ds(transitions[0]);
       return draw(
         progress,
