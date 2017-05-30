@@ -503,18 +503,25 @@ vec4 transition (vec2 uv) {
               <li>
                 With
                 {" "}
-                <code>gl-react</code>
+                <a href="https://github.com/gre/gl-react">
+                  <code>gl-react</code>
+                </a>
                 {" "}
                 you can painlessly use the library
                 {" "}
-                <code>react-gl-transition</code>.
+                <a href="https://www.npmjs.com/package/react-gl-transition">
+                  <code>react-gl-transition</code>
+                </a>
+                .
                 {" "}
                 This is what this website uses heavily.
               </li>
               <li>
                 In a node.js server you can use
                 {" "}
-                <code>headless-gl</code>
+                <a href="https://github.com/stackgl/headless-gl">
+                  headless <code>gl</code>
+                </a>
                 {" "}
                 to render a transition on server side.
                 {" "}
