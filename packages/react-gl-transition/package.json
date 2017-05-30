@@ -1,5 +1,12 @@
 {
   "name": "react-gl-transition",
+  "description": "React component to render a GL Transition in gl-react",
+  "keywords": [
+    "gl-react",
+    "webgl",
+    "react",
+    "react-component"
+  ],
   "version": "1.9.0",
   "main": "lib/GLTransition.js",
   "license": "MIT",
