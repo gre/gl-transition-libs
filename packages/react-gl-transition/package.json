@@ -7,7 +7,7 @@
     "react",
     "react-component"
   ],
-  "version": "1.9.0",
+  "version": "1.9.5",
   "main": "lib/GLTransition.js",
   "license": "MIT",
   "scripts": {
