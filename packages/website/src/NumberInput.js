@@ -40,7 +40,7 @@ export default class NumberInput extends Component {
   render() {
     const props = {
       ...this.props,
-      type: "string",
+      type: "number",
       value: "" + this.state.value,
       onChange: this.onChange,
     };
