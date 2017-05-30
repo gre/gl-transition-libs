@@ -5,7 +5,7 @@
   padding: 0 5px;
   font-size: 10px;
   box-sizing: border-box;
-  overflow: auto;
+  overflow: hidden;
   white-space: nowrap;
 }
 .editor-status-bar.error {

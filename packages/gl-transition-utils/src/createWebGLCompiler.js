@@ -151,9 +151,6 @@ export default (gl: WebGLRenderingContext) => {
       gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels); // we need to put this in the scope because impl like Chrome are lazy and this really trigger the work.
       const afterDraw1 = now();
       const draw1PixelsPicks = pickPositions.map(colorAt);
-      const draw1Tests = draw1PixelsPicks.map((pick, i) =>
-        colorMatches(pick, expectedDraw1Picks[i])
-      );
 
       const beforeDraw2 = now();
       shader.uniforms.progress = 1;
@@ -161,29 +158,59 @@ export default (gl: WebGLRenderingContext) => {
       gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
       const afterDraw2 = now();
       const draw2PixelsPicks = pickPositions.map(colorAt);
-      const draw2Tests = draw2PixelsPicks.map((pick, i) =>
-        colorMatches(pick, expectedDraw2Picks[i])
-      );
 
       const drawErrorMessages = [];
       const drawErrorDebug = [];
+
+      const draw1Tests = draw1PixelsPicks.map((pick, i) =>
+        colorMatches(pick, expectedDraw1Picks[i])
+      );
       if (!draw1Tests.every(valid => valid)) {
-        drawErrorMessages.push("render getFromColor(uv) when progress=0.0");
-        drawErrorDebug.push(debugPicks(draw1PixelsPicks, draw1Tests));
+        if (
+          draw1PixelsPicks
+            .map((pick, i) => colorMatches(pick, expectedDraw2Picks[i]))
+            .every(valid => valid)
+        ) {
+          drawErrorMessages.push(
+            "getFromColor(uv) MUST render when progress=0.0 but NOT getToColor(uv)"
+          );
+        } else {
+          drawErrorMessages.push(
+            "getFromColor(uv) MUST render when progress=0.0"
+          );
+          drawErrorDebug.push(debugPicks(draw1PixelsPicks, draw1Tests));
+        }
       }
+
+      const draw2Tests = draw2PixelsPicks.map((pick, i) =>
+        colorMatches(pick, expectedDraw2Picks[i])
+      );
       if (!draw2Tests.every(valid => valid)) {
-        drawErrorMessages.push("render getToColor(uv) when progress=1.0");
-        drawErrorDebug.push(debugPicks(draw2PixelsPicks, draw2Tests));
+        if (
+          draw2PixelsPicks
+            .map((pick, i) => colorMatches(pick, expectedDraw1Picks[i]))
+            .every(valid => valid)
+        ) {
+          drawErrorMessages.push(
+            "getToColor(uv) MUST render when progress=1.0 but NOT getFromColor(uv)"
+          );
+        } else {
+          drawErrorMessages.push(
+            "getToColor(uv) MUST render when progress=1.0"
+          );
+          drawErrorDebug.push(debugPicks(draw2PixelsPicks, draw2Tests));
+        }
       }
+
       if (drawErrorMessages.length > 0) {
         errors.push({
           code: "Transition_draw_invalid",
           type: "error",
-          message: "invalid transition, it must: " +
+          message: "invalid transition: " +
             drawErrorMessages.join(", ") +
-            " – " +
-            " DEBUG: " +
-            drawErrorDebug.join(" ; "),
+            (drawErrorDebug.length
+              ? " – " + " DEBUG: " + drawErrorDebug.join(" ; ")
+              : ""),
         });
       }
 
