@@ -1,8 +1,7 @@
 # general
 
 - address the ratio problem in shaders. the hard part about it is getting the size as a uniform.
-  - I'm considering having an utility in gl-react to get the size of a given texture "input".
-  - for gl-transition-render CLI, it should be easy as we have the pixels size.
+  - for web, need to address https://github.com/gre/gl-react/issues/116
 - write short blog post.
 - add a description, tags and a README for react-gl-transition
 - implement gl-transition for https://github.com/gre/gl-transition-libs/issues/20

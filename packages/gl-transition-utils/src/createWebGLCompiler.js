@@ -28,27 +28,42 @@ type CompilerResult = {
   }>,
 };
 
+const pickPositionsForSize = (w, h) => {
+  const padX = Math.floor(w / 64);
+  const padY = Math.floor(h / 64);
+  return [
+    [padX, padY],
+    [w - 1 - padX, padY],
+    [padX, h - 1 - padY],
+    [w - 1 - padX, h - 1 - padY],
+    [Math.floor(w / 2), Math.floor(h / 2)],
+  ];
+};
 const expectedDraw1Picks = [
-  [0, 0, 0, 255],
-  [255, 0, 0, 255],
-  [0, 255, 0, 255],
-  [255, 255, 0, 255],
+  [4, 4, 0, 255],
+  [251, 4, 0, 255],
+  [4, 251, 0, 255],
+  [251, 251, 0, 255],
+  [128, 128, 0, 255],
 ];
 const expectedDraw2Picks = [
-  [0, 0, 255, 255],
-  [255, 0, 255, 255],
-  [0, 255, 255, 255],
-  [255, 255, 255, 255],
+  [4, 4, 255, 255],
+  [251, 4, 255, 255],
+  [4, 251, 255, 255],
+  [251, 251, 255, 255],
+  [128, 128, 255, 255],
 ];
 
-const debugColor = c => {
+const debugColor = (c, lbl) => {
   const [r, g, b, a] = c;
-  if (a === 255) {
-    return `[${[r, g, b].join(",")}]`;
-  } else {
-    return `[${[r, g, b, a].join(",")}]`;
-  }
+  return `${lbl}:rgba(${[r, g, b, a].join(",")})`;
 };
+
+const debugPicks = (picks, tests) =>
+  picks
+    .map((c, i) => (!tests[i] ? debugColor(c, i) : ""))
+    .filter(f => f)
+    .join(" ");
 
 const VERTEX_SHADER = `attribute vec2 _p;
 varying vec2 uv;
@@ -60,8 +75,9 @@ uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
 export default (gl: WebGLRenderingContext) => {
   const { drawingBufferWidth: w, drawingBufferHeight: h } = gl;
   const pixels = new Uint8Array(w * h * 4);
+  const pickPositions = pickPositionsForSize(w, h);
 
-  function colorAt(x, y) {
+  function colorAt([x, y]) {
     const i = (x + y * w) * 4;
     const r = pixels[i + 0];
     const g = pixels[i + 1];
@@ -134,40 +150,30 @@ export default (gl: WebGLRenderingContext) => {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels); // we need to put this in the scope because impl like Chrome are lazy and this really trigger the work.
       const afterDraw1 = now();
-      const draw1PixelsPicks = [
-        colorAt(0, 0),
-        colorAt(w - 1, 0),
-        colorAt(0, h - 1),
-        colorAt(w - 1, h - 1),
-      ];
-      const draw1isCorrect = draw1PixelsPicks
-        .map((pick, i) => colorMatches(pick, expectedDraw1Picks[i]))
-        .every(valid => valid);
+      const draw1PixelsPicks = pickPositions.map(colorAt);
+      const draw1Tests = draw1PixelsPicks.map((pick, i) =>
+        colorMatches(pick, expectedDraw1Picks[i])
+      );
 
       const beforeDraw2 = now();
       shader.uniforms.progress = 1;
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
       const afterDraw2 = now();
-      const draw2PixelsPicks = [
-        colorAt(0, 0),
-        colorAt(w - 1, 0),
-        colorAt(0, h - 1),
-        colorAt(w - 1, h - 1),
-      ];
-      const draw2isCorrect = draw2PixelsPicks
-        .map((pick, i) => colorMatches(pick, expectedDraw2Picks[i]))
-        .every(valid => valid);
+      const draw2PixelsPicks = pickPositions.map(colorAt);
+      const draw2Tests = draw2PixelsPicks.map((pick, i) =>
+        colorMatches(pick, expectedDraw2Picks[i])
+      );
 
       const drawErrorMessages = [];
       const drawErrorDebug = [];
-      if (!draw1isCorrect) {
+      if (!draw1Tests.every(valid => valid)) {
         drawErrorMessages.push("render getFromColor(uv) when progress=0.0");
-        drawErrorDebug.push(draw1PixelsPicks.map(debugColor).join(","));
+        drawErrorDebug.push(debugPicks(draw1PixelsPicks, draw1Tests));
       }
-      if (!draw2isCorrect) {
+      if (!draw2Tests.every(valid => valid)) {
         drawErrorMessages.push("render getToColor(uv) when progress=1.0");
-        drawErrorDebug.push(draw2PixelsPicks.map(debugColor).join(","));
+        drawErrorDebug.push(debugPicks(draw2PixelsPicks, draw2Tests));
       }
       if (drawErrorMessages.length > 0) {
         errors.push({
@@ -177,7 +183,7 @@ export default (gl: WebGLRenderingContext) => {
             drawErrorMessages.join(", ") +
             " – " +
             " DEBUG: " +
-            drawErrorDebug.join(";"),
+            drawErrorDebug.join(" ; "),
         });
       }
 
