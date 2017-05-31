@@ -238,17 +238,17 @@ export default function transformSource(
   }
 
   if (ast) {
-    const forbiddenScopes = Object.keys(ast.scope).filter(key =>
-      blacklistScope.includes(key)
+    const forbiddenScopes = Object.keys(ast.scope).filter(
+      key => blacklistScope.includes(key) || key.slice(0, 1) === "_"
     );
     forbiddenScopes.forEach(id => {
       // $FlowFixMe
       const token = ast.scope[id].token;
       errors.push({
-        type: "error",
+        type: "warn",
         code: "GLT_reserved_variable_used",
         id,
-        message: `'${id}' cannot be defined. It is reserved for the wrapping GLSL code.`,
+        message: `'${id}' cannot be defined. ${id.slice(0, 1) === "_" ? "Do not start global scope variables with an underscore. " : ""}It is reserved for the wrapping GLSL code.`,
         ...extraPositionFromToken(token),
       });
     });

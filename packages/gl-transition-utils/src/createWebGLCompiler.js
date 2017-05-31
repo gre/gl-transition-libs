@@ -66,10 +66,10 @@ const debugPicks = (picks, tests) =>
     .join(" ");
 
 const VERTEX_SHADER = `attribute vec2 _p;
-varying vec2 uv;
+varying vec2 _uv;
 void main() {
 gl_Position = vec4(_p,0.0,1.0);
-uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
+_uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
 }`;
 
 export default (gl: WebGLRenderingContext) => {
@@ -121,9 +121,9 @@ export default (gl: WebGLRenderingContext) => {
       shader = createShader(
         gl,
         VERTEX_SHADER,
-        `precision highp float;varying vec2 uv;uniform float progress, ratio;vec4 getFromColor (vec2 uv) { return vec4(uv, 0.0, 1.0); } vec4 getToColor (vec2 uv) { return vec4(uv, 1.0, 1.0); } ${glsl}
+        `precision highp float;varying vec2 _uv;uniform float progress, ratio;vec4 getFromColor (vec2 uv) { return vec4(uv, 0.0, 1.0); } vec4 getToColor (vec2 uv) { return vec4(uv, 1.0, 1.0); } ${glsl}
   void main () {
-    gl_FragColor = transition(uv);
+    gl_FragColor = transition(_uv);
   }`
       );
       gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels); // this is just to force trigger a flush

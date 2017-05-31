@@ -17,10 +17,10 @@ type Options = {
 };
 
 const VERT = `attribute vec2 _p;
-varying vec2 uv;
+varying vec2 _uv;
 void main() {
 gl_Position = vec4(_p,0.0,1.0);
-uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
+_uv = vec2(0.5, 0.5) * (_p+vec2(1.0, 1.0));
 }`;
 
 // these functions make a GLSL code that map the texture2D uv to preserve ratio for a given ${r} image ratio.
@@ -37,9 +37,9 @@ const makeFrag = (transitionGlsl: string, resizeMode: string): string => {
   const r = resizeModes[resizeMode];
   if (!r) throw new Error("invalid resizeMode=" + resizeMode);
   return `\
-precision highp float;varying vec2 uv;uniform sampler2D from, to;uniform float progress, ratio, _fromR, _toR;vec4 getFromColor(vec2 uv){return texture2D(from,${r("_fromR")});}vec4 getToColor(vec2 uv){return texture2D(to,${r("_toR")});}
+precision highp float;varying vec2 _uv;uniform sampler2D from, to;uniform float progress, ratio, _fromR, _toR;vec4 getFromColor(vec2 uv){return texture2D(from,${r("_fromR")});}vec4 getToColor(vec2 uv){return texture2D(to,${r("_toR")});}
 ${transitionGlsl}
-void main(){gl_FragColor=transition(uv);}`;
+void main(){gl_FragColor=transition(_uv);}`;
 };
 
 export default (
