@@ -1,0 +1,33 @@
+{
+  "name": "regl-transition",
+  "version": "1.12.0",
+  "description": "a function to render a GL Transition with a regl context",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "compile": "babel -d lib/ src/",
+    "watch": "babel -w -d lib/ src/",
+    "prepublish": "npm run compile"
+  },
+  "files": [
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+    "regl": "^1.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-stage-1": "^6.24.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gre/gl-transition-libs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gre/gl-transition-libs/issues"
+  },
+  "homepage": "https://github.com/gre/gl-transition-libs#readme"
+}
