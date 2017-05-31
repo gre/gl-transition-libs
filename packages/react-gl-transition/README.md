@@ -17,7 +17,7 @@ It renders one frame of the transition (up to you to run the animation loop the 
 
 ### props
 
-- **from**: the source texture to transition from. an image URL or any texture format accepted by gl-react! (e.g. a `() => video ref` – see https://gl-react-cookbook.surge.sh/ for examples)
+- **from**: the source texture to transition from. an image URL or any texture format accepted by gl-react! (e.g. a `<video>` React Element! – see https://gl-react-cookbook.surge.sh/ for examples)
 - **to**: the destination texture to transition to. (same format as from)
 - **progress** *(number)*: a value from 0 to 1
 - **transition** *(object)*: a transition object coming from gl-transitions library. see format in https://www.npmjs.com/package/gl-transitions README.
