@@ -64,7 +64,7 @@
   justify-content: center;
 }
 .Intro .vignette .TransitionAuthorAndName {
-  max-width: auto;
+  max-width: 100%;
 }
 .Intro section.full-width .vignette footer {
   font-size: 20px;
