@@ -4,7 +4,7 @@ import BezierEasing from "bezier-easing";
 import BezierEasingEditor from "bezier-easing-editor";
 import AnimatedVignette from "./AnimatedVignette";
 import Waypoint from "react-waypoint";
-import { transitionsByCreatedAt, transitionsByName } from "./data";
+import { transitionsOrderByRandom, transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
 import GlslCode from "./GlslCode";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
@@ -106,7 +106,7 @@ class Preview extends PureComponent {
           <div className="preview">
             <AnimatedVignette
               paused={!visible}
-              transitions={transitionsByCreatedAt}
+              transitions={transitionsOrderByRandom}
               images={images}
               preload={allImagesToPreload}
               width={width}
@@ -316,7 +316,7 @@ class VideoExample extends PureComponent {
             <AnimatedVignette
               interaction
               paused={!visible}
-              transitions={transitionsByCreatedAt}
+              transitions={transitionsOrderByRandom}
               images={
                 !visible
                   ? [null]
@@ -485,7 +485,7 @@ vec4 transition (vec2 uv) {
             <p>
               There is currently
               {" "}
-              <strong>{transitionsByCreatedAt.length} transitions</strong>
+              <strong>{transitionsOrderByRandom.length} transitions</strong>
               {" "}
               created by many contributors ❤️ and released under a
               {" "}

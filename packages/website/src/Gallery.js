@@ -2,7 +2,7 @@
 import React, { Component, PureComponent } from "react";
 import querystring from "querystring";
 import { Link } from "react-router-dom";
-import { transitionsByCreatedAt, transitionsByUpdatedAt } from "./data";
+import { transitionsOrderByCreatedAt, transitionsOrderByUpdatedAt } from "./data";
 import Vignette from "./Vignette";
 import dateAgo from "./dateAgo";
 import ScrollToTop from "./ScrollToTop";
@@ -112,8 +112,8 @@ export default class Gallery extends Component {
     const page = !isNaN(query.page) ? parseInt(query.page, 10) : 1;
     const order = query.order;
     const transitions = order === "updated"
-      ? transitionsByUpdatedAt
-      : transitionsByCreatedAt;
+      ? transitionsOrderByUpdatedAt
+      : transitionsOrderByCreatedAt;
     const nbPages = Math.ceil(transitions.length / pageSize);
     const pagination = Array(nbPages) // the time we have too much pages we refactor this xD
       .fill(null)
