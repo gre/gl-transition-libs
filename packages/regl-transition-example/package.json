@@ -1,16 +1,16 @@
 {
   "private": true,
   "name": "regl-transition-example",
-  "version": "1.0.0",
+  "version": "1.13.0",
   "main": "index.js",
   "scripts": {
     "start": "budo index.js"
   },
   "license": "ISC",
   "dependencies": {
+    "gl-transitions": "1",
     "regl": "^1.3.0",
-    "regl-transition": "1.12.0",
-    "gl-transitions": "1"
+    "regl-transition": "^1.13.0"
   },
   "devDependencies": {
     "budo": "^10.0.3"
