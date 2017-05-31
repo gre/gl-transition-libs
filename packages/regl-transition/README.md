@@ -1,6 +1,6 @@
 # regl-transition
 
-a function to render a [GL Transition](https://gl-transitions.com) with a [regl](https://gitter.im/mikolalysenko/regl) context.
+a function to render a [GL Transition](https://gl-transitions.com) with a [regl](https://github.com/regl-project/regl) context.
 
 ## short example
 
