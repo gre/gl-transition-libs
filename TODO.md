@@ -1,5 +1,6 @@
 # website
 
+- encourage more people to use ratio. we need to show what the transition do with a diff ratio.
 - editor: a button to reset the defaults & also visually see if you have diverged from the default.
 - should prevent nav everytime we "lose" content like when editing an existing shader (if !=). for the creation it's probably ok to leave because a "back" would restore the state.
 - FAQ each error should be documented somewhere so we can link them in a FAQ kind of doc.

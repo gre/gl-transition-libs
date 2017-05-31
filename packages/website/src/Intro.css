@@ -22,12 +22,10 @@
   padding: 1em 0;
 }
 
-.Intro section > * {
-  box-sizing: content-box;
-  padding: 20px 40px;
-}
 .Intro section:not(.full-width) > * {
   max-width: 512px;
+  box-sizing: content-box;
+  padding: 20px 40px;
 }
 
 .Intro strong {
@@ -64,6 +62,13 @@
   text-align: center;
   font-size: 12px;
   justify-content: center;
+}
+.Intro .vignette .TransitionAuthorAndName {
+  max-width: auto;
+}
+.Intro section.full-width .vignette footer {
+  font-size: 20px;
+  bottom: -40px;
 }
 
 .Intro a.small {
