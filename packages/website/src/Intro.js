@@ -12,6 +12,12 @@ import { defaultSampler2D } from "./transform";
 import { fromImage, toImage } from "./Gallery";
 import FaGithub from "react-icons/lib/fa/github";
 import "./Intro.css";
+import cut1mp4 from "./videos/sintel/cut1.mp4";
+import cut2mp4 from "./videos/sintel/cut2.mp4";
+import cut3mp4 from "./videos/sintel/cut3.mp4";
+import cut1webm from "./videos/sintel/cut1.webm";
+import cut2webm from "./videos/sintel/cut2.webm";
+import cut3webm from "./videos/sintel/cut3.webm";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
   require("./images/1024x768/barley.jpg"),
@@ -258,36 +264,33 @@ class ConfigurableExample extends PureComponent {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
-                    padding: 10,
                   }}
                 >
-                  <label>
-                    duration:
+                  <label style={{ display: "flex", flexDirection: "row" }}>
+                    duration
                     {" "}
                     <input
-                      type="number"
+                      style={{ flex: 1 }}
+                      type="range"
                       value={duration}
                       min={100}
                       max={6000}
                       step={100}
                       onChange={this.onDurationChange}
                     />
-                    {" "}
-                    ms.
                   </label>
-                  <label>
-                    delay:
+                  <label style={{ display: "flex", flexDirection: "row" }}>
+                    delay
                     {" "}
                     <input
-                      type="number"
+                      style={{ flex: 1 }}
+                      type="range"
                       value={delay}
                       min={100}
                       max={2000}
                       step={100}
                       onChange={this.onDelayChange}
                     />
-                    {" "}
-                    ms.
                   </label>
                 </div>
               </div>
@@ -299,14 +302,64 @@ class ConfigurableExample extends PureComponent {
   }
 }
 
+class VideoExample extends PureComponent {
+  props: {
+    width: number,
+    height: number,
+  };
+  render() {
+    const { width } = this.props;
+    return (
+      <TrackVisibility>
+        {visible => (
+          <section className="full-width">
+            <AnimatedVignette
+              interaction
+              paused={!visible}
+              transitions={transitionsByCreatedAt}
+              images={
+                !visible
+                  ? [null]
+                  : [
+                      // this works precisely working because of gl-react ;)
+                      <video key={1} autoPlay loop>
+                        <source type="video/webm" src={cut1webm} />
+                        <source type="video/mp4" src={cut1mp4} />
+                      </video>,
+                      <video key={2} autoPlay loop>
+                        <source type="video/webm" src={cut2webm} />
+                        <source type="video/mp4" src={cut2mp4} />
+                      </video>,
+                      <video key={3} autoPlay loop>
+                        <source type="video/webm" src={cut3webm} />
+                        <source type="video/mp4" src={cut3mp4} />
+                      </video>,
+                    ]
+              }
+              width={width}
+              height={Math.round(width * 544 / 1280)}
+              duration={3000}
+              delay={500}
+              keepRenderingDuringDelay
+              Footer={VignetteFooter}
+            />
+          </section>
+        )}
+      </TrackVisibility>
+    );
+  }
+}
+
 export default class Intro extends Component {
   render() {
-    let width = 512, height = 384;
+    let maxWidth = Infinity;
     if (window.screen) {
-      const ratio = width / height;
-      width = Math.min(window.screen.width, width);
-      height = Math.round(width / ratio);
+      maxWidth = window.screen.width;
     }
+
+    const imgWidth = Math.min(512, maxWidth);
+    const imgHeight = Math.round(imgWidth * 384 / 512);
+
     return (
       <div className="Intro">
 
@@ -316,7 +369,7 @@ export default class Intro extends Component {
           <Logo />
         </header>
         <section>
-          <Preview width={width} height={height} />
+          <Preview width={imgWidth} height={imgHeight} />
           <div>
             <p>
               GLSL is a
@@ -457,7 +510,13 @@ vec4 transition (vec2 uv) {
           <Logo /> are configurable
         </header>
 
-        <ConfigurableExample width={width} height={height} />
+        <ConfigurableExample width={imgWidth} height={imgHeight} />
+
+        <header>
+          <Logo /> works for Videos
+        </header>
+
+        <VideoExample width={Math.min(1024, maxWidth)} />
 
         <header>
           <Logo /> ecosystem
@@ -496,25 +555,52 @@ vec4 transition (vec2 uv) {
             </ul>
           </div>
           <div>
-            It's possible to use Vanilla WebGL code to run the transitions and in various environments.
-            There are also libraries to help you on that.
+            You can draw GL transitions and in various environments:
 
             <ul>
               <li>
-                With
+                <strong>In Vanilla WebGL code,</strong>
                 {" "}
-                <a href="https://github.com/gre/gl-react">
-                  <code>gl-react</code>
+                <a href="https://www.npmjs.com/package/gl-transition">
+                  <code>gl-transition</code>
                 </a>
                 {" "}
-                you can painlessly use the library
+                exposes a draw function to render a GL Transition frame.
+              </li>
+              <li>
+                <strong>In React paradigm,</strong>
                 {" "}
                 <a href="https://www.npmjs.com/package/react-gl-transition">
                   <code>react-gl-transition</code>
                 </a>
-                .
                 {" "}
-                This is what this website uses heavily.
+                exposes a {"<GLTransition />"} component to use in a
+                {" "}
+                <a href="https://github.com/gre/gl-react">gl-react</a>
+                's Surface.
+                {" "}
+                This is what this app uses heavily.
+              </li>
+              <li>
+                <strong>In CLI,</strong>
+                {" "}
+                <a href="https://www.npmjs.com/package/gl-transition-scripts">
+                  <code>gl-transition-scripts</code>
+                </a>
+                {" "}
+                exposes a
+                {" "}
+                <em>gl-transition-render</em>
+                {" "}
+                command to render a Transition to an image file.
+                {" "}
+                Our bot uses that to render a GIF and put it in the PRs!
+                {" "}
+                Travis also validates the transitions that gets committed with the
+                {" "}
+                <em>gl-transition-transform</em>
+                {" "}
+                command.
               </li>
               <li>
                 In a node.js server you can use
@@ -523,16 +609,20 @@ vec4 transition (vec2 uv) {
                   headless <code>gl</code>
                 </a>
                 {" "}
-                to render a transition on server side.
+                and obviously
                 {" "}
-                Our bot uses that to render a GIF and put it in the PRs!
+                <a href="https://www.npmjs.com/package/gl-transition">
+                  gl-transition
+                </a> to render a transition on server side. Which is what the
                 {" "}
-                Travis also validates the transitions that gets committed.
+                <em>gl-transition-render</em>
+                {" "}
+                command is doing.
               </li>
               <li>
-                <strong>
-                  More helpers will come and supporting more environments are welcome to contributions.
-                </strong>
+                <a href="https://github.com/gre/gl-transition-libs">
+                  ...more environments and languages to support are welcomed to contributions.
+                </a>
               </li>
             </ul>
           </div>

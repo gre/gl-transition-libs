@@ -89,8 +89,8 @@ export default class Vignette extends Component {
 
   _cachedProgress: number = defaultProgress;
   getProgress = (): number => this._cachedProgress;
-  setProgress = (value: number) => {
-    if (this._cachedProgress === value) return;
+  setProgress = (value: number, forceRendering: boolean = false) => {
+    if (this._cachedProgress === value && !forceRendering) return;
     this._cachedProgress = value;
     const { _setProgress } = this;
     if (_setProgress && !this.state.failing) {

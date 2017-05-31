@@ -24,8 +24,10 @@
 
 .Intro section > * {
   box-sizing: content-box;
-  max-width: 512px;
   padding: 20px 40px;
+}
+.Intro section:not(.full-width) > * {
+  max-width: 512px;
 }
 
 .Intro strong {
@@ -48,6 +50,7 @@
 .Intro code {
   background: #222;
   padding: 0.2em 0.4em;
+  white-space: nowrap;
 }
 
 .Intro img.full {

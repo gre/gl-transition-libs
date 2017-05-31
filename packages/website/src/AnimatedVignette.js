@@ -11,13 +11,17 @@ type Props = {
   images: Array<string>,
   delay: number,
   duration: number, // in ms
+  keepRenderingDuringDelay?: boolean,
 };
+
+// NB this is our own abstraction specifically for the website, it's not meant to be used somewhere else, but if you want, feel free to fork the code.
 export default class AnimatedVignette extends Component {
   props: Props;
   static defaultProps = {
     paused: false,
     delay: 0,
     duration: 5000,
+    keepRenderingDuringDelay: false,
   };
   state = {
     i: 0,
@@ -40,7 +44,7 @@ export default class AnimatedVignette extends Component {
     } else if (this.endReachedSince < delay) {
       // nothing to do. pause for the delay.
       this.endReachedSince += dt;
-      vignette.setProgress(1);
+      vignette.setProgress(1, this.props.keepRenderingDuringDelay);
     } else {
       // schedule a new slide...
       this.setState({ i: this.state.i + 1 });
