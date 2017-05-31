@@ -11,7 +11,7 @@ The only assumption is that you have used `bindBuffer` with "a-big-triangle" buf
 ```js
 import createTransition from "gl-transition";
 const transition = createTransition(glContext, oneTransitionObjectFromGLTransitionsLib);
-transition.draw(0.3, from, to, 512, 256, { param1: 42.0 });
+transition.draw(0.3, fromTexture, toTexture, 512, 256, { param1: 42.0 });
 ```
 
 ## API
