@@ -1,6 +1,6 @@
 {
   "name": "regl-transition",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "description": "a function to render a GL Transition with a regl context",
   "main": "lib/index.js",
   "license": "MIT",

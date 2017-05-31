@@ -30,7 +30,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "version": "1.13.0",
+  "version": "1.13.1",
   "name": "website",
   "private": true
 }
