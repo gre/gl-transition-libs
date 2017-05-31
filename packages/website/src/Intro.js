@@ -568,6 +568,17 @@ vec4 transition (vec2 uv) {
                 exposes a draw function to render a GL Transition frame.
               </li>
               <li>
+                <strong>
+                  With <a href="https://github.com/regl-project/regl">regl</a>,
+                </strong>
+                {" "}
+                <a href="https://www.npmjs.com/package/regl-transition">
+                  <code>regl-transition</code>
+                </a>
+                {" "}
+                exposes a function to render a GL Transition with a regl context.
+              </li>
+              <li>
                 <strong>In React paradigm,</strong>
                 {" "}
                 <a href="https://www.npmjs.com/package/react-gl-transition">
