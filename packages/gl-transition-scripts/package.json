@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-scripts",
-  "version": "1.9.5",
+  "version": "1.10.0",
   "description": "Utilities to render a GL Transition on the CLI",
   "bin": {
     "gl-transition-transform": "bin/gl-transition-transform.js",
@@ -22,8 +22,8 @@
     "get-pixels": "^3.3.0",
     "gl": "^4.0.3",
     "gl-texture2d": "^2.1.0",
-    "gl-transition": "^1.1.0",
-    "gl-transition-utils": "^1.9.5",
+    "gl-transition": "^1.10.0",
+    "gl-transition-utils": "^1.10.0",
     "ndarray": "^1.0.18",
     "save-pixels": "^2.3.4"
   },
