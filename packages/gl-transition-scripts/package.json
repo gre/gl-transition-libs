@@ -32,5 +32,13 @@
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-stage-1": "^6.24.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gre/gl-transition-libs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gre/gl-transition-libs/issues"
+  },
+  "homepage": "https://github.com/gre/gl-transition-libs#readme"
 }
