@@ -537,9 +537,9 @@ vec4 transition (vec2 uv) {
                 {" "}
                 <a
                   className="small"
-                  href="https://unpkg.com/gl-transitions@0/gl-transitions.js"
+                  href="https://unpkg.com/gl-transitions@1/gl-transitions.js"
                 >
-                  https://unpkg.com/gl-transitions@0/gl-transitions.js
+                  https://unpkg.com/gl-transitions@1/gl-transitions.js
                 </a>
               </li>
               <li>
@@ -547,9 +547,9 @@ vec4 transition (vec2 uv) {
                 {" "}
                 <a
                   className="small"
-                  href="https://unpkg.com/gl-transitions@0/gl-transitions.json"
+                  href="https://unpkg.com/gl-transitions@1/gl-transitions.json"
                 >
-                  https://unpkg.com/gl-transitions@0/gl-transitions.json
+                  https://unpkg.com/gl-transitions@1/gl-transitions.json
                 </a>
               </li>
             </ul>
