@@ -12,7 +12,7 @@ transition({ progress: 0.3, from: regl.texture(..), to: regl.texture(..) });
 
 ### full example
 
-(this is a full working example. see [`regl-transition-example`](../regl-transition-example))
+(this is a full working example. see [`regl-transition-example`](https://github.com/gre/gl-transition-libs/tree/master/packages/regl-transition-example))
 
 ```js
 const GLTransitions = require("gl-transitions");
@@ -72,5 +72,5 @@ type ReglDrawCommand = ({
   to: ReglTexture,
   progress: number,
   ...any transition parameters to override goes here...
-})
+}) => *
 ```
