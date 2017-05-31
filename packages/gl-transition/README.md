@@ -1,6 +1,6 @@
 # gl-transition
 
-a light utility to render a [GL Transition](https://gl-transitions.com) frame with a `WebGLRenderingContext`.
+a light function to render a [GL Transition](https://gl-transitions.com) frame with a `WebGLRenderingContext`.
 The library adopts [stack.gl](http://stack.gl) style.
 The only dependency is [gl-shader](https://www.npmjs.com/package/gl-shader).
 

@@ -1,24 +1,15 @@
-## gl-transition libraries
-
-This is a multi-packages repository for [gl-transitions](https://github.com/gl-transitions/gl-transitions).
-
 <img src="https://camo.githubusercontent.com/c42ecc6197b0f51a106fb50723f9bc6d2e1f925c/687474703a2f2f692e696d6775722e636f6d2f74573331704a452e676966" /><img src="https://camo.githubusercontent.com/7e34cd12d5a9afa94f470395b04b0914c978ce01/687474703a2f2f692e696d6775722e636f6d2f555a5a727775552e676966" /><img src="https://camo.githubusercontent.com/0456d4ed8753fbce027f1174dc8b22da548eeade/687474703a2f2f692e696d6775722e636f6d2f654974426a33582e676966" />
 
-## Links
+This repository hosts multiple packages for [gl-transitions](https://github.com/gl-transitions/gl-transitions).
+
+- [gl-transition](packages/gl-transition): a light function to render a GL Transition frame with a WebGLRenderingContext.
+- [react-gl-transition](packages/react-gl-transition): a React component to render a GL Transition in gl-react v3.
+- [website](packages/website): gl-transitions.com source code. it automatically gets redeployed from `master` branch.
+
+## Other Links
 
 - [GLTransitions website](https://gl-transitions.com), gallery and editor.
 - [gl-transitions repository](https://github.com/gl-transitions/gl-transitions), collection of gl transitions.
-
-## Run the website
-
-```
-yarn
-yarn start
-```
-
-if developing, also run in another tab `yarn run watch`.
-
-> The website is hosted on https://gl-transitions.com and automatically updated from `master` branch.
 
 ## Kudos
 
@@ -39,4 +30,4 @@ if developing, also run in another tab `yarn run watch`.
 
 - [ffmpeg](https://ffmpeg.org/)
 - [xvfb](https://www.x.org/)
-- [unsplash.com for the images](https://unsplash.com/)
+- [unsplash.com](https://unsplash.com/) for the images
