@@ -3,8 +3,10 @@
 This repository hosts multiple packages for [gl-transitions](https://github.com/gl-transitions/gl-transitions).
 
 - [gl-transition](packages/gl-transition): a light function to render a GL Transition frame with a WebGLRenderingContext.
+- [regl-transition](packages/regl-transition): a function to render a GL Transition with a regl context.
 - [react-gl-transition](packages/react-gl-transition): a React component to render a GL Transition in gl-react v3.
 - [website](packages/website): gl-transitions.com source code. it automatically gets redeployed from `master` branch.
+- [regl-transition-example](packages/regl-transition-example): example for regl-transition.
 
 ## Other Links
 
