@@ -1,6 +1,6 @@
 {
   "name": "gl-transition",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "a light utility to render a GL Transition frame with a WebGLRenderingContext",
   "main": "lib/index.js",
   "license": "MIT",
