@@ -404,7 +404,7 @@ export default class Intro extends Component {
             </p>
           </div>
         </section>
-        <header>What are <Logo />?</header>
+        <header id="spec">What are <Logo />?</header>
 
         <section>
           <div>
@@ -469,7 +469,7 @@ vec4 transition (vec2 uv) {
           </div>
         </section>
 
-        <header>
+        <header id="github">
           <a href={"https://github.com/" + githubRepoPath}>
             <Logo />
             are on
@@ -506,19 +506,19 @@ vec4 transition (vec2 uv) {
           </div>
         </section>
 
-        <header>
+        <header id="configurable">
           <Logo /> are configurable
         </header>
 
         <ConfigurableExample width={imgWidth} height={imgHeight} />
 
-        <header>
+        <header id="video">
           <Logo /> works for Videos
         </header>
 
         <VideoExample width={Math.min(1024, maxWidth)} />
 
-        <header>
+        <header id="ecosystem">
           <Logo /> ecosystem
         </header>
 
