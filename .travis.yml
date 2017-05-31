@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "7"
+script: yarn test
+os: linux
+dist: trusty
+sudo: false
+before_deploy:
+  - yarn run build-website
+deploy:
+  provider: surge
+  project: ./packages/website/build/
+  domain: gl-transitions.surge.sh
+  skip_cleanup: true
