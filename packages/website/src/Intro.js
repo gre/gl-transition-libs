@@ -12,6 +12,9 @@ import { defaultSampler2D } from "./transform";
 import { fromImage, toImage } from "./Gallery";
 import FaGithub from "react-icons/lib/fa/github";
 import "./Intro.css";
+import AbstractCorridor from "./shaders/AbstractCorridor";
+import From2DTo3D from "./shaders/From2DTo3D";
+import VoronoiDistances from "./shaders/VoronoiDistances";
 import cut1mp4 from "./videos/sintel/cut1.mp4";
 import cut2mp4 from "./videos/sintel/cut2.mp4";
 import cut3mp4 from "./videos/sintel/cut3.mp4";
@@ -349,6 +352,41 @@ class VideoExample extends PureComponent {
     );
   }
 }
+class ShadersExample extends PureComponent {
+  props: {
+    width: number,
+    height: number,
+  };
+  render() {
+    const { width } = this.props;
+    const shaders = [
+      // this works precisely working because of gl-react ;)
+      <VoronoiDistances />,
+      <From2DTo3D />,
+      <AbstractCorridor />,
+    ];
+    return (
+      <TrackVisibility>
+        {visible => (
+          <section className="full-width">
+            <AnimatedVignette
+              interaction
+              paused={!visible}
+              transitions={transitionsOrderByRandom}
+              images={!visible ? [null] : shaders}
+              width={width}
+              height={Math.round(width * 544 / 1280)}
+              duration={3000}
+              delay={500}
+              keepRenderingDuringDelay
+              Footer={VignetteFooter}
+            />
+          </section>
+        )}
+      </TrackVisibility>
+    );
+  }
+}
 
 export default class Intro extends Component {
   render() {
@@ -517,6 +555,12 @@ vec4 transition (vec2 uv) {
         </header>
 
         <VideoExample width={Math.min(1024, maxWidth)} />
+
+        <header id="shader">
+          <Logo /> works for Shaders!
+        </header>
+
+        <ShadersExample width={Math.min(1024, maxWidth)} />
 
         <header id="ecosystem">
           <Logo /> ecosystem
