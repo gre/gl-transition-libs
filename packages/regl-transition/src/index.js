@@ -46,14 +46,13 @@ module.exports = (
 
   const passInParams = {};
   Object.keys(transition.paramsTypes).forEach(key => {
-    passInParams[key] = (ctx, props) =>
-      key in props
-        ? props[key]
-        : transition.defaultParams[key] ||
-            regl.texture({
-              // empty texture
-              shape: [2, 2],
-            });
+    if (transition.paramsTypes[key] === "sampler2D") {
+      passInParams[key] = (ctx, props) =>
+        key in props ? props[key] : regl.texture({ shape: [2, 2] }); // empty texture fallback
+    } else {
+      passInParams[key] = (ctx, props) =>
+        key in props ? props[key] : transition.defaultParams[key];
+    }
   });
 
   return regl({
