@@ -48,8 +48,9 @@ export default (
   glsl: string,
   extraErrorsForTransitionResult: * = (data: *) => []
 ) => {
+  const transitionRes = transformSource(filename, glsl);
   const compilationRes = browserWebGLCompiler
-    ? browserWebGLCompiler(glsl)
+    ? browserWebGLCompiler(transitionRes.data)
     : {
         data: null,
         errors: [
@@ -62,7 +63,6 @@ export default (
           },
         ],
       };
-  const transitionRes = transformSource(filename, glsl);
   const extraErrors = extraErrorsForTransitionResult(transitionRes);
   function priority(e) {
     if (typeof e.line === "number") {

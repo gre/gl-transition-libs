@@ -9,8 +9,8 @@ const gl = createGL(512, 256, { preserveDrawingBuffer: true });
 if (!gl) throw new Error("GL validation context could not be created");
 const webGLCompiler = createWebGLCompiler(gl);
 export default (filename: string, glsl: string, path: string) => {
-  const compilation = webGLCompiler(glsl);
   const transition = transformSource(filename, glsl);
+  const compilation = webGLCompiler(transition.data);
   const gitFileMeta = retrieveFileMeta(path);
   return {
     data: {

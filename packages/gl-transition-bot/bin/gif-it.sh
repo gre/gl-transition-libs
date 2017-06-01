@@ -27,5 +27,13 @@ filters="scale=256:-1:flags=lanczos"
 ffmpeg -v fatal -framerate 30 -i $tmpimgs/%d.png -vf "$filters,palettegen" -y $palette  >&2
 ffmpeg -v fatal -framerate 30 -i $tmpimgs/%d.png -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $gif  >&2
 
+filesize=$(wc -c < "$gif")
+if [ $filesize -ge 5242880 ]; then
+  # gif was too big. generating a smaller one...
+  filters="scale=128:-1:flags=lanczos"
+  ffmpeg -v fatal -framerate 30 -i $tmpimgs/%d.png -vf "$filters,palettegen" -y $palette  >&2
+  ffmpeg -v fatal -framerate 30 -i $tmpimgs/%d.png -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $gif  >&2
+fi
+
 curl -sS -H "Authorization: Client-ID $imgurkey" -H 'Expect: ' -F "image=@$gif" https://api.imgur.com/3/image |
 json data.link

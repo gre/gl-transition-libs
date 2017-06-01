@@ -24,6 +24,7 @@ type CompilerResult = {
     type: string,
     message: string,
     code: string,
+    id?: string,
     line?: number,
   }>,
 };
@@ -109,7 +110,7 @@ export default (gl: WebGLRenderingContext) => {
   genericTexture.minFilter = gl.LINEAR;
   genericTexture.magFilter = gl.LINEAR;
 
-  return (glsl: string): CompilerResult => {
+  return ({ glsl, paramsTypes, defaultParams }): CompilerResult => {
     let data = {
       compileTime: 0,
       drawTime: 0,
@@ -136,11 +137,26 @@ export default (gl: WebGLRenderingContext) => {
       shader.bind();
       shader.attributes._p.pointer();
 
-      Object.keys(shader.types.uniforms).forEach(key => {
+      for (let key in shader.types.uniforms) {
         if (shader.types.uniforms[key] === "sampler2D") {
           shader.uniforms[key] = genericTexture.bind();
+        } else {
+          if (key in defaultParams) {
+            shader.uniforms[key] = defaultParams[key];
+          }
         }
-      });
+      }
+
+      for (let key in paramsTypes) {
+        if (!(key in shader.uniforms)) {
+          errors.push({
+            code: "Transition_unused_uniforms",
+            id: key,
+            type: "warn",
+            message: `The uniform '${key}' is defined but never used. use it or drop it.`,
+          });
+        }
+      }
 
       shader.uniforms.ratio = w / h;
 
