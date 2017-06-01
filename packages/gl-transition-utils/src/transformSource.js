@@ -15,15 +15,17 @@ export type UniformDefaultValue =
   | Array<UniformDefaultLiteralValue>
   | UniformDefaultLiteralValue;
 
+export type TransitionObject = {
+  author?: string,
+  license?: string,
+  name: string,
+  glsl: string,
+  defaultParams: { [_: string]: UniformDefaultValue },
+  paramsTypes: { [_: string]: string },
+};
+
 export type TransformResult = {
-  data: {
-    author?: string,
-    license?: string,
-    name: string,
-    glsl: string,
-    defaultParams: { [_: string]: UniformDefaultValue },
-    paramsTypes: { [_: string]: string },
-  },
+  data: TransitionObject,
   errors: Array<{
     type: "error" | "warn",
     message: string,

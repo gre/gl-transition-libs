@@ -1,6 +1,7 @@
 //@flow
 import transformSource from "gl-transition-utils/lib/transformSource";
 import createWebGLCompiler from "gl-transition-utils/lib/createWebGLCompiler";
+import type { TransitionObject } from "gl-transition-utils/lib/transformSource";
 
 export const defaultSampler2D = require("./textures/luma/spiral-2.png");
 
@@ -15,7 +16,9 @@ export function defaultSampler2DParamsForType(types: { [_: string]: string }) {
   return res;
 }
 
-export function supplyDefaultSampler2DToTransition(transition: *) {
+export function supplyDefaultSampler2DToTransition(
+  transition: TransitionObject
+): TransitionObject {
   const sampler2DParams = defaultSampler2DParamsForType(transition.paramsTypes);
   if (!sampler2DParams) return transition;
   return {
