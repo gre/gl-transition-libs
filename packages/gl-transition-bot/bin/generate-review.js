@@ -60,7 +60,7 @@ exec(
           pathname: "https://gl-transitions.com/editor",
           query: { glsl, name },
         });
-        const head = `**[${success ? "✔︎" : "✕"} ${name}](${link})**`;
+        const head = `<strong><a href="${link}">${success ? "✔︎" : "✕"} ${name}</a></strong>`;
         if (success) {
           return `${head} (compile in ${ms(data.compilation.compileTime)}, draw in ${ms(data.compilation.drawTime)})`;
         }
@@ -104,7 +104,7 @@ exec(
         const previews = gifs
           .map(
             ({ gif, stderr }) =>
-              (gif ? `![](${gif})` : "") +
+              (gif ? `[![](${gif})](${gif})` : "") +
               (stderr
                 ? `\n**Errors during gif generation:**\n\`\`\`${stderr}\`\`\`\n`
                 : "")
