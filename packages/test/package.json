@@ -2,7 +2,7 @@
   "name": "gl-transition-test",
   "private": true,
   "scripts": {
-    "test": "gl-transition-transform -d node_modules/gl-transitions/transitions -o test_results.json"
+    "test": "rm -f test_results.json && gl-transition-transform -d node_modules/gl-transitions/transitions -o test_results.json && test -s test_results.json"
   },
   "dependencies": {
     "gl-transition-scripts": "*",
