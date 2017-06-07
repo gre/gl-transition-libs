@@ -1,0 +1,11 @@
+{
+  "name": "gl-transition-test",
+  "private": true,
+  "scripts": {
+    "test": "gl-transition-transform -d node_modules/gl-transitions/transitions -o test_results.json"
+  },
+  "dependencies": {
+    "gl-transition-scripts": "*",
+    "gl-transitions": "*"
+  }
+}

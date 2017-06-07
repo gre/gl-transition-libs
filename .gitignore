@@ -1,5 +1,6 @@
 node_modules/
 packages/*/lib/
+test_results.json
 lerna-debug.log
 npm-debug.log
 .DS_Store

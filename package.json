@@ -1,11 +1,11 @@
 {
   "private": true,
   "scripts": {
-    "postinstall": "lerna bootstrap --hoist --nohoist=headless-gl",
+    "postinstall": "lerna bootstrap --hoist --nohoist=headless-gl --nohoist=gl-transitions",
     "start": "cd packages/website && yarn start",
     "watch": "lerna run watch --stream --no-sort",
     "build-website": "cd packages/website && yarn build",
-    "test": "cd packages/gl-transition-utils && yarn test"
+    "test": "lerna run test"
   },
   "devDependencies": {
     "lerna": "^2.0.0-rc.4"

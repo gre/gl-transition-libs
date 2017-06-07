@@ -27,7 +27,6 @@
     "prepare": "./src/images/generate.sh",
     "start": "yarn run prepare && react-scripts start",
     "build": "yarn run prepare && react-scripts build && echo gl-transitions.com > build/CNAME && cp build/index.html build/200.html",
-    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "version": "1.14.0",
