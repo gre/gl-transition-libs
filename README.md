@@ -12,7 +12,7 @@ This repository hosts multiple packages for [gl-transitions](https://github.com/
 
 ## Other Links
 
-- [GLTransitions website](https://gl-transitions.com), gallery and editor.
+- [GLTransitions website](https://gl-transitions.com), gallery and editor. *( alternative hosting: https://gl-transitions.surge.sh/ )*
 - [gl-transitions repository](https://github.com/gl-transitions/gl-transitions), collection of gl transitions.
 
 ## Kudos
