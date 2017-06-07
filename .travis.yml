@@ -4,7 +4,16 @@ node_js:
 script: yarn test
 os: linux
 dist: trusty
-sudo: false
+addons:
+  apt:
+    packages:
+    - mesa-utils
+    - xvfb
+    - libgl1-mesa-dri
+    - libglapi-mesa
+    - libosmesa6
+before_script:
+  - export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start
 before_deploy:
   - yarn run build-website
 deploy:
