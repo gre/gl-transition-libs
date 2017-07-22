@@ -6,12 +6,11 @@
   "bin": {
     "gl-transition-bot-review-pr": "bin/generate-review.js"
   },
-  "files": [
-    "bin"
-  ],
+  "files": ["bin"],
   "dependencies": {
     "gl-transition-scripts": "^1.15.0",
     "json": "^9.0.6",
+    "githubhook": "^1.7.1",
     "request": "^2.81.0"
   }
 }
