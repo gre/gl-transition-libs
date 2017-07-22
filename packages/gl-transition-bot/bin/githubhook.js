@@ -3,13 +3,14 @@ var path = require("path");
 const child_process = require("child_process");
 var github = githubhook({
   secret: process.env.GITHUB_HOOK_SECRET,
+  port: process.env.PORT
 });
 
 github.listen();
 
 const watchedActions = {
   opened: true,
-  synchronize: true,
+  synchronize: true
 };
 
 github.on("pull_request:gl-transitions", (ref, data) => {
