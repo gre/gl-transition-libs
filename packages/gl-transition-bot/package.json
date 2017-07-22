@@ -1,16 +1,18 @@
 {
   "name": "gl-transition-bot",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "main": "lib/index.js",
   "license": "MIT",
   "bin": {
     "gl-transition-bot-review-pr": "bin/generate-review.js"
   },
-  "files": ["bin"],
+  "files": [
+    "bin"
+  ],
   "dependencies": {
+    "githubhook": "^1.7.1",
     "gl-transition-scripts": "^1.15.0",
     "json": "^9.0.6",
-    "githubhook": "^1.7.1",
     "request": "^2.81.0"
   }
 }
