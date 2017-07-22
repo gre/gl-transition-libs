@@ -3,7 +3,7 @@
 #env vars: GITHUB_TOKEN IMGUR_KEY
 
 set -e
-rm -rf gl-transitions
+cd `mktemp -d`
 git clone https://github.com/gl-transitions/gl-transitions.git
 cd gl-transitions
 git fetch origin pull/$1/head:pr
