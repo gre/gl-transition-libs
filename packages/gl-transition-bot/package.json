@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-bot",
-  "version": "1.15.2",
+  "version": "1.15.3",
   "main": "lib/index.js",
   "license": "MIT",
   "bin": {
