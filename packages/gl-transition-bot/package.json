@@ -6,9 +6,10 @@
   "bin": {
     "gl-transition-bot-review-pr": "bin/generate-review.js"
   },
-  "files": [
-    "bin"
-  ],
+  "scripts": {
+    "start": "node bin/githubhook.js"
+  },
+  "files": ["bin"],
   "dependencies": {
     "githubhook": "^1.7.1",
     "gl-transition-scripts": "^1.15.0",
