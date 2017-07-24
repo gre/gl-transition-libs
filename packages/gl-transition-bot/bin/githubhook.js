@@ -21,6 +21,7 @@ github.on("pull_request:gl-transitions", (ref, data) => {
     path.join(__dirname, "generate-review.sh"),
     {
       env: {
+        ...process.env,
         PULL_REQUEST: data.number
       }
     },
