@@ -20,10 +20,9 @@ github.on("pull_request:gl-transitions", (ref, data) => {
   child_process.execFile(
     path.join(__dirname, "generate-review.sh"),
     {
-      env: {
-        ...process.env,
+      env: Object.assign({}, process.env, {
         PULL_REQUEST: data.number
-      }
+      })
     },
     (error, stdout, stderr) => {
       if (error) console.error(error, stdout);
