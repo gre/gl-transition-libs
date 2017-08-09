@@ -47,22 +47,22 @@ export default class Vignette extends Component {
     onHoverOut?: Function,
     interaction?: boolean,
     onDrawWithProgress?: (x: number) => void,
-    preload?: Array<*>,
+    preload?: Array<*>
   };
   visitor = new SurfaceVisitor(this);
   static defaultProps = {
     width: 300,
     height: 200,
-    interaction: true,
+    interaction: true
   };
   state: {
     hoverValue: number,
     hover: boolean,
-    failing: ?Object,
+    failing: ?Object
   } = {
     hoverValue: 0,
     hover: false,
-    failing: null,
+    failing: null
   };
 
   componentDidMount() {
@@ -84,7 +84,8 @@ export default class Vignette extends Component {
 
   _setProgress: ?(progress: number) => void = null;
   onRef = (glt: GLTransition) => {
-    this._setProgress = glt && glt.getComponent().setProgress;
+    const c = glt && glt.getComponent();
+    this._setProgress = c && c.setProgress;
   };
 
   _cachedProgress: number = defaultProgress;
@@ -103,7 +104,7 @@ export default class Vignette extends Component {
   onMouseEnter = (e: *) => {
     this.setState({
       hoverValue: hoverValueFromEvent(e),
-      hover: true,
+      hover: true
     });
     const { onHoverIn } = this.props;
     if (onHoverIn) onHoverIn();
@@ -115,7 +116,7 @@ export default class Vignette extends Component {
   };
   onMouseLeave = () => {
     this.setState({
-      hover: false,
+      hover: false
     });
     const { onHoverOut } = this.props;
     if (!onHoverOut || onHoverOut() !== false) {
@@ -133,7 +134,7 @@ export default class Vignette extends Component {
       height,
       Footer,
       interaction,
-      preload,
+      preload
     } = this.props;
     const { hover, hoverValue, failing } = this.state;
     const pvalue = this.getProgress();
@@ -143,7 +144,7 @@ export default class Vignette extends Component {
         className={[
           "vignette",
           hover ? "hover" : "",
-          failing ? "failing" : "",
+          failing ? "failing" : ""
         ].join(" ")}
         style={{ width, height }}
       >
@@ -173,7 +174,9 @@ export default class Vignette extends Component {
         {failing
           ? <div className="failing">
               <FaExclamationTriangle />
-              <p>{failing.message}</p>
+              <p>
+                {failing.message}
+              </p>
             </div>
           : null}
       </div>
