@@ -21,3 +21,5 @@ deploy:
   project: ./packages/website/build/
   domain: gl-transitions.surge.sh
   skip_cleanup: true
+  on:
+    branch: master
