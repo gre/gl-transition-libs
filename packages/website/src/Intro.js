@@ -108,7 +108,6 @@ class Preview extends PureComponent {
               paused={!visible}
               transitions={transitionsOrderByRandom}
               images={images}
-              preload={allImagesToPreload}
               width={width}
               height={height}
               duration={3000}
@@ -178,6 +177,7 @@ class ConfigurableExample extends PureComponent {
                 transitionsParams={[transitionParams]}
                 easings={[BezierEasing(...easing)]}
                 images={images}
+                preload={allImagesToPreload}
                 width={width}
                 height={height}
                 duration={duration}
