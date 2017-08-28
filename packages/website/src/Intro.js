@@ -27,13 +27,13 @@ const images = [
   require("./images/1024x768/ikZyw45kT4m16vHkHe7u_9647713235_29ce0305d2_o.jpg"),
   require("./images/1024x768/lUUnN7VGSoWZ3noefeH7_Baker_Beach-12.jpg"),
   require("./images/1024x768/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg"),
-  require("./images/1024x768/wdXqHcTwSTmLuKOGz92L_Landscape.jpg"),
+  require("./images/1024x768/wdXqHcTwSTmLuKOGz92L_Landscape.jpg")
 ];
 
 const allImagesToPreload = images.concat([
   defaultSampler2D,
   fromImage,
-  toImage,
+  toImage
 ]);
 
 const Logo = () => (
@@ -45,7 +45,7 @@ const Logo = () => (
 
 class VignetteFooter extends PureComponent {
   props: {
-    transition: *,
+    transition: *
   };
   render() {
     const { transition } = this.props;
@@ -61,7 +61,7 @@ class VignetteFooter extends PureComponent {
 
 class BezierEasingEditorWithProgressSetter extends Component {
   state = {
-    progress: 0,
+    progress: 0
   };
   setProgress(progress: number) {
     this.setState({ progress });
@@ -75,10 +75,10 @@ class BezierEasingEditorWithProgressSetter extends Component {
 
 class TrackVisibility extends Component {
   props: {
-    children?: Function,
+    children?: Function
   };
   state = {
-    visible: false,
+    visible: false
   };
   onEnter = () => {
     this.setState({ visible: true });
@@ -126,7 +126,7 @@ class Preview extends PureComponent {
 class ConfigurableExample extends PureComponent {
   props: {
     width: number,
-    height: number,
+    height: number
   };
   state = {
     easing: [0.5, 0, 0.8, 0.8],
@@ -135,8 +135,8 @@ class ConfigurableExample extends PureComponent {
     transitionParams: {
       reflection: 0.4,
       perspective: 0.4,
-      depth: 3,
-    },
+      depth: 3
+    }
   };
   onEasingChange = easing => {
     this.setState({ easing });
@@ -151,8 +151,8 @@ class ConfigurableExample extends PureComponent {
     this.setState({
       transitionParams: {
         ...this.state.transitionParams,
-        [e.target.name]: parseFloat(e.target.value, 10),
-      },
+        [e.target.name]: parseFloat(e.target.value, 10)
+      }
     });
   };
   onBezierEditorRef = ref => {
@@ -192,7 +192,7 @@ class ConfigurableExample extends PureComponent {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  padding: 10,
+                  padding: 10
                 }}
               >
                 <label style={{ display: "flex", flexDirection: "row" }}>
@@ -240,7 +240,7 @@ class ConfigurableExample extends PureComponent {
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  flexWrap: "wrap",
+                  flexWrap: "wrap"
                 }}
               >
                 <BezierEasingEditorWithProgressSetter
@@ -256,19 +256,18 @@ class ConfigurableExample extends PureComponent {
                   handleColor="#fc6"
                   progressColor="#fc6"
                   textStyle={{
-                    fill: "#fc6",
+                    fill: "#fc6"
                   }}
                 />
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "center",
+                    justifyContent: "center"
                   }}
                 >
                   <label style={{ display: "flex", flexDirection: "row" }}>
-                    duration
-                    {" "}
+                    duration{" "}
                     <input
                       style={{ flex: 1 }}
                       type="range"
@@ -280,8 +279,7 @@ class ConfigurableExample extends PureComponent {
                     />
                   </label>
                   <label style={{ display: "flex", flexDirection: "row" }}>
-                    delay
-                    {" "}
+                    delay{" "}
                     <input
                       style={{ flex: 1 }}
                       type="range"
@@ -305,7 +303,7 @@ class ConfigurableExample extends PureComponent {
 class VideoExample extends PureComponent {
   props: {
     width: number,
-    height: number,
+    height: number
   };
   render() {
     const { width } = this.props;
@@ -318,23 +316,25 @@ class VideoExample extends PureComponent {
               paused={!visible}
               transitions={transitionsOrderByRandom}
               images={
-                !visible
-                  ? [null]
-                  : [
-                      // this works precisely working because of gl-react ;)
-                      <video key={1} autoPlay loop>
-                        <source type="video/webm" src={cut1webm} />
-                        <source type="video/mp4" src={cut1mp4} />
-                      </video>,
-                      <video key={2} autoPlay loop>
-                        <source type="video/webm" src={cut2webm} />
-                        <source type="video/mp4" src={cut2mp4} />
-                      </video>,
-                      <video key={3} autoPlay loop>
-                        <source type="video/webm" src={cut3webm} />
-                        <source type="video/mp4" src={cut3mp4} />
-                      </video>,
-                    ]
+                !visible ? (
+                  [null]
+                ) : (
+                  [
+                    // this works precisely working because of gl-react ;)
+                    <video key={1} autoPlay loop>
+                      <source type="video/webm" src={cut1webm} />
+                      <source type="video/mp4" src={cut1mp4} />
+                    </video>,
+                    <video key={2} autoPlay loop>
+                      <source type="video/webm" src={cut2webm} />
+                      <source type="video/mp4" src={cut2mp4} />
+                    </video>,
+                    <video key={3} autoPlay loop>
+                      <source type="video/webm" src={cut3webm} />
+                      <source type="video/mp4" src={cut3mp4} />
+                    </video>
+                  ]
+                )
               }
               width={width}
               height={Math.round(width * 544 / 1280)}
@@ -351,7 +351,18 @@ class VideoExample extends PureComponent {
 }
 
 export default class Intro extends Component {
+  state = {
+    loadGif: false
+  };
+  _timeout: *;
+  componentDidMount() {
+    this._timeout = setTimeout(() => this.setState({ loadGif: true }), 1000);
+  }
+  componentWillUnmount() {
+    clearTimeout(this._timeout);
+  }
   render() {
+    const { loadGif } = this.state;
     let maxWidth = Infinity;
     if (window.screen) {
       maxWidth = window.screen.width;
@@ -362,49 +373,34 @@ export default class Intro extends Component {
 
     return (
       <div className="Intro">
-
         <header>
-          The Open Collection of
-          {" "}
-          <Logo />
+          The Open Collection of <Logo />
         </header>
         <section>
           <Preview width={imgWidth} height={imgHeight} />
           <div>
             <p>
-              GLSL is a
-              {" "}
-              <strong>powerful</strong>
-              {" "}
-              and easy to learn language, perfect for image effects. It really is the
-              {" "}
-              <strong>ultimate language to implement Transitions</strong>
-              {" "}
-              in.
+              GLSL is a <strong>powerful</strong> and easy to learn language,
+              perfect for image effects. It really is the{" "}
+              <strong>ultimate language to implement Transitions</strong> in.
             </p>
             <p>
-              It's
-              {" "}
-              <strong>highly performant</strong>
-              {" "}
-              (GLSL runs on the GPU),
-              {" "}
-              <strong>universal</strong>
-              {" "}
-              (OpenGL is available everywhere),
-              {" "}
-              <strong>customizable</strong>
-              {" "}
-              (each transition can have many parameters)
-              {" "}
-              and can be run over any pixel source like images, videos, canvas,...
+              It's <strong>highly performant</strong> (GLSL runs on the GPU),{" "}
+              <strong>universal</strong> (OpenGL is available everywhere),{" "}
+              <strong>customizable</strong> (each transition can have many
+              parameters) and can be run over any pixel source like images,
+              videos, canvas,...
             </p>
             <p>
-              This Open Source initiative aims to establish an universal collection of transitions that various softwares can use (including Movie Editors).
+              This Open Source initiative aims to establish an universal
+              collection of transitions that various softwares can use
+              (including Movie Editors).
             </p>
           </div>
         </section>
-        <header id="spec">What are <Logo />?</header>
+        <header id="spec">
+          What are <Logo />?
+        </header>
 
         <section>
           <div>
@@ -427,43 +423,17 @@ vec4 transition (vec2 uv) {
           </div>
           <div>
             <p>
-              A GL Transition is a GLSL code that implements a
-              {" "}
-              <code>transition</code> coloring function:
-              {" "}
-              For a given
-              {" "}
-              <code>uv</code>
-              {" "}
-              pixel position, returns a
-              {" "}
-              color representing the mix of the
-              {" "}
-              <strong>source</strong>
-              {" "}
-              to the
-              {" "}
-              <strong>destination</strong>
-              {" "}
-              textures based on the variation of a contextual
-              {" "}
-              <code>progress</code>
-              {" "}
-              value from
-              {" "}
-              <code>0.0</code>
-              {" "}
-              to
-              {" "}
+              A GL Transition is a GLSL code that implements a{" "}
+              <code>transition</code> coloring function: For a given{" "}
+              <code>uv</code> pixel position, returns a color representing the
+              mix of the <strong>source</strong> to the{" "}
+              <strong>destination</strong> textures based on the variation of a
+              contextual <code>progress</code> value from <code>0.0</code> to{" "}
               <code>1.0</code>.
             </p>
             <p>
               <a href={"https://github.com/" + githubRepoPath}>
-                More specification can be found on
-                {" "}
-                <FaGithub />
-                {" "}
-                Github
+                More specification can be found on <FaGithub /> Github
               </a>.
             </p>
           </div>
@@ -472,33 +442,30 @@ vec4 transition (vec2 uv) {
         <header id="github">
           <a href={"https://github.com/" + githubRepoPath}>
             <Logo />
-            are on
-            {" "}
-            <FaGithub /> Github
+            are on <FaGithub /> Github
           </a>
         </header>
         <section>
           <div>
-            <img alt="" className="full" src={require("./github.gif")} />
+            {loadGif ? (
+              <img alt="" className="full" src={require("./github.gif")} />
+            ) : (
+              <div style={{ height: 455 }} />
+            )}
           </div>
           <div>
             <p>
-              There is currently
-              {" "}
-              <strong>{transitionsOrderByRandom.length} transitions</strong>
-              {" "}
-              created by many contributors ❤️ and released under a
-              {" "}
+              There is currently{" "}
+              <strong>
+                {transitionsOrderByRandom.length} transitions
+              </strong>{" "}
+              created by many contributors ❤️ and released under a{" "}
               <strong>Free License</strong>.
             </p>
             <p>
-              The initiative is
-              {" "}
-              <strong>community driven</strong>, managed on
-              {" "}
-              <a href={"https://github.com/" + githubRepoPath}>
-                Github
-              </a>. PRs are reviewed and validated by a 🤖bot.
+              The initiative is <strong>community driven</strong>, managed on{" "}
+              <a href={"https://github.com/" + githubRepoPath}>Github</a>. PRs
+              are reviewed and validated by a 🤖bot.
             </p>
             <p>
               <strong>You can directly send PRs from this website!</strong>
@@ -526,15 +493,14 @@ vec4 transition (vec2 uv) {
           <div>
             <a href="https://www.npmjs.com/package/gl-transitions">
               <code>gl-transitions</code>
-            </a>
-            {" "} gets auto-published on NPM.
+            </a>{" "}
+            gets auto-published on NPM.
             <ul>
               <li>
                 <code>npm install gl-transitions --save</code>
               </li>
               <li>
-                or embed it:
-                {" "}
+                or embed it:{" "}
                 <a
                   className="small"
                   href="https://unpkg.com/gl-transitions@1/gl-transitions.js"
@@ -543,8 +509,7 @@ vec4 transition (vec2 uv) {
                 </a>
               </li>
               <li>
-                or a JSON:
-                {" "}
+                or a JSON:{" "}
                 <a
                   className="small"
                   href="https://unpkg.com/gl-transitions@1/gl-transitions.json"
@@ -556,83 +521,60 @@ vec4 transition (vec2 uv) {
           </div>
           <div>
             You can draw GL transitions and in various environments:
-
             <ul>
               <li>
-                <strong>In Vanilla WebGL code,</strong>
-                {" "}
+                <strong>In Vanilla WebGL code,</strong>{" "}
                 <a href="https://www.npmjs.com/package/gl-transition">
                   <code>gl-transition</code>
-                </a>
-                {" "}
+                </a>{" "}
                 exposes a draw function to render a GL Transition frame.
               </li>
               <li>
                 <strong>
                   With <a href="https://github.com/regl-project/regl">regl</a>,
-                </strong>
-                {" "}
+                </strong>{" "}
                 <a href="https://www.npmjs.com/package/regl-transition">
                   <code>regl-transition</code>
-                </a>
-                {" "}
-                exposes a function to render a GL Transition with a regl context.
+                </a>{" "}
+                exposes a function to render a GL Transition with a regl
+                context.
               </li>
               <li>
-                <strong>In React paradigm,</strong>
-                {" "}
+                <strong>In React paradigm,</strong>{" "}
                 <a href="https://www.npmjs.com/package/react-gl-transition">
                   <code>react-gl-transition</code>
-                </a>
-                {" "}
-                exposes a {"<GLTransition />"} component to use in a
-                {" "}
+                </a>{" "}
+                exposes a {"<GLTransition />"} component to use in a{" "}
                 <a href="https://github.com/gre/gl-react">gl-react</a>
-                's Surface.
-                {" "}
-                This is what this app uses heavily.
+                's Surface. This is what this app uses heavily.
               </li>
               <li>
-                <strong>In CLI,</strong>
-                {" "}
+                <strong>In CLI,</strong>{" "}
                 <a href="https://www.npmjs.com/package/gl-transition-scripts">
                   <code>gl-transition-scripts</code>
-                </a>
-                {" "}
-                exposes a
-                {" "}
-                <em>gl-transition-render</em>
-                {" "}
-                command to render a Transition to an image file.
-                {" "}
-                Our bot uses that to render a GIF and put it in the PRs!
-                {" "}
-                Travis also validates the transitions that gets committed with the
-                {" "}
-                <em>gl-transition-transform</em>
-                {" "}
+                </a>{" "}
+                exposes a <em>gl-transition-render</em> command to render a
+                Transition to an image file. Our bot uses that to render a GIF
+                and put it in the PRs! Travis also validates the transitions
+                that gets committed with the <em>gl-transition-transform</em>{" "}
                 command.
               </li>
               <li>
-                In a node.js server you can use
-                {" "}
+                In a node.js server you can use{" "}
                 <a href="https://github.com/stackgl/headless-gl">
                   headless <code>gl</code>
-                </a>
-                {" "}
-                and obviously
-                {" "}
+                </a>{" "}
+                and obviously{" "}
                 <a href="https://www.npmjs.com/package/gl-transition">
                   gl-transition
-                </a> to render a transition on server side. Which is what the
-                {" "}
-                <em>gl-transition-render</em>
-                {" "}
-                command is doing.
+                </a>{" "}
+                to render a transition on server side. Which is what the{" "}
+                <em>gl-transition-render</em> command is doing.
               </li>
               <li>
                 <a href="https://github.com/gre/gl-transition-libs">
-                  ...more environments and languages to support are welcomed to contributions.
+                  ...more environments and languages to support are welcomed to
+                  contributions.
                 </a>
               </li>
             </ul>
@@ -640,9 +582,10 @@ vec4 transition (vec2 uv) {
         </section>
 
         <header>
-          That's it folks! Get to your shader code
-          {" "}
-          <span role="img" aria-label="">❤️</span>
+          That's it folks! Get to your shader code{" "}
+          <span role="img" aria-label="">
+            ❤️
+          </span>
         </header>
 
         <footer>
@@ -650,7 +593,6 @@ vec4 transition (vec2 uv) {
             Create a new Transition
           </Link>
         </footer>
-
       </div>
     );
   }
