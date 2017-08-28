@@ -83,9 +83,8 @@ export default class Vignette extends Component {
   }
 
   _setProgress: ?(progress: number) => void = null;
-  onRef = (glt: GLTransition) => {
-    this._setProgress =
-      glt && glt.getComponent() && glt.getComponent().setProgress;
+  onRef = (glt: *) => {
+    this._setProgress = glt && glt.setProgress;
   };
 
   _cachedProgress: number = defaultProgress;
@@ -158,7 +157,7 @@ export default class Vignette extends Component {
           preload={preload}
         >
           <GLTransition
-            ref={this.onRef}
+            onConnectSizeComponentRef={this.onRef}
             transition={transition}
             transitionParams={transitionParams}
             from={from}

@@ -3,8 +3,8 @@
     "bezier-easing": "^2.0.3",
     "bezier-easing-editor": "^0.7.0",
     "flow-bin": "^0.46.0",
-    "gl-react": "next",
-    "gl-react-dom": "next",
+    "gl-react": "^3.12.0",
+    "gl-react-dom": "^3.12.0",
     "gl-shader": "^4.2.1",
     "gl-transition-utils": "^1.15.0",
     "glsl-parser": "^2.0.0",
@@ -26,7 +26,8 @@
   "scripts": {
     "prepare": "./src/images/generate.sh",
     "start": "yarn run prepare && react-scripts start",
-    "build": "yarn run prepare && react-scripts build && echo gl-transitions.com > build/CNAME && cp build/index.html build/200.html",
+    "build":
+      "yarn run prepare && react-scripts build && echo gl-transitions.com > build/CNAME && cp build/index.html build/200.html",
     "eject": "react-scripts eject"
   },
   "version": "1.15.0",
