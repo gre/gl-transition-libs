@@ -2625,17 +2625,17 @@ gl-format-compiler-error@^1.0.2:
     glsl-shader-name "^1.0.0"
     sprintf-js "^1.0.3"
 
-gl-react-dom@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/gl-react-dom/-/gl-react-dom-3.6.0.tgz#984820336ca4cc84c13f7e56902bdbadd4bdab6b"
+gl-react-dom@next:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/gl-react-dom/-/gl-react-dom-3.10.0.tgz#1191430f2f818471ab31f7c0e4e8771491d01bc7"
   dependencies:
     invariant "^2.2.1"
     prop-types "^15.5.8"
     raf "^3.3.0"
 
-gl-react@^3.6.0:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/gl-react/-/gl-react-3.6.0.tgz#f3ae029ce29e5bb69833f530e80fef3d0a830b81"
+gl-react@next:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/gl-react/-/gl-react-3.10.0.tgz#1fccefa09dd43439386ceac85759320532775ff2"
   dependencies:
     gl-shader "^4.2.1"
     invariant "^2.2.1"
@@ -2659,9 +2659,9 @@ gl-texture2d@^2.1.0:
     ndarray-ops "^1.2.2"
     typedarray-pool "^1.1.0"
 
-gl-transition-utils@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/gl-transition-utils/-/gl-transition-utils-1.8.0.tgz#038aca41ab5b0bfe812c739f5686be73957aa9a8"
+gl-transition-utils@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/gl-transition-utils/-/gl-transition-utils-1.15.0.tgz#941ad531a4d32ec93ee28f83facabf19fc133a51"
   dependencies:
     gl-shader "^4.2.1"
     gl-texture2d "^2.1.0"
@@ -4997,9 +4997,9 @@ react-error-overlay@^1.0.6:
     settle-promise "1.0.0"
     source-map "0.5.6"
 
-react-gl-transition@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/react-gl-transition/-/react-gl-transition-1.5.1.tgz#7e7ca6795841a5576958e179591eeecc63594270"
+react-gl-transition@^1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/react-gl-transition/-/react-gl-transition-1.13.0.tgz#0a6900c880a180d91b46db1fefdf746d77e027c4"
 
 react-icon-base@2.0.7:
   version "2.0.7"
