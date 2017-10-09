@@ -381,8 +381,8 @@ export default class Intro extends Component {
           <div>
             <p>
               GLSL is a <strong>powerful</strong> and easy to learn language,
-              perfect for image effects. It really is the{" "}
-              <strong>ultimate language to implement Transitions</strong> in.
+              perfect for image effects. It is in fact the{" "}
+              <strong>ultimate language to implement Transitions</strong> in!
             </p>
             <p>
               It's <strong>highly performant</strong> (GLSL runs on the GPU),{" "}
