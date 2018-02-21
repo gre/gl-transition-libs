@@ -7,4 +7,5 @@ export default {
   GPLv2: "https://opensource.org/licenses/GPL-2.0",
   GPLv3: "https://opensource.org/licenses/GPL-3.0",
   "Apache-2.0": "https://opensource.org/licenses/Apache-2.0",
+  "BSD 2 Clause": "https://opensource.org/licenses/BSD-2-Clause"
 };
