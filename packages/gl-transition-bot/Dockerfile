@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:8
 LABEL maintainer "gre"
 
 RUN sed -i "s/jessie main/jessie main contrib non-free/" /etc/apt/sources.list
