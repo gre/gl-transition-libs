@@ -5,8 +5,8 @@
     "test": "rm -f test_results.json && gl-transition-transform -d node_modules/gl-transitions/transitions -o test_results.json && test -s test_results.json"
   },
   "dependencies": {
-    "gl-transition-scripts": "^1.15.0",
+    "gl-transition-scripts": "^1.16.0",
     "gl-transitions": "*"
   },
-  "version": "1.15.0"
+  "version": "1.16.0"
 }
