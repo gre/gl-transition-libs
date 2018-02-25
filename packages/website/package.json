@@ -14,7 +14,7 @@
     "performance-now": "^2.1.0",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
-    "react-gl-transition": "^1.13.0",
+    "react-gl-transition": "^1.19.0",
     "react-icons": "^2.2.5",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
@@ -29,7 +29,7 @@
     "build": "yarn run prepare && react-scripts build && echo gl-transitions.com > build/CNAME && cp build/index.html build/200.html",
     "eject": "react-scripts eject"
   },
-  "version": "1.18.0",
+  "version": "1.19.0",
   "name": "website",
   "private": true
 }

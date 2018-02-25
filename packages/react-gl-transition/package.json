@@ -7,7 +7,7 @@
     "react",
     "react-component"
   ],
-  "version": "1.13.0",
+  "version": "1.19.0",
   "main": "lib/GLTransition.js",
   "license": "MIT",
   "scripts": {
@@ -24,6 +24,5 @@
   "peerDependencies": {
     "gl-react": "^3.5.0",
     "react": "^15.5.4"
-  },
-  "dependencies": {}
+  }
 }
