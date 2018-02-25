@@ -6,7 +6,7 @@
     "gl-react": "^3.12.0",
     "gl-react-dom": "^3.12.0",
     "gl-shader": "^4.2.1",
-    "gl-transition-utils": "^1.17.0",
+    "gl-transition-utils": "^1.18.0",
     "glsl-parser": "^2.0.0",
     "glsl-tokenizer": "^2.1.2",
     "glsldoc": "^0.0.4",
@@ -29,7 +29,7 @@
     "build": "yarn run prepare && react-scripts build && echo gl-transitions.com > build/CNAME && cp build/index.html build/200.html",
     "eject": "react-scripts eject"
   },
-  "version": "1.17.0",
+  "version": "1.18.0",
   "name": "website",
   "private": true
 }

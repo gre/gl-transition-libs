@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-bot",
-  "version": "1.17.0",
+  "version": "1.18.0",
   "main": "lib/index.js",
   "license": "MIT",
   "bin": {
@@ -14,7 +14,7 @@
   ],
   "dependencies": {
     "githubhook": "^1.7.1",
-    "gl-transition-scripts": "^1.17.0",
+    "gl-transition-scripts": "^1.18.0",
     "json": "^9.0.6",
     "request": "^2.81.0"
   }
