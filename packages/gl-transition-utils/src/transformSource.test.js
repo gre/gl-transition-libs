@@ -123,6 +123,26 @@ test("must define uv params", () => {
   expect(res.errors.length).toBeGreaterThan(0);
 });
 
+test("first meta comment is taken in priority", () => {
+  const res = transformSource(
+    "test.glsl",
+    `
+      // Author: gre
+      // License: MIT
+      // Author: gre_2
+      // License: GPLv2
+      vec4 transition (vec2 p) {
+        return vec4(p, 1.0, 1.0);
+      }
+  `
+  );
+  expect(res.errors).toEqual([]);
+  expect(res.data).toMatchObject({
+    author: "gre",
+    license: "MIT"
+  });
+});
+
 test("renaming param is fine", () => {
   const res = transformSource(
     "test.glsl",
@@ -171,7 +191,7 @@ test("crazy defaults", () => {
     a: 42.2,
     b: 42.2,
     c: 3.3,
-    d: 5.5,
+    d: 5.5
   });
   expect(res.data.author).toEqual("Gaetan");
   expect(res.data.license).toEqual("LGPL");

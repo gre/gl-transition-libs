@@ -562,7 +562,7 @@ export default function transformSource(
         let [_, key, value] = m;
         key = key.trim().toLowerCase();
         value = value.trim();
-        if (whitelistMeta.indexOf(key) !== -1) {
+        if (!data[key] && whitelistMeta.indexOf(key) !== -1) {
           if (!value) {
             errors.push({
               type: "error",
