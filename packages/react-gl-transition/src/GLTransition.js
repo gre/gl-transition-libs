@@ -48,18 +48,14 @@ export default connectSize(
           ref="node"
           shader={{
             frag: `
-    precision highp float;
-    varying vec2 uv;
-    uniform float progress, ratio;
-    uniform sampler2D from, to;
-    vec4 getFromColor (vec2 uv) {
-    return texture2D(from, uv);
-    }
-    vec4 getToColor (vec2 uv) {
-    return texture2D(to, uv);
-    }
-    ${glsl}
-    void main(){gl_FragColor=transition(uv);}`
+precision highp float;
+varying vec2 uv;
+uniform float progress, ratio;
+uniform sampler2D from, to;
+vec4 getFromColor(vec2 uv){return texture2D(from, uv);}
+vec4 getToColor(vec2 uv){return texture2D(to, uv);}
+${glsl}
+void main(){gl_FragColor=transition(uv);}`
           }}
           ignoreUnusedUniforms={["ratio"]}
           uniforms={this.getUniformsWithProgress(progress)}
