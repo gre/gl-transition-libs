@@ -7,7 +7,7 @@ export default connectSize(
     props: {
       transition: {
         glsl: string,
-        defaultParams?: Object,
+        defaultParams?: Object
       },
       transitionParams?: Object,
       progress: number,
@@ -16,7 +16,7 @@ export default connectSize(
       to: any,
       // provided by connectSize
       width: number,
-      height: number,
+      height: number
     };
     getUniformsWithProgress(progress: number) {
       const {
@@ -25,7 +25,7 @@ export default connectSize(
         from,
         to,
         width,
-        height,
+        height
       } = this.props;
       return {
         ...defaultParams,
@@ -33,12 +33,12 @@ export default connectSize(
         progress,
         from,
         to,
-        ratio: width / height,
+        ratio: width / height
       };
     }
     setProgress = (progress: number) => {
       this.refs.node.setDrawProps({
-        uniforms: this.getUniformsWithProgress(progress),
+        uniforms: this.getUniformsWithProgress(progress)
       });
     };
     render() {
@@ -59,11 +59,9 @@ export default connectSize(
     return texture2D(to, uv);
     }
     ${glsl}
-    void main () {
-    float r = ratio;${/* THIS IS A NO OP just so uniform still exists after GL compilation */ ""}
-    gl_FragColor = transition(uv);
-    }`,
+    void main(){gl_FragColor=transition(uv);}`
           }}
+          ignoreUnusedUniforms={["ratio"]}
           uniforms={this.getUniformsWithProgress(progress)}
         />
       );
