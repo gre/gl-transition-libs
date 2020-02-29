@@ -12,8 +12,8 @@
     "glsldoc": "^0.0.4",
     "highlight.js": "^9.11.0",
     "performance-now": "^2.1.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "react-gl-transition": "^1.19.2",
     "react-icons": "^2.2.5",
     "react-router": "^4.1.1",
@@ -21,7 +21,7 @@
     "react-waypoint": "^7.0.3"
   },
   "devDependencies": {
-    "react-scripts": "1.0.6"
+    "react-scripts": "3.4.0"
   },
   "scripts": {
     "prepare": "./src/images/generate.sh",
@@ -31,5 +31,17 @@
   },
   "version": "1.19.2",
   "name": "website",
-  "private": true
+  "private": true,
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
