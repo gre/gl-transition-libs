@@ -379,8 +379,8 @@ builtin-status-codes@^3.0.0:
   resolved "https://registry.yarnpkg.com/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz#85982878e21b98e1c66425e03d0174788f569ee8"
 
 cached-path-relative@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/cached-path-relative/-/cached-path-relative-1.0.1.tgz#d09c4b52800aa4c078e2dd81a869aac90d2e54e7"
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/cached-path-relative/-/cached-path-relative-1.0.2.tgz#a13df4196d26776220cc3356eb147a52dba2c6db"
 
 camelcase-keys@^2.0.0:
   version "2.1.0"
@@ -853,6 +853,10 @@ getpass@^0.1.1:
   resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
   dependencies:
     assert-plus "^1.0.0"
+
+gl-transitions@1:
+  version "1.43.0"
+  resolved "https://registry.yarnpkg.com/gl-transitions/-/gl-transitions-1.43.0.tgz#790ce78f6713c75caba2b354764d7497971edcfd"
 
 glob-base@^0.3.0:
   version "0.3.0"
@@ -1752,6 +1756,12 @@ regex-cache@^0.4.2:
   dependencies:
     is-equal-shallow "^0.1.3"
     is-primitive "^2.0.0"
+
+regl-transition@^1.13.4:
+  version "1.13.4"
+  resolved "https://registry.yarnpkg.com/regl-transition/-/regl-transition-1.13.4.tgz#b9c7ec17351ec72ff45b13364edce9650b680757"
+  dependencies:
+    regl "^1.3.0"
 
 regl@^1.3.0:
   version "1.3.0"
