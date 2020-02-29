@@ -24,7 +24,7 @@
     "react-scripts": "3.4.0"
   },
   "scripts": {
-    "prepare": "./src/images/generate.sh",
+    "regen": "./src/images/generate.sh",
     "start": "yarn run prepare && react-scripts start",
     "build": "yarn run prepare && react-scripts build && echo gl-transitions.com > build/CNAME && cp build/index.html build/200.html",
     "eject": "react-scripts eject"
