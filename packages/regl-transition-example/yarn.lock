@@ -705,8 +705,8 @@ expand-range@^1.8.1:
     fill-range "^2.1.0"
 
 extend@~3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
 
 extglob@^0.3.1:
   version "0.3.2"
@@ -853,6 +853,10 @@ getpass@^0.1.1:
   resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
   dependencies:
     assert-plus "^1.0.0"
+
+gl-transitions@1:
+  version "1.43.0"
+  resolved "https://registry.yarnpkg.com/gl-transitions/-/gl-transitions-1.43.0.tgz#790ce78f6713c75caba2b354764d7497971edcfd"
 
 glob-base@^0.3.0:
   version "0.3.0"
@@ -1752,6 +1756,12 @@ regex-cache@^0.4.2:
   dependencies:
     is-equal-shallow "^0.1.3"
     is-primitive "^2.0.0"
+
+regl-transition@^1.13.4:
+  version "1.13.4"
+  resolved "https://registry.yarnpkg.com/regl-transition/-/regl-transition-1.13.4.tgz#b9c7ec17351ec72ff45b13364edce9650b680757"
+  dependencies:
+    regl "^1.3.0"
 
 regl@^1.3.0:
   version "1.3.0"
