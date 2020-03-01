@@ -1,24 +1,24 @@
 {
   "dependencies": {
-    "bezier-easing": "^2.0.3",
-    "bezier-easing-editor": "^0.7.0",
-    "flow-bin": "^0.46.0",
-    "gl-react": "^3.12.0",
-    "gl-react-dom": "^3.12.0",
+    "bezier-easing": "^2.1.0",
+    "bezier-easing-editor": "^0.8.0",
+    "flow-bin": "^0.119.1",
+    "gl-react": "^4.0.1",
+    "gl-react-dom": "^4.0.1",
     "gl-shader": "^4.2.1",
     "gl-transition-utils": "^1.18.0",
-    "glsl-parser": "^2.0.0",
-    "glsl-tokenizer": "^2.1.2",
+    "glsl-parser": "^2.0.1",
+    "glsl-tokenizer": "^2.1.5",
     "glsldoc": "^0.0.4",
-    "highlight.js": "^9.11.0",
+    "highlight.js": "^9.18.1",
     "performance-now": "^2.1.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-gl-transition": "^1.19.2",
-    "react-icons": "^2.2.5",
-    "react-router": "^4.1.1",
-    "react-router-dom": "^4.1.1",
-    "react-waypoint": "^7.0.3"
+    "react-icons": "^3.9.0",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
+    "react-waypoint": "^9.0.2"
   },
   "devDependencies": {
     "react-scripts": "3.4.0"

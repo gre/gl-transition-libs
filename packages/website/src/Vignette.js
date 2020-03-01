@@ -3,12 +3,13 @@ import React, { Component } from "react";
 import { Visitor } from "gl-react";
 import { Surface } from "gl-react-dom";
 import GLTransition from "react-gl-transition";
-import FaExclamationTriangle from "react-icons/lib/fa/exclamation-triangle";
+import { FaExclamationTriangle } from "react-icons/fa";
 import "./Vignette.css";
 
 const defaultProgress = 0.3;
 
 class SurfaceVisitor extends Visitor {
+  // eslint-disable-next-line
   vignette: Vignette;
   constructor(vignette: *) {
     super();

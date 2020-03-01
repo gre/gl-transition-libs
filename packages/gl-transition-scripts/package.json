@@ -18,7 +18,7 @@
     "src"
   ],
   "dependencies": {
-    "commander": "^2.9.0",
+    "commander": "^4.1.1",
     "get-pixels": "^3.3.0",
     "gl": "^4.0.3",
     "gl-texture2d": "^2.1.0",

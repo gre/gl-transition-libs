@@ -2,12 +2,15 @@
 import React, { Component, PureComponent } from "react";
 import querystring from "querystring";
 import { Link } from "react-router-dom";
-import { transitionsOrderByCreatedAt, transitionsOrderByUpdatedAt } from "./data";
+import {
+  transitionsOrderByCreatedAt,
+  transitionsOrderByUpdatedAt
+} from "./data";
 import Vignette from "./Vignette";
 import dateAgo from "./dateAgo";
 import ScrollToTop from "./ScrollToTop";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
-import FaExpand from "react-icons/lib/fa/expand";
+import { FaExpand } from "react-icons/fa";
 import "./Gallery.css";
 
 export const fromImage = require("./images/600x400/barley.jpg");
@@ -16,7 +19,7 @@ export const toImage = require("./images/600x400/hBd6EPoQT2C8VQYv65ys_White_Sand
 const footerForOrder = (getDate: *) =>
   class GalleryVignetteFooter extends PureComponent {
     props: {
-      transition: *,
+      transition: *
     };
     render() {
       const { transition } = this.props;
@@ -27,9 +30,7 @@ const footerForOrder = (getDate: *) =>
           </Link>
           <footer>
             <TransitionAuthorAndName transition={transition} />
-            <span className="dateago">
-              {dateAgo(getDate(transition))}
-            </span>
+            <span className="dateago">{dateAgo(getDate(transition))}</span>
           </footer>
         </div>
       );
@@ -41,7 +42,7 @@ const CreatedFooter = footerForOrder(t => t.createdAt);
 class GalleryVignette extends PureComponent {
   props: {
     transition: *,
-    order: *,
+    order: *
   };
   render() {
     const { transition, order } = this.props;
@@ -72,7 +73,7 @@ class PageLink extends PureComponent {
   props: {
     page: number,
     current: number,
-    children?: *,
+    children?: *
   };
   render() {
     const { page, current, children } = this.props;
@@ -102,7 +103,7 @@ function getPage(page, transitions) {
 
 export default class Gallery extends Component {
   props: {
-    location: *,
+    location: *
   };
   render() {
     const { location } = this.props;
@@ -111,9 +112,10 @@ export default class Gallery extends Component {
       : {};
     const page = !isNaN(query.page) ? parseInt(query.page, 10) : 1;
     const order = query.order;
-    const transitions = order === "updated"
-      ? transitionsOrderByUpdatedAt
-      : transitionsOrderByCreatedAt;
+    const transitions =
+      order === "updated"
+        ? transitionsOrderByUpdatedAt
+        : transitionsOrderByCreatedAt;
     const nbPages = Math.ceil(transitions.length / pageSize);
     const pagination = Array(nbPages) // the time we have too much pages we refactor this xD
       .fill(null)
@@ -126,25 +128,28 @@ export default class Gallery extends Component {
     return (
       <ScrollToTop>
         <div className="gallery">
-          <div className="pager">
-            {pagination}
-          </div>
+          <div className="pager">{pagination}</div>
           <div className="transitions">
-            {getPage(page, transitions).map(
-              (transition, i) =>
-                transition
-                  ? <GalleryVignette
-                      key={i}
-                      transition={transition}
-                      order={order}
-                    />
-                  : <VignettePlaceholder key={i} />
+            {getPage(page, transitions).map((transition, i) =>
+              transition ? (
+                <GalleryVignette
+                  key={i}
+                  transition={transition}
+                  order={order}
+                />
+              ) : (
+                <VignettePlaceholder key={i} />
+              )
             )}
           </div>
           <div className="pager">
-            {page === nbPages && page !== 1
-              ? <PageLink page={1} current={page}>Back to First Page</PageLink>
-              : pagination}
+            {page === nbPages && page !== 1 ? (
+              <PageLink page={1} current={page}>
+                Back to First Page
+              </PageLink>
+            ) : (
+              pagination
+            )}
           </div>
         </div>
       </ScrollToTop>

@@ -5,8 +5,7 @@ import { transitionsByName } from "./data";
 import acceptedLicenses from "gl-transition-utils/lib/acceptedLicenses";
 import AnimatedVignette from "./AnimatedVignette";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
-import FaEdit from "react-icons/lib/fa/edit";
-import FaRandom from "react-icons/lib/fa/random";
+import { FaEdit, FaRandom } from "react-icons/fa";
 import "./Preview.css";
 const images = [
   require("./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg"),
@@ -17,11 +16,11 @@ const images = [
   require("./images/1024x768/ikZyw45kT4m16vHkHe7u_9647713235_29ce0305d2_o.jpg"),
   require("./images/1024x768/lUUnN7VGSoWZ3noefeH7_Baker_Beach-12.jpg"),
   require("./images/1024x768/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg"),
-  require("./images/1024x768/wdXqHcTwSTmLuKOGz92L_Landscape.jpg"),
+  require("./images/1024x768/wdXqHcTwSTmLuKOGz92L_Landscape.jpg")
 ];
 
 type Props = {
-  name: string,
+  name: string
 };
 
 const tnames = Object.keys(transitionsByName);

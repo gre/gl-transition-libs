@@ -8,7 +8,7 @@ import SuggestTransform from "./SuggestTransform";
 import { githubRepoFolder, githubRepoPath } from "./conf";
 import { transitionsByName } from "./data";
 import PrimaryBtn from "./PrimaryBtn";
-import FaGithub from "react-icons/lib/fa/github";
+import { FaGithub } from "react-icons/fa";
 import "./EditNew.css";
 
 function selectEventTarget(e: *) {
@@ -34,7 +34,7 @@ const transformWithoutNameCollision = (filename, glsl) =>
       errors.push({
         type: "warn",
         code: "GLT_invalid_filename",
-        message: "Transition '" + name + "' already exists",
+        message: "Transition '" + name + "' already exists"
       });
     }
     return errors;
@@ -52,17 +52,17 @@ vec4 transition (vec2 uv) {
     getToColor(uv),
     progress
   );
-}`,
+}`
 };
 
 type Props = {
   location: *,
-  history: *,
+  history: *
 };
 
 type Query = {
   glsl?: string,
-  name?: string,
+  name?: string
 };
 
 function getQuery({ location }: Props): Query {
@@ -72,7 +72,7 @@ function setQuery(props: Props, query: Query): void {
   const cur = getQuery(props);
   props.history.replace({
     pathname: props.location.pathname,
-    search: querystring.stringify({ ...cur, ...query }),
+    search: querystring.stringify({ ...cur, ...query })
   });
 }
 
@@ -81,7 +81,7 @@ export default class EditNew extends Component {
   state: {
     transitionResult: *,
     transitionParams: *,
-    transformSuggestionDiscarded: boolean,
+    transformSuggestionDiscarded: boolean
   };
 
   constructor(props: Props) {
@@ -95,7 +95,7 @@ export default class EditNew extends Component {
     this.state = {
       transitionResult,
       transitionParams,
-      transformSuggestionDiscarded: false,
+      transformSuggestionDiscarded: false
     };
   }
 
@@ -131,7 +131,7 @@ export default class EditNew extends Component {
     const {
       transitionResult,
       transitionParams,
-      transformSuggestionDiscarded,
+      transformSuggestionDiscarded
     } = this.state;
     const filenameErrors = [];
     const glslErrors = [];
@@ -155,7 +155,9 @@ export default class EditNew extends Component {
           <div>
             <label className="tname">
               <input
-                className={`transition-name ${filenameErrors.length > 0 ? "error" : ""}`}
+                className={`transition-name ${
+                  filenameErrors.length > 0 ? "error" : ""
+                }`}
                 type="text"
                 placeholder="Transition Name"
                 onFocus={selectEventTarget}
@@ -176,7 +178,8 @@ export default class EditNew extends Component {
           <PrimaryBtn
             disabled={transitionResult.errors.length > 0}
             href={URL.format({
-              pathname: "https://github.com/" +
+              pathname:
+                "https://github.com/" +
                 githubRepoPath +
                 "/new/master" +
                 githubRepoFolder +
@@ -185,24 +188,22 @@ export default class EditNew extends Component {
                 ".glsl",
               query: {
                 filename: name + ".glsl",
-                value: transitionResult.data.transition.glsl,
-              },
+                value: transitionResult.data.transition.glsl
+              }
             })}
           >
-            <FaGithub />
-            {" "}
-            Publish on Github
+            <FaGithub /> Publish on Github
           </PrimaryBtn>
         }
       >
         {!transformSuggestionDiscarded &&
-          probablyOldTransitionCode(transitionResult)
-          ? <SuggestTransform
-              glsl={glsl}
-              onFragChange={this.onFragChange}
-              onDiscard={this.onDiscard}
-            />
-          : null}
+        probablyOldTransitionCode(transitionResult) ? (
+          <SuggestTransform
+            glsl={glsl}
+            onFragChange={this.onFragChange}
+            onDiscard={this.onDiscard}
+          />
+        ) : null}
       </Editor>
     );
   }

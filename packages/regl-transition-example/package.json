@@ -13,6 +13,6 @@
     "regl-transition": "^1.13.4"
   },
   "devDependencies": {
-    "budo": "^10.0.3"
+    "budo": "^11.6.3"
   }
 }

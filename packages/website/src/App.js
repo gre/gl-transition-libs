@@ -10,8 +10,8 @@ import Intro from "./Intro";
 import NotFound from "./NotFound";
 import { transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
-import FaGithub from "react-icons/lib/fa/github";
-import FaBug from "react-icons/lib/fa/bug";
+import { FaGithub } from "react-icons/fa";
+import { FaBug } from "react-icons/fa";
 
 const renderPreview = (props: *) => {
   const { name } = props.match.params;
@@ -40,23 +40,26 @@ class App extends Component {
           <Link to="/">
             <h1 className="logo">
               <span>GL</span>
-              <span>T<span className="full">ransitions</span></span>
+              <span>
+                T<span className="full">ransitions</span>
+              </span>
             </h1>
           </Link>
           <nav>
-            <NavLink exact to="/gallery">Gallery</NavLink>
+            <NavLink exact to="/gallery">
+              Gallery
+            </NavLink>
             <NavLink to="/editor">Editor</NavLink>
           </nav>
           <div style={{ flex: 1 }} />
           <div className="external">
-
             <a
               href={"https://github.com/" + githubRepoPath}
               target="_blank"
               rel="noopener noreferrer"
             >
               <FaGithub />
-              <span> gl-transitions</span>
+              <span>&nbsp;gl-transitions</span>
             </a>
             <a
               href="https://github.com/gre/gl-transition-libs/issues"
@@ -64,7 +67,7 @@ class App extends Component {
               rel="noopener noreferrer"
             >
               <FaBug />
-              <span> Found a Bug?</span>
+              <span>&nbsp;Found a Bug?</span>
             </a>
           </div>
         </header>

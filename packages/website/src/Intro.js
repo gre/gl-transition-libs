@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import BezierEasing from "bezier-easing";
 import BezierEasingEditor from "bezier-easing-editor";
 import AnimatedVignette from "./AnimatedVignette";
-import Waypoint from "react-waypoint";
+import { Waypoint } from "react-waypoint";
 import { transitionsOrderByRandom, transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
 import GlslCode from "./GlslCode";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import { defaultSampler2D } from "./transform";
 import { fromImage, toImage } from "./Gallery";
-import FaGithub from "react-icons/lib/fa/github";
+import { FaGithub } from "react-icons/fa";
 import "./Intro.css";
 import cut1mp4 from "./videos/sintel/cut1.mp4";
 import cut2mp4 from "./videos/sintel/cut2.mp4";
@@ -316,28 +316,26 @@ class VideoExample extends PureComponent {
               paused={!visible}
               transitions={transitionsOrderByRandom}
               images={
-                !visible ? (
-                  [null]
-                ) : (
-                  [
-                    // this works precisely working because of gl-react ;)
-                    <video key={1} autoPlay loop>
-                      <source type="video/webm" src={cut1webm} />
-                      <source type="video/mp4" src={cut1mp4} />
-                    </video>,
-                    <video key={2} autoPlay loop>
-                      <source type="video/webm" src={cut2webm} />
-                      <source type="video/mp4" src={cut2mp4} />
-                    </video>,
-                    <video key={3} autoPlay loop>
-                      <source type="video/webm" src={cut3webm} />
-                      <source type="video/mp4" src={cut3mp4} />
-                    </video>
-                  ]
-                )
+                !visible
+                  ? [null]
+                  : [
+                      // this works precisely working because of gl-react ;)
+                      <video key={1} autoPlay loop>
+                        <source type="video/webm" src={cut1webm} />
+                        <source type="video/mp4" src={cut1mp4} />
+                      </video>,
+                      <video key={2} autoPlay loop>
+                        <source type="video/webm" src={cut2webm} />
+                        <source type="video/mp4" src={cut2mp4} />
+                      </video>,
+                      <video key={3} autoPlay loop>
+                        <source type="video/webm" src={cut3webm} />
+                        <source type="video/mp4" src={cut3mp4} />
+                      </video>
+                    ]
               }
               width={width}
-              height={Math.round(width * 544 / 1280)}
+              height={Math.round((width * 544) / 1280)}
               duration={3000}
               delay={500}
               keepRenderingDuringDelay
@@ -369,7 +367,7 @@ export default class Intro extends Component {
     }
 
     const imgWidth = Math.min(512, maxWidth);
-    const imgHeight = Math.round(imgWidth * 384 / 512);
+    const imgHeight = Math.round((imgWidth * 384) / 512);
 
     return (
       <div className="Intro">
@@ -434,7 +432,8 @@ vec4 transition (vec2 uv) {
             <p>
               <a href={"https://github.com/" + githubRepoPath}>
                 More specification can be found on <FaGithub /> Github
-              </a>.
+              </a>
+              .
             </p>
           </div>
         </section>
@@ -456,9 +455,7 @@ vec4 transition (vec2 uv) {
           <div>
             <p>
               There is currently{" "}
-              <strong>
-                {transitionsOrderByRandom.length} transitions
-              </strong>{" "}
+              <strong>{transitionsOrderByRandom.length} transitions</strong>{" "}
               created by many contributors ❤️ and released under a{" "}
               <strong>Free License</strong>.
             </p>

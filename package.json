@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "postinstall": "lerna bootstrap --hoist --nohoist=headless-gl --nohoist=gl-transitions",
+    "postinstall": "lerna bootstrap",
     "start": "cd packages/website && yarn start",
     "watch": "lerna run watch --stream --no-sort",
     "build-website": "cd packages/website && yarn build",
@@ -11,5 +11,8 @@
     "lerna": "^3.20.2"
   },
   "name": "gl-transition-libs",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/*"
+  ]
 }

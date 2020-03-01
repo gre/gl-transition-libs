@@ -50,10 +50,14 @@
 .App > header > .external {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 .App > header > .external > a {
   padding: 0.8em;
   color: #ccc;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 @media screen and (max-width: 540px) {

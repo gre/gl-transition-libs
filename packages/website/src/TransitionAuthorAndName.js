@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import URL from "url";
 import { githubRepoFolder, githubRepoPath } from "./conf";
-import FaGithub from "react-icons/lib/fa/github";
+import { FaGithub } from "react-icons/fa";
 import "./TransitionAuthorAndName.css";
 
 export default class TransitionAuthorAndName extends Component {
@@ -21,13 +21,14 @@ export default class TransitionAuthorAndName extends Component {
     }
     if (withGithubLink) {
       const fileHref = URL.format({
-        pathname: "https://github.com/" +
+        pathname:
+          "https://github.com/" +
           githubRepoPath +
           "/tree/master" +
           githubRepoFolder +
           "/" +
           name +
-          ".glsl",
+          ".glsl"
       });
       return (
         <a
@@ -36,10 +37,7 @@ export default class TransitionAuthorAndName extends Component {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FaGithub />
-          {" "}
-          <strong>{name}</strong>
-          {" "}
+          <FaGithub /> <strong>{name}</strong>{" "}
           <em title={transition.author}>{author}</em>
         </a>
       );

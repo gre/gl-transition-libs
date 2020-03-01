@@ -2,42 +2,41 @@ import React, { Component } from "react";
 import glsldoc from "glsldoc";
 import GlslCode from "./GlslCode";
 import "./GlslContextualHelp.css";
-import FaBook from "react-icons/lib/fa/book";
-import FaFileCodeO from "react-icons/lib/fa/file-code-o";
+import { FaBook, FaFileCode } from "react-icons/fa";
 
 const GlslDocumentation = glsldoc.concat([
   {
     type: "function",
     name: "getFromColor",
     usage: "vec4 c = getFromColor(uv)",
-    description: "Get the color of the 'from' image at a given coordinate",
+    description: "Get the color of the 'from' image at a given coordinate"
   },
   {
     type: "function",
     name: "getToColor",
     usage: "vec4 c = getToColor(uv)",
-    description: "Get the color of the 'to' image at a given coordinate",
+    description: "Get the color of the 'to' image at a given coordinate"
   },
   {
     type: "transition uniform",
     name: "progress",
     usage: "uniform float progress;",
-    description: "The 'progress' moves from 0.0 to 1.0 during a transition. It is the only way to make your GLSL Transition animated.",
+    description:
+      "The 'progress' moves from 0.0 to 1.0 during a transition. It is the only way to make your GLSL Transition animated."
   },
   {
     type: "transition uniform",
     name: "ratio",
     usage: "uniform float ratio;",
-    description: "A that corresponds to width/height",
-  },
+    description: "A that corresponds to width/height"
+  }
 ]);
 
 const GlslDocumentationIndexedPerName = {};
 GlslDocumentation.forEach(d => {
-  GlslDocumentationIndexedPerName[d.name] = (GlslDocumentationIndexedPerName[
-    d.name
-  ] || [])
-    .concat(d);
+  GlslDocumentationIndexedPerName[d.name] = (
+    GlslDocumentationIndexedPerName[d.name] || []
+  ).concat(d);
 });
 
 const prettyType = str => str.replace(/_/g, " ");
@@ -52,42 +51,44 @@ export default class GlslContextualHelp extends Component {
   props: {
     token: ?{
       type: string,
-      value: string,
-    },
+      value: string
+    }
   };
 
   render() {
     const { token } = this.props;
     var documentation = token && findDocumentation(token);
 
-    return !documentation
-      ? <div className="links">
-          <a
-            href="https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaBook />
-            GLSL Spec.
-          </a>
-          <a
-            href="https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <FaFileCodeO />
-            Quick Ref.
-          </a>
-        </div>
-      : <div className="glsl-documentation">
-          <p className="glsl-token-type-name">
-            <span className="glsl-token-type">
-              {prettyType(documentation.type)}
-            </span>
-            <span className="glsl-token-name">{documentation.name}</span>
-          </p>
-          {!documentation.usage ? "" : <GlslCode code={documentation.usage} />}
-          <p className="glsl-token-description">{documentation.description}</p>
-        </div>;
+    return !documentation ? (
+      <div className="links">
+        <a
+          href="https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FaBook />
+          GLSL Spec.
+        </a>
+        <a
+          href="https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FaFileCode />
+          Quick Ref.
+        </a>
+      </div>
+    ) : (
+      <div className="glsl-documentation">
+        <p className="glsl-token-type-name">
+          <span className="glsl-token-type">
+            {prettyType(documentation.type)}
+          </span>
+          <span className="glsl-token-name">{documentation.name}</span>
+        </p>
+        {!documentation.usage ? "" : <GlslCode code={documentation.usage} />}
+        <p className="glsl-token-description">{documentation.description}</p>
+      </div>
+    );
   }
 }
