@@ -26,7 +26,7 @@
   "scripts": {
     "regen": "./src/images/generate.sh",
     "start": "react-scripts start",
-    "build": "react-scripts build && echo gl-transitions.com > build/CNAME && cp build/index.html build/200.html",
+    "build": "react-scripts build && cp build/index.html build/200.html && cp build/index.html build/404.html",
     "eject": "react-scripts eject"
   },
   "version": "1.19.2",
