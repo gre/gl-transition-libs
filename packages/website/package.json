@@ -2,7 +2,7 @@
   "dependencies": {
     "bezier-easing": "^2.1.0",
     "bezier-easing-editor": "^0.8.0",
-    "flow-bin": "^0.119.1",
+    "flow-bin": "^0.121.0",
     "gl-react": "^4.0.1",
     "gl-react-dom": "^4.0.1",
     "gl-shader": "^4.2.1",
@@ -21,7 +21,7 @@
     "react-waypoint": "^9.0.2"
   },
   "devDependencies": {
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.1"
   },
   "scripts": {
     "regen": "./src/images/generate.sh",
