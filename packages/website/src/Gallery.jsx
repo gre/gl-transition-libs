@@ -77,23 +77,49 @@ class PageLink extends PureComponent {
   }
 }
 
+// debounced: each URL change re-renders the grid, remounting costly WebGL contexts
 class SearchInput extends PureComponent {
-  onChange = e => {
+  state = { value: this.props.query.q || "" };
+  timeout = null;
+  componentDidUpdate(prevProps) {
+    const q = this.props.query.q || "";
+    // q changed from outside (Show all, back button): sync the input
+    if (q !== (prevProps.query.q || "") && q !== this.state.value) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+      this.setState({ value: q });
+    }
+  }
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
+  apply = () => {
+    clearTimeout(this.timeout);
+    this.timeout = null;
     const { query, navigate } = this.props;
-    navigate(galleryPath({ ...query, q: e.target.value }, 1), {
+    if ((query.q || "") === this.state.value) return;
+    navigate(galleryPath({ ...query, q: this.state.value }, 1), {
       replace: true
     });
   };
+  onChange = e => {
+    this.setState({ value: e.target.value });
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(this.apply, 300);
+  };
+  onKeyDown = e => {
+    if (e.key === "Enter") this.apply();
+  };
   render() {
-    const { query } = this.props;
     return (
       <label className="search">
         <FaSearch />
         <input
           type="search"
           placeholder="Search by name or author…"
-          value={query.q || ""}
+          value={this.state.value}
           onChange={this.onChange}
+          onKeyDown={this.onKeyDown}
         />
       </label>
     );
