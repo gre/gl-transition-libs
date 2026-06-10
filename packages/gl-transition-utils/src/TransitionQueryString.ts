@@ -15,21 +15,28 @@ function parse(str: string): Params {
   const query: Params = {};
   str.split("&").forEach((kv) => {
     if (!kv) return;
-    const [key, rawVal] = kv.split("=");
-    if (!key || !rawVal) return;
-    const val = decodeURIComponent(rawVal);
-    const splitByComma = val.split(",");
+    // split on the first "=" only: values can contain "=" (e.g. signed URLs)
+    const i = kv.indexOf("=");
+    if (i <= 0 || i === kv.length - 1) return;
+    const key = decodeURIComponent(kv.slice(0, i));
+    const rawVal = kv.slice(i + 1);
+    // comma-split before decoding so encoded commas inside values don't split
+    const splitByComma = rawVal.split(",");
     query[key] =
-      splitByComma.length > 1 ? splitByComma.map(parseValue) : parseValue(val);
+      splitByComma.length > 1
+        ? splitByComma.map((s) => parseValue(decodeURIComponent(s)))
+        : parseValue(decodeURIComponent(rawVal));
   });
   return query;
 }
 function stringifyValue(v: unknown): string {
-  return String(v);
+  return Array.isArray(v)
+    ? v.map((x) => encodeURIComponent(String(x))).join(",")
+    : encodeURIComponent(String(v));
 }
 function stringify(params: Params): string {
   return Object.keys(params)
-    .map((key) => key + "=" + stringifyValue(params[key]))
+    .map((key) => encodeURIComponent(key) + "=" + stringifyValue(params[key]))
     .join("&");
 }
 
