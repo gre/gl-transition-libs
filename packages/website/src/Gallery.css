@@ -26,6 +26,43 @@
   padding: 4px;
 }
 
+.gallery .search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  max-width: 400px;
+  margin: 20px auto 0;
+  padding: 0.4em 0.8em;
+  background: #222;
+  border: 1px solid #555;
+  border-radius: 2em;
+  color: #999;
+}
+.gallery .search:focus-within {
+  border-color: #fc6;
+  color: #fc6;
+}
+.gallery .search input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 1.2em;
+}
+
+.gallery .no-results {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.4em;
+  color: #999;
+}
+.gallery .no-results a {
+  color: #fc6;
+}
+
 .gallery .pager {
   display: flex;
   flex-direction: row;

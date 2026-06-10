@@ -45,7 +45,8 @@ function EditorRoute() {
 
 function GalleryRoute() {
   const location = useLocation();
-  return <Gallery location={location} />;
+  const navigate = useNavigate();
+  return <Gallery location={location} navigate={navigate} />;
 }
 
 class App extends Component {
