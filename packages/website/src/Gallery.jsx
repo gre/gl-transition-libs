@@ -10,11 +10,7 @@ import ScrollToTop from "./ScrollToTop";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
 import { FaExpand, FaSearch } from "react-icons/fa";
 import "./Gallery.css";
-import fromImageUrl from "./images/600x400/barley.jpg";
-import toImageUrl from "./images/600x400/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg";
-
-export const fromImage = fromImageUrl;
-export const toImage = toImageUrl;
+import { fromImage, toImage } from "./galleryImages";
 
 const footerForOrder = (getDate) =>
   class GalleryVignetteFooter extends PureComponent {
