@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "gl-transitions": "1",
     "regl": "^2.1.1",
