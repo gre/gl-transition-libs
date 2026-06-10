@@ -1,7 +1,7 @@
 import React, { PureComponent, Component, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import BezierEasing from "bezier-easing";
-import BezierEasingEditor from "./vendor/bezier-easing-editor";
+import BezierEasingEditor from "bezier-easing-editor";
 import AnimatedVignette from "./AnimatedVignette";
 import { transitionsOrderByRandom, transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";

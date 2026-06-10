@@ -168,6 +168,9 @@ importers:
       bezier-easing:
         specifier: ^2.1.0
         version: 2.1.0
+      bezier-easing-editor:
+        specifier: ^1.1.0
+        version: 1.1.0(react@19.2.7)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1007,8 +1010,16 @@ packages:
     resolution: {integrity: sha512-pbnl5XzGBdrFU/wT4jqmJVPn2B6UHPBOhzMQkY/SPUPB6QtUXtmBHBIwCbXJol93mOpGMnQyP/+BB19q04xj7g==}
     engines: {node: '>=4'}
 
+  bezier-easing-editor@1.1.0:
+    resolution: {integrity: sha512-GS3Vl86EOXxgKD2P1D0Mb4StgOz01pmuuSTnlL6VRiqMMm0gQoazlFJ5t1EzEeJaMyyrt1NoNFa4m0ua/2SfpA==}
+    peerDependencies:
+      react: '>=17'
+
   bezier-easing@2.1.0:
     resolution: {integrity: sha512-gbIqZ/eslnUFC1tjEvtz0sgx+xTK20wDnYMIA27VA04R7w6xxXQPZDbibjA9DTWZRA2CXtwHykkVzlCaAJAZig==}
+
+  bezier-easing@3.0.0:
+    resolution: {integrity: sha512-lE85voPXiK99T8NHOfhaUqCZpJdP1gBbbTEvdBDdPB+phyvPZPNWalBe42eb6lKOYchP0qZrtBiRCARtT4edRQ==}
 
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
@@ -3211,7 +3222,14 @@ snapshots:
     dependencies:
       is-windows: 1.0.2
 
+  bezier-easing-editor@1.1.0(react@19.2.7):
+    dependencies:
+      bezier-easing: 3.0.0
+      react: 19.2.7
+
   bezier-easing@2.1.0: {}
+
+  bezier-easing@3.0.0: {}
 
   bindings@1.5.0:
     dependencies:

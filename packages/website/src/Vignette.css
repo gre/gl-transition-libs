@@ -31,6 +31,8 @@
 
 .vignette canvas {
   outline: 1px solid #000;
+  /* keep vertical page scroll; horizontal touch drags scrub the transition */
+  touch-action: pan-y;
 }
 .vignette.hover canvas {
   outline-color: #fc6;
