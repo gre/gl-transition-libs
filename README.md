@@ -1,6 +1,6 @@
 [![CI](https://github.com/gre/gl-transition-libs/actions/workflows/ci.yml/badge.svg)](https://github.com/gre/gl-transition-libs/actions/workflows/ci.yml)
 
-<img src=".github/images/demo-1.gif" width="256" /><img src=".github/images/demo-2.gif" width="256" /><img src=".github/images/demo-3.gif" width="256" />
+<img src=".github/images/demo-1.gif" alt="GL Transition demo: animated transition effect between two photos" width="256" /><img src=".github/images/demo-2.gif" alt="GL Transition demo: a desert road photo transitioning to another scene" width="256" /><img src=".github/images/demo-3.gif" alt="GL Transition demo: animated shader transition between two photos" width="256" />
 
 This repository hosts multiple packages for [gl-transitions](https://github.com/gl-transitions/gl-transitions).
 
