@@ -1,0 +1,4 @@
+node = "22.20.0"
+
+[settings]
+detect-strategy = "prefer-prototools"

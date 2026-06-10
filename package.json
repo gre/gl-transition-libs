@@ -1,18 +1,21 @@
 {
-  "private": true,
-  "scripts": {
-    "postinstall": "lerna bootstrap && lerna run compile",
-    "start": "cd packages/website && yarn start",
-    "watch": "lerna run watch --stream --no-sort",
-    "build-website": "cd packages/website && yarn build",
-    "test": "lerna run test"
-  },
-  "devDependencies": {
-    "lerna": "^3.20.2"
-  },
   "name": "gl-transition-libs",
   "version": "0.0.0",
-  "workspaces": [
-    "packages/*"
-  ]
+  "private": true,
+  "packageManager": "pnpm@10.18.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "dev": "pnpm --filter website dev",
+    "build-website": "pnpm --filter website build",
+    "changeset": "changeset",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.0"
+  }
 }

@@ -1,7 +1,7 @@
-//@flow
 import { supplyDefaultSampler2DToTransition } from "./transform";
-export const transitions: Array<*> = (window.GLTransitions || [])
-  .map(supplyDefaultSampler2DToTransition);
+export const transitions = (window.GLTransitions || []).map(
+  supplyDefaultSampler2DToTransition
+);
 export const transitionsOrderByCreatedAt = transitions
   .slice(0)
   .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

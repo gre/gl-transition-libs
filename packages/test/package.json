@@ -1,12 +1,12 @@
 {
   "name": "gl-transition-test",
   "private": true,
+  "version": "1.18.0",
   "scripts": {
-    "test": "rm -f test_results.json && gl-transition-transform -d node_modules/gl-transitions/transitions -o test_results.json && test -s test_results.json"
+    "test": "bash run.sh"
   },
   "dependencies": {
-    "gl-transition-scripts": "^1.18.0",
+    "gl-transition-scripts": "workspace:^",
     "gl-transitions": "*"
-  },
-  "version": "1.18.0"
+  }
 }

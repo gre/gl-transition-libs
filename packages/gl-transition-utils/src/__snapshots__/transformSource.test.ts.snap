@@ -1,0 +1,301 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`must define metas 1`] = `
+{
+  "data": {
+    "defaultParams": {},
+    "glsl": "
+    vec4 transition (vec2 uv) {
+      return vec4(0.0);
+    }
+",
+    "name": "test",
+    "paramsTypes": {},
+  },
+  "errors": [
+    {
+      "code": "GLT_meta_missing",
+      "message": "'author' is missing. Please define it in a '// author: ...' comment",
+      "type": "error",
+    },
+    {
+      "code": "GLT_meta_missing",
+      "message": "'license' is missing. Please define it in a '// license: ...' comment",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`must define the correct signature 1`] = `
+{
+  "data": {
+    "author": "gre",
+    "defaultParams": {},
+    "glsl": "
+    // Author: gre
+    // License: MIT
+    void transition (vec2 uv) {}",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": {},
+  },
+  "errors": [
+    {
+      "code": "GLT_GLSL_error",
+      "line": 4,
+      "message": "GLSL code error: expected \`{\`, got {}
+{} at line 4",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`must define the transition function 1`] = `
+{
+  "data": {
+    "defaultParams": {},
+    "glsl": "
+
+",
+    "name": "test",
+    "paramsTypes": {},
+  },
+  "errors": [
+    {
+      "code": "GLT_transition_no_impl",
+      "message": "'vec4 transition(vec2 uv)' function is not implemented",
+      "type": "error",
+    },
+    {
+      "code": "GLT_meta_missing",
+      "message": "'author' is missing. Please define it in a '// author: ...' comment",
+      "type": "error",
+    },
+    {
+      "code": "GLT_meta_missing",
+      "message": "'license' is missing. Please define it in a '// license: ...' comment",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`must define uv params 1`] = `
+{
+  "data": {
+    "author": "gre",
+    "defaultParams": {},
+    "glsl": "
+      // Author: gre
+      // License: MIT
+      vec4 transition () {
+        return vec4(0.0);
+      }
+  ",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": {},
+  },
+  "errors": [
+    {
+      "code": "GLT_transition_wrong_type",
+      "column": 21,
+      "line": 4,
+      "message": "transition must be a function with following signature: 'vec4 transition(vec2 uv)'",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`must not override existing things 1`] = `
+{
+  "data": {
+    "defaultParams": {
+      "from": 42,
+      "to": 42,
+    },
+    "glsl": "
+uniform float from; /* = 42. */
+uniform float to; /* = 42. */
+vec4 transition (vec2 uv) {}
+",
+    "name": "test",
+    "paramsTypes": {
+      "from": "float",
+      "to": "float",
+    },
+  },
+  "errors": [
+    {
+      "code": "GLT_reserved_variable_used",
+      "column": 18,
+      "id": "from",
+      "line": 2,
+      "message": "'from' cannot be defined. It is reserved for the wrapping GLSL code.",
+      "type": "warn",
+    },
+    {
+      "code": "GLT_reserved_variable_used",
+      "column": 16,
+      "id": "to",
+      "line": 3,
+      "message": "'to' cannot be defined. It is reserved for the wrapping GLSL code.",
+      "type": "warn",
+    },
+    {
+      "code": "GLT_meta_missing",
+      "message": "'author' is missing. Please define it in a '// author: ...' comment",
+      "type": "error",
+    },
+    {
+      "code": "GLT_meta_missing",
+      "message": "'license' is missing. Please define it in a '// license: ...' comment",
+      "type": "error",
+    },
+  ],
+}
+`;
+
+exports[`not providing a default creates a warning 1`] = `
+{
+  "author": "gre",
+  "defaultParams": {
+    "color": [
+      0,
+      0,
+      0,
+    ],
+  },
+  "glsl": "
+// Author: gre
+// License: MIT
+uniform vec3 color;
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv) + vec4(progress*color, 1.0),
+    getToColor(uv) + vec4((1.0-progress)*color, 1.0),
+    progress
+  );
+}
+  ",
+  "license": "MIT",
+  "name": "burn-2",
+  "paramsTypes": {
+    "color": "vec3",
+  },
+}
+`;
+
+exports[`other example 1`] = `
+{
+  "data": {
+    "author": "gre",
+    "defaultParams": {
+      "color": [
+        0.9,
+        0.4,
+        0.2,
+      ],
+      "foo": 42,
+      "yo": null,
+    },
+    "glsl": "
+  // author: gre
+  // License: MIT
+  uniform vec3 color /* = vec3(0.9, 0.4, 0.2) */;
+  uniform float foo; /* = 42. */
+  uniform sampler2D yo;
+  vec4 transition (/* weird comment in the middle */vec2 uv) {
+    return mix(
+    getFromColor(uv) + vec4(progress*color, 1.0),
+    getToColor(uv) + vec4((1.0-progress)*color, 1.0),
+    progress);
+  }
+  ",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": {
+      "color": "vec3",
+      "foo": "float",
+      "yo": "sampler2D",
+    },
+  },
+  "errors": [],
+}
+`;
+
+exports[`parse correctly burn.glsl 1`] = `
+{
+  "data": {
+    "author": "gre",
+    "defaultParams": {
+      "color": [
+        0.9,
+        0.4,
+        0.2,
+      ],
+    },
+    "glsl": "
+// author: gre
+// license: MIT
+uniform vec3 color; // = vec3(0.9, 0.4, 0.2)
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv) + vec4(progress*color, 1.0),
+    getToColor(uv) + vec4((1.0-progress)*color, 1.0),
+    progress
+  );
+}
+  ",
+    "license": "MIT",
+    "name": "burn",
+    "paramsTypes": {
+      "color": "vec3",
+    },
+  },
+  "errors": [],
+}
+`;
+
+exports[`renaming param is fine 1`] = `
+{
+  "data": {
+    "author": "gre",
+    "defaultParams": {},
+    "glsl": "
+      // Author: gre
+      // License: MIT
+      vec4 transition (vec2 p) {
+        return vec4(p, 1.0, 1.0);
+      }
+  ",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": {},
+  },
+  "errors": [],
+}
+`;
+
+exports[`simple transition function is fine 1`] = `
+{
+  "data": {
+    "author": "gre",
+    "defaultParams": {},
+    "glsl": "
+      // Author: gre
+      // License: MIT
+      vec4 transition (vec2 uv) {
+        return vec4(0.0);
+      }
+  ",
+    "license": "MIT",
+    "name": "test",
+    "paramsTypes": {},
+  },
+  "errors": [],
+}
+`;
