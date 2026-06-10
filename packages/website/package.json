@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "bezier-easing": "^2.1.0",
+    "bezier-easing": "^3.0.0",
     "bezier-easing-editor": "^1.1.0",
     "buffer": "^6.0.3",
     "gl-react": "^6.0.0",

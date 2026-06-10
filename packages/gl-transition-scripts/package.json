@@ -22,19 +22,20 @@
   },
   "dependencies": {
     "commander": "^14.0.0",
-    "get-pixels": "^3.3.3",
     "gl": "^8.1.6",
     "gl-texture2d": "^2.1.0",
     "gl-transition": "workspace:^",
     "gl-transition-utils": "workspace:^",
+    "jpeg-js": "^0.4.4",
     "ndarray": "^1.0.19",
+    "pngjs": "^7.0.0",
     "save-pixels": "^2.3.6"
   },
   "devDependencies": {
-    "@types/get-pixels": "^3.3.4",
     "@types/gl": "^6.0.5",
     "@types/ndarray": "^1.0.14",
     "@types/node": "^22.15.0",
+    "@types/pngjs": "^6.0.5",
     "tsdown": "^0.22.2",
     "typescript": "^5.8.3"
   },
