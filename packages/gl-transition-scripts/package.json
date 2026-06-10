@@ -1,6 +1,6 @@
 {
   "name": "gl-transition-scripts",
-  "version": "1.18.0",
+  "version": "2.0.0",
   "description": "Utilities to render a GL Transition on the CLI",
   "license": "MIT",
   "type": "module",
