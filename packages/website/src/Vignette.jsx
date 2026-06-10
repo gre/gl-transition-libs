@@ -71,7 +71,7 @@ export default class Vignette extends Component {
     }
   };
 
-  onMouseEnter = e => {
+  onPointerEnter = e => {
     this.setState({
       hoverValue: hoverValueFromEvent(e),
       hover: true
@@ -79,12 +79,12 @@ export default class Vignette extends Component {
     const { onHoverIn } = this.props;
     if (onHoverIn) onHoverIn();
   };
-  onMouseMove = e => {
+  onPointerMove = e => {
     const hoverValue = hoverValueFromEvent(e);
     this._cachedProgress = Math.max(0, Math.min(-0.1 + hoverValue / 0.8, 1));
     this.setState({ hoverValue });
   };
-  onMouseLeave = () => {
+  onPointerLeave = () => {
     this.setState({
       hover: false
     });
@@ -119,9 +119,10 @@ export default class Vignette extends Component {
         style={{ width, height }}
       >
         <Surface
-          onMouseMove={interaction ? this.onMouseMove : null}
-          onMouseEnter={interaction ? this.onMouseEnter : null}
-          onMouseLeave={interaction ? this.onMouseLeave : null}
+          onPointerMove={interaction ? this.onPointerMove : null}
+          onPointerEnter={interaction ? this.onPointerEnter : null}
+          onPointerLeave={interaction ? this.onPointerLeave : null}
+          onPointerCancel={interaction ? this.onPointerLeave : null}
           width={width}
           height={height}
           visitor={this.visitor}
