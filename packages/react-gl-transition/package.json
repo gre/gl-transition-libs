@@ -8,21 +8,53 @@
     "react-component"
   ],
   "version": "1.19.2",
-  "main": "lib/GLTransition.js",
   "license": "MIT",
-  "scripts": {
-    "compile": "babel -d lib/ src/",
-    "watch": "babel -w -d lib/ src/",
-    "prepublish": "npm run compile"
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
   },
-  "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-1": "^6.24.1"
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc",
+    "prepack": "pnpm build"
   },
   "peerDependencies": {
-    "gl-react": "^3.5.0",
-    "react": "^15.5.4"
-  }
+    "gl-react": "^6.0.0",
+    "react": ">=18"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "gl-react": "^6.0.0",
+    "react": "^19.1.0",
+    "tsdown": "^0.22.2",
+    "typescript": "^5.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gre/gl-transition-libs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gre/gl-transition-libs/issues"
+  },
+  "homepage": "https://github.com/gre/gl-transition-libs#readme"
 }

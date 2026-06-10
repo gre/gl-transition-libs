@@ -1,0 +1,73 @@
+import React, { Component, createRef } from "react";
+import { Node, connectSize } from "gl-react";
+
+export interface TransitionObjectLike {
+  glsl: string;
+  defaultParams?: { [key: string]: unknown };
+}
+
+export interface GLTransitionProps {
+  transition: TransitionObjectLike;
+  transitionParams?: { [key: string]: unknown };
+  progress: number;
+  // from and to can be any value that are accepted by gl-react for textures.
+  from: unknown;
+  to: unknown;
+  // provided by connectSize
+  width: number;
+  height: number;
+}
+
+class GLTransition extends Component<GLTransitionProps> {
+  nodeRef = createRef<Node>();
+
+  getUniformsWithProgress(progress: number) {
+    const {
+      transition: { defaultParams },
+      transitionParams,
+      from,
+      to,
+      width,
+      height,
+    } = this.props;
+    return {
+      ...defaultParams,
+      ...transitionParams,
+      progress,
+      from,
+      to,
+      ratio: width / height,
+    };
+  }
+  setProgress = (progress: number) => {
+    this.nodeRef.current?.setDrawProps({
+      uniforms: this.getUniformsWithProgress(progress),
+    });
+  };
+  render() {
+    const {
+      transition: { glsl },
+      progress,
+    } = this.props;
+    return (
+      <Node
+        ref={this.nodeRef}
+        shader={{
+          frag: `
+precision highp float;
+varying vec2 uv;
+uniform float progress, ratio;
+uniform sampler2D from, to;
+vec4 getFromColor(vec2 uv){return texture2D(from, uv);}
+vec4 getToColor(vec2 uv){return texture2D(to, uv);}
+${glsl}
+void main(){gl_FragColor=transition(uv);}`,
+        }}
+        ignoreUnusedUniforms={["ratio"]}
+        uniforms={this.getUniformsWithProgress(progress)}
+      />
+    );
+  }
+}
+
+export default connectSize(GLTransition);

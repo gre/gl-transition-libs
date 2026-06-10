@@ -5,7 +5,7 @@ a function to render a [GL Transition](https://gl-transitions.com) with a [regl]
 ## short example
 
 ```js
-const createREGLTransition = require("regl-transition");
+import createREGLTransition from "regl-transition";
 const transition = createREGLTransition(regl, transitionObjectFromGLTransitions);
 transition({ progress: 0.3, from: regl.texture(..), to: regl.texture(..) });
 ```
@@ -15,9 +15,9 @@ transition({ progress: 0.3, from: regl.texture(..), to: regl.texture(..) });
 (this is a full working example. see [`regl-transition-example`](https://github.com/gre/gl-transition-libs/tree/master/packages/regl-transition-example))
 
 ```js
-const GLTransitions = require("gl-transitions");
-const createREGL = require("regl");
-const createREGLTransition = require("regl-transition");
+import GLTransitions from "gl-transitions";
+import createREGL from "regl";
+import createREGLTransition from "regl-transition";
 
 const delay = 1;
 const duration = 1.5;

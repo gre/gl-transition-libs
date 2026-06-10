@@ -7,12 +7,12 @@
 ### Run it locally
 
 ```
-yarn
-yarn start
+pnpm install
+pnpm dev
 ```
 
-### when developing
+### Build for production
 
 ```
-yarn run watch
+pnpm build-website
 ```

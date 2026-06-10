@@ -1,11 +1,9 @@
-//@flow
-import transformSource from "gl-transition-utils/lib/transformSource";
-import createWebGLCompiler from "gl-transition-utils/lib/createWebGLCompiler";
-import type { TransitionObject } from "gl-transition-utils/lib/transformSource";
+import { transformSource, createWebGLCompiler } from "gl-transition-utils";
+import defaultSampler2DUrl from "./textures/luma/spiral-2.png";
 
-export const defaultSampler2D = require("./textures/luma/spiral-2.png");
+export const defaultSampler2D = defaultSampler2DUrl;
 
-export function defaultSampler2DParamsForType(types: { [_: string]: string }) {
+export function defaultSampler2DParamsForType(types) {
   let res;
   Object.keys(types).forEach(key => {
     if (types[key] === "sampler2D") {
@@ -16,9 +14,7 @@ export function defaultSampler2DParamsForType(types: { [_: string]: string }) {
   return res;
 }
 
-export function supplyDefaultSampler2DToTransition(
-  transition: TransitionObject
-): TransitionObject {
+export function supplyDefaultSampler2DToTransition(transition) {
   const sampler2DParams = defaultSampler2DParamsForType(transition.paramsTypes);
   if (!sampler2DParams) return transition;
   return {
@@ -34,7 +30,7 @@ const canvas = document.createElement("canvas");
 // the size need to be > 256 just so we can be accurate enough on colors
 canvas.width = 512;
 canvas.height = 256;
-const gl: ?WebGLRenderingContext = // $FlowFixMe
+const gl =
   canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 let browserWebGLCompiler = gl && createWebGLCompiler(gl);
 
@@ -46,11 +42,7 @@ canvas.addEventListener("restore", () => {
   browserWebGLCompiler = gl && createWebGLCompiler(gl);
 });
 
-export default (
-  filename: string,
-  glsl: string,
-  extraErrorsForTransitionResult: * = (data: *) => []
-) => {
+export default (filename, glsl, extraErrorsForTransitionResult = () => []) => {
   const transitionRes = transformSource(filename, glsl);
   const compilationRes = browserWebGLCompiler
     ? browserWebGLCompiler(transitionRes.data)

@@ -1,0 +1,572 @@
+import React, { PureComponent, Component, useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import BezierEasing from "bezier-easing";
+import BezierEasingEditor from "./vendor/bezier-easing-editor";
+import AnimatedVignette from "./AnimatedVignette";
+import { transitionsOrderByRandom, transitionsByName } from "./data";
+import { githubRepoPath } from "./conf";
+import GlslCode from "./GlslCode";
+import TransitionAuthorAndName from "./TransitionAuthorAndName";
+import { defaultSampler2D } from "./transform";
+import { fromImage, toImage } from "./Gallery";
+import { FaGithub } from "react-icons/fa";
+import "./Intro.css";
+import cut1mp4 from "./videos/sintel/cut1.mp4";
+import cut2mp4 from "./videos/sintel/cut2.mp4";
+import cut3mp4 from "./videos/sintel/cut3.mp4";
+import cut1webm from "./videos/sintel/cut1.webm";
+import cut2webm from "./videos/sintel/cut2.webm";
+import cut3webm from "./videos/sintel/cut3.webm";
+import githubGif from "./github.gif";
+import img1 from "./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg";
+import img2 from "./images/1024x768/barley.jpg";
+import img3 from "./images/1024x768/bigbuckbunny_snapshot1.jpg";
+import img4 from "./images/1024x768/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg";
+import img5 from "./images/1024x768/ic1dX3kBQjGNaPQb8Xel_1920x1280.jpg";
+import img6 from "./images/1024x768/ikZyw45kT4m16vHkHe7u_9647713235_29ce0305d2_o.jpg";
+import img7 from "./images/1024x768/lUUnN7VGSoWZ3noefeH7_Baker_Beach-12.jpg";
+import img8 from "./images/1024x768/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg";
+import img9 from "./images/1024x768/wdXqHcTwSTmLuKOGz92L_Landscape.jpg";
+
+const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
+
+const allImagesToPreload = images.concat([
+  defaultSampler2D,
+  fromImage,
+  toImage
+]);
+
+const Logo = () => (
+  <span className="logo">
+    <span>GL</span>
+    <span>Transitions</span>
+  </span>
+);
+
+class VignetteFooter extends PureComponent {
+  render() {
+    const { transition } = this.props;
+    return (
+      <Link to={`/editor/${transition.name}`}>
+        <footer>
+          <TransitionAuthorAndName transition={transition} />
+        </footer>
+      </Link>
+    );
+  }
+}
+
+class BezierEasingEditorWithProgressSetter extends Component {
+  state = {
+    progress: 0
+  };
+  setProgress(progress) {
+    this.setState({ progress });
+  }
+  render() {
+    return (
+      <BezierEasingEditor {...this.props} progress={this.state.progress} />
+    );
+  }
+}
+
+function TrackVisibility({ children }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(entries => {
+      setVisible(entries.some(e => e.isIntersecting));
+    });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={ref}>{children(visible)}</div>;
+}
+
+class Preview extends PureComponent {
+  render() {
+    const { width, height } = this.props;
+    return (
+      <TrackVisibility>
+        {visible => (
+          <div className="preview">
+            <AnimatedVignette
+              paused={!visible}
+              transitions={transitionsOrderByRandom}
+              images={images}
+              width={width}
+              height={height}
+              duration={3000}
+              delay={500}
+              interaction={false}
+              Footer={VignetteFooter}
+            />
+          </div>
+        )}
+      </TrackVisibility>
+    );
+  }
+}
+
+class ConfigurableExample extends PureComponent {
+  state = {
+    easing: [0.5, 0, 0.8, 0.8],
+    duration: 2000,
+    delay: 100,
+    transitionParams: {
+      reflection: 0.4,
+      perspective: 0.4,
+      depth: 3
+    }
+  };
+  onEasingChange = easing => {
+    this.setState({ easing });
+  };
+  onDurationChange = e => {
+    this.setState({ duration: parseInt(e.target.value, 10) });
+  };
+  onDelayChange = e => {
+    this.setState({ delay: parseInt(e.target.value, 10) });
+  };
+  onTransitionParamsChange = e => {
+    this.setState({
+      transitionParams: {
+        ...this.state.transitionParams,
+        [e.target.name]: parseFloat(e.target.value)
+      }
+    });
+  };
+  onBezierEditorRef = ref => {
+    this.bezierEditor = ref;
+  };
+  onDrawWithProgress = progress => {
+    const { bezierEditor } = this;
+    if (!bezierEditor) return;
+    bezierEditor.setProgress(progress);
+  };
+  render() {
+    const { width, height } = this.props;
+    const { easing, duration, delay, transitionParams } = this.state;
+    const bezierEasingSize = Math.round(0.6 * width);
+    return (
+      <TrackVisibility>
+        {visible => (
+          <section>
+            <div>
+              <AnimatedVignette
+                paused={!visible}
+                transitions={[transitionsByName.doorway]}
+                transitionsParams={[transitionParams]}
+                easings={[BezierEasing(...easing)]}
+                images={images}
+                preload={allImagesToPreload}
+                width={width}
+                height={height}
+                duration={duration}
+                delay={delay}
+                Footer={VignetteFooter}
+                onDrawWithProgress={this.onDrawWithProgress}
+              />
+            </div>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  padding: 10
+                }}
+              >
+                <label style={{ display: "flex", flexDirection: "row" }}>
+                  reflection
+                  <input
+                    style={{ flex: 1 }}
+                    type="range"
+                    name="reflection"
+                    value={transitionParams.reflection}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    onChange={this.onTransitionParamsChange}
+                  />
+                </label>
+                <label style={{ display: "flex", flexDirection: "row" }}>
+                  depth
+                  <input
+                    style={{ flex: 1 }}
+                    type="range"
+                    name="depth"
+                    value={transitionParams.depth}
+                    min={1}
+                    max={20}
+                    step={0.1}
+                    onChange={this.onTransitionParamsChange}
+                  />
+                </label>
+                <label style={{ display: "flex", flexDirection: "row" }}>
+                  perspective
+                  <input
+                    style={{ flex: 1 }}
+                    type="range"
+                    name="perspective"
+                    value={transitionParams.perspective}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    onChange={this.onTransitionParamsChange}
+                  />
+                </label>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap"
+                }}
+              >
+                <BezierEasingEditorWithProgressSetter
+                  ref={this.onBezierEditorRef}
+                  value={easing}
+                  onChange={this.onEasingChange}
+                  width={bezierEasingSize}
+                  height={bezierEasingSize}
+                  padding={[60, 60, 60, 60]}
+                  background="transparent"
+                  gridColor="#444"
+                  curveColor="#b82"
+                  handleColor="#fc6"
+                  progressColor="#fc6"
+                  textStyle={{
+                    fill: "#fc6"
+                  }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center"
+                  }}
+                >
+                  <label style={{ display: "flex", flexDirection: "row" }}>
+                    duration{" "}
+                    <input
+                      style={{ flex: 1 }}
+                      type="range"
+                      value={duration}
+                      min={100}
+                      max={6000}
+                      step={100}
+                      onChange={this.onDurationChange}
+                    />
+                  </label>
+                  <label style={{ display: "flex", flexDirection: "row" }}>
+                    delay{" "}
+                    <input
+                      style={{ flex: 1 }}
+                      type="range"
+                      value={delay}
+                      min={100}
+                      max={2000}
+                      step={100}
+                      onChange={this.onDelayChange}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+      </TrackVisibility>
+    );
+  }
+}
+
+class VideoExample extends PureComponent {
+  render() {
+    const { width } = this.props;
+    return (
+      <TrackVisibility>
+        {visible => (
+          <section className="full-width">
+            <AnimatedVignette
+              interaction
+              paused={!visible}
+              transitions={transitionsOrderByRandom}
+              images={
+                !visible
+                  ? [null]
+                  : [
+                      // this works precisely working because of gl-react ;)
+                      <video key={1} autoPlay loop>
+                        <source type="video/webm" src={cut1webm} />
+                        <source type="video/mp4" src={cut1mp4} />
+                      </video>,
+                      <video key={2} autoPlay loop>
+                        <source type="video/webm" src={cut2webm} />
+                        <source type="video/mp4" src={cut2mp4} />
+                      </video>,
+                      <video key={3} autoPlay loop>
+                        <source type="video/webm" src={cut3webm} />
+                        <source type="video/mp4" src={cut3mp4} />
+                      </video>
+                    ]
+              }
+              width={width}
+              height={Math.round((width * 544) / 1280)}
+              duration={3000}
+              delay={500}
+              keepRenderingDuringDelay
+              Footer={VignetteFooter}
+            />
+          </section>
+        )}
+      </TrackVisibility>
+    );
+  }
+}
+
+export default class Intro extends Component {
+  state = {
+    loadGif: false
+  };
+  componentDidMount() {
+    this._timeout = setTimeout(() => this.setState({ loadGif: true }), 1000);
+  }
+  componentWillUnmount() {
+    clearTimeout(this._timeout);
+  }
+  render() {
+    const { loadGif } = this.state;
+    let maxWidth = Infinity;
+    if (window.screen) {
+      maxWidth = window.screen.width;
+    }
+
+    const imgWidth = Math.min(512, maxWidth);
+    const imgHeight = Math.round((imgWidth * 384) / 512);
+
+    return (
+      <div className="Intro">
+        <header>
+          The Open Collection of <Logo />
+        </header>
+        <section>
+          <Preview width={imgWidth} height={imgHeight} />
+          <div>
+            <p>
+              GLSL is a <strong>powerful</strong> and easy-to-learn language,
+              perfect for image effects. It is arguably the{" "}
+              <strong>best language to implement transitions</strong> in!
+            </p>
+            <p>
+              It's <strong>highly performant</strong> (GLSL runs on the GPU),{" "}
+              <strong>universal</strong> (OpenGL is available everywhere),{" "}
+              <strong>customizable</strong> (each transition can have many
+              parameters) and can be run over any pixel source like images,
+              videos, canvas,...
+            </p>
+            <p>
+              This Open Source initiative aims to establish a universal
+              collection of transitions that any software can use
+              (including video editors).
+            </p>
+          </div>
+        </section>
+        <header id="spec">
+          What are <Logo />?
+        </header>
+
+        <section>
+          <div>
+            <GlslCode
+              code={`\
+// transition of a simple fade.
+vec4 transition (vec2 uv) {
+  return mix(
+    getFromColor(uv),
+    getToColor(uv),
+    progress
+  );
+}`}
+            />
+            <footer>
+              <Link className="btn" to="/editor">
+                Experiment with this code
+              </Link>
+            </footer>
+          </div>
+          <div>
+            <p>
+              A GL Transition is GLSL code implementing a{" "}
+              <code>transition</code> coloring function: for a given{" "}
+              <code>uv</code> pixel position, it returns a color representing
+              the mix of the <strong>source</strong> and{" "}
+              <strong>destination</strong> textures, driven by a contextual{" "}
+              <code>progress</code> value going from <code>0.0</code> to{" "}
+              <code>1.0</code>.
+            </p>
+            <p>
+              <a href={"https://github.com/" + githubRepoPath}>
+                The full specification can be found on <FaGithub /> GitHub
+              </a>
+              .
+            </p>
+          </div>
+        </section>
+
+        <header id="github">
+          <a href={"https://github.com/" + githubRepoPath}>
+            <Logo />
+            are on <FaGithub /> Github
+          </a>
+        </header>
+        <section>
+          <div>
+            {loadGif ? (
+              <img alt="" className="full" src={githubGif} />
+            ) : (
+              <div style={{ height: 455 }} />
+            )}
+          </div>
+          <div>
+            <p>
+              There are currently{" "}
+              <strong>{transitionsOrderByRandom.length} transitions</strong>{" "}
+              created by many contributors ❤️ and released under a{" "}
+              <strong>Free License</strong>.
+            </p>
+            <p>
+              The initiative is <strong>community driven</strong>, managed on{" "}
+              <a href={"https://github.com/" + githubRepoPath}>GitHub</a>. PRs
+              are automatically validated by CI 🤖, which renders preview GIFs.
+            </p>
+            <p>
+              <strong>You can directly send PRs from this website!</strong>
+            </p>
+          </div>
+        </section>
+
+        <header id="configurable">
+          <Logo /> are configurable
+        </header>
+
+        <ConfigurableExample width={imgWidth} height={imgHeight} />
+
+        <header id="video">
+          <Logo /> work with videos
+        </header>
+
+        <VideoExample width={Math.min(1024, maxWidth)} />
+
+        <header id="ecosystem">
+          <Logo /> ecosystem
+        </header>
+
+        <section>
+          <div>
+            <a href="https://www.npmjs.com/package/gl-transitions">
+              <code>gl-transitions</code>
+            </a>{" "}
+            is auto-published to npm.
+            <ul>
+              <li>
+                <code>npm install gl-transitions --save</code>
+              </li>
+              <li>
+                or embed it:{" "}
+                <a
+                  className="small"
+                  href="https://unpkg.com/gl-transitions@1/gl-transitions.js"
+                >
+                  https://unpkg.com/gl-transitions@1/gl-transitions.js
+                </a>
+              </li>
+              <li>
+                or as JSON:{" "}
+                <a
+                  className="small"
+                  href="https://unpkg.com/gl-transitions@1/gl-transitions.json"
+                >
+                  https://unpkg.com/gl-transitions@1/gl-transitions.json
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            You can draw GL transitions in various environments:
+            <ul>
+              <li>
+                <strong>In Vanilla WebGL code,</strong>{" "}
+                <a href="https://www.npmjs.com/package/gl-transition">
+                  <code>gl-transition</code>
+                </a>{" "}
+                exposes a draw function to render a GL Transition frame.
+              </li>
+              <li>
+                <strong>
+                  With <a href="https://github.com/regl-project/regl">regl</a>,
+                </strong>{" "}
+                <a href="https://www.npmjs.com/package/regl-transition">
+                  <code>regl-transition</code>
+                </a>{" "}
+                exposes a function to render a GL Transition with a regl
+                context.
+              </li>
+              <li>
+                <strong>In the React paradigm,</strong>{" "}
+                <a href="https://www.npmjs.com/package/react-gl-transition">
+                  <code>react-gl-transition</code>
+                </a>{" "}
+                exposes a {"<GLTransition />"} component to use in a{" "}
+                <a href="https://github.com/gre/gl-react">gl-react</a> Surface.
+                This is what this app uses heavily.
+              </li>
+              <li>
+                <strong>In CLI,</strong>{" "}
+                <a href="https://www.npmjs.com/package/gl-transition-scripts">
+                  <code>gl-transition-scripts</code>
+                </a>{" "}
+                exposes a <em>gl-transition-render</em> command to render a
+                transition to an image file. CI uses it to render the preview
+                GIFs in PRs, and validates the transitions that get committed
+                with the <em>gl-transition-transform</em> command.
+              </li>
+              <li>
+                On a Node.js server you can use{" "}
+                <a href="https://github.com/stackgl/headless-gl">
+                  headless <code>gl</code>
+                </a>{" "}
+                with{" "}
+                <a href="https://www.npmjs.com/package/gl-transition">
+                  gl-transition
+                </a>{" "}
+                to render transitions server-side — which is exactly what the{" "}
+                <em>gl-transition-render</em> command does.
+              </li>
+              <li>
+                <a href="https://github.com/gre/gl-transition-libs">
+                  ...contributions adding support for more environments and
+                  languages are welcome.
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <header>
+          That's it, folks! Get to your shader code{" "}
+          <span role="img" aria-label="">
+            ❤️
+          </span>
+        </header>
+
+        <footer>
+          <Link className="btn" to="/editor">
+            Create a new Transition
+          </Link>
+        </footer>
+      </div>
+    );
+  }
+}

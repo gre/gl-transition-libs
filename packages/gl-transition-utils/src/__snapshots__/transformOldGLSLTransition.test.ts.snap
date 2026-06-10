@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`transform luma example 1`] = `
+{
+  "data": {
+    "glsl": "// Author:
+// License: MIT
+// Yo
+uniform sampler2D luma;
+
+vec4 transition(vec2 uv) {
+  vec2 p = uv.xy / vec2(1.0).xy;
+  return mix(
+    getFromColor(p),
+    getToColor(p),
+    step(texture2D(luma, p).r, progress)
+  );
+}",
+  },
+  "errors": [],
+}
+`;
+
+exports[`transform simple example 1`] = `
+{
+  "data": {
+    "glsl": "// Author:
+// License: MIT
+vec4 transition(vec2 uv) {
+  vec2 p = uv.xy / vec2(1.0).xy;
+  return mix(getFromColor(p), getToColor(p), progress);
+}",
+  },
+  "errors": [],
+}
+`;
