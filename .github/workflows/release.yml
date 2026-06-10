@@ -22,7 +22,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Upgrade npm for trusted publishing (needs >= 11.5.1, Node 22 ships 10)
-        run: npm install -g npm@latest
+        run: npm install -g npm@11 && npm --version
       - name: Install headless-gl system dependencies
         run: |
           sudo apt-get update
