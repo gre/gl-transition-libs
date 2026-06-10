@@ -28,14 +28,9 @@ pnpm dev            # run the website locally (vite)
 
 Releases are managed with [Changesets](https://github.com/changesets/changesets): add a changeset with `pnpm changeset`, merge to `master`, and the release workflow opens a version PR / publishes to npm (requires the `NPM_TOKEN` repo secret).
 
-## Website deployment (GitHub Pages + gl-transitions.com)
+## Website deployment (Vercel + gl-transitions.com)
 
-The `deploy-website.yml` workflow builds the website and deploys it to GitHub Pages on every push to `master`. One-time setup:
-
-1. Repo Settings → Pages → Source: "GitHub Actions". Set the custom domain to `gl-transitions.com` and enable "Enforce HTTPS" (the `CNAME` file is already in `packages/website/public/`).
-2. DNS — the domain is currently on Vercel DNS (`ns1/ns2.vercel-dns.com`). In the Vercel dashboard (or wherever DNS ends up), point the apex to GitHub Pages:
-   - `A` records for `gl-transitions.com` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   - `CNAME` record for `www` → `gre.github.io`
+The website deploys on [Vercel](https://vercel.com) (project connected to this repo; the domain lives on Vercel DNS). `vercel.json` scopes the build to the website subtree — `pnpm install --filter website...` skips `gl-transition-scripts` and its headless-gl native build, which the Vercel image cannot compile.
 
 ## Kudos
 
@@ -48,8 +43,8 @@ The `deploy-website.yml` workflow builds the website and deploys it to GitHub Pa
 
 **Services**
 
-- [GitHub Actions](https://github.com/features/actions) for CI, npm releases and website deployment.
-- [GitHub Pages](https://pages.github.com) for hosting the website.
+- [GitHub Actions](https://github.com/features/actions) for CI and npm releases.
+- [Vercel](https://vercel.com) for hosting the website.
 - [Github](https://github.com) itself, for being a platform for hosting [gl-transitions](https://github.com/gl-transitions/gl-transitions)
 
 **Others**

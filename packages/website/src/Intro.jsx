@@ -355,9 +355,9 @@ export default class Intro extends Component {
           <Preview width={imgWidth} height={imgHeight} />
           <div>
             <p>
-              GLSL is a <strong>powerful</strong> and easy to learn language,
-              perfect for image effects. It is in fact the{" "}
-              <strong>ultimate language to implement Transitions</strong> in!
+              GLSL is a <strong>powerful</strong> and easy-to-learn language,
+              perfect for image effects. It is arguably the{" "}
+              <strong>best language to implement transitions</strong> in!
             </p>
             <p>
               It's <strong>highly performant</strong> (GLSL runs on the GPU),{" "}
@@ -367,9 +367,9 @@ export default class Intro extends Component {
               videos, canvas,...
             </p>
             <p>
-              This Open Source initiative aims to establish an universal
-              collection of transitions that various softwares can use
-              (including Movie Editors).
+              This Open Source initiative aims to establish a universal
+              collection of transitions that any software can use
+              (including video editors).
             </p>
           </div>
         </section>
@@ -398,17 +398,17 @@ vec4 transition (vec2 uv) {
           </div>
           <div>
             <p>
-              A GL Transition is a GLSL code that implements a{" "}
-              <code>transition</code> coloring function: For a given{" "}
-              <code>uv</code> pixel position, returns a color representing the
-              mix of the <strong>source</strong> to the{" "}
-              <strong>destination</strong> textures based on the variation of a
-              contextual <code>progress</code> value from <code>0.0</code> to{" "}
+              A GL Transition is GLSL code implementing a{" "}
+              <code>transition</code> coloring function: for a given{" "}
+              <code>uv</code> pixel position, it returns a color representing
+              the mix of the <strong>source</strong> and{" "}
+              <strong>destination</strong> textures, driven by a contextual{" "}
+              <code>progress</code> value going from <code>0.0</code> to{" "}
               <code>1.0</code>.
             </p>
             <p>
               <a href={"https://github.com/" + githubRepoPath}>
-                More specification can be found on <FaGithub /> Github
+                The full specification can be found on <FaGithub /> GitHub
               </a>
               .
             </p>
@@ -431,15 +431,15 @@ vec4 transition (vec2 uv) {
           </div>
           <div>
             <p>
-              There is currently{" "}
+              There are currently{" "}
               <strong>{transitionsOrderByRandom.length} transitions</strong>{" "}
               created by many contributors ❤️ and released under a{" "}
               <strong>Free License</strong>.
             </p>
             <p>
               The initiative is <strong>community driven</strong>, managed on{" "}
-              <a href={"https://github.com/" + githubRepoPath}>Github</a>. PRs
-              are reviewed and validated by a 🤖bot.
+              <a href={"https://github.com/" + githubRepoPath}>GitHub</a>. PRs
+              are automatically validated by CI 🤖, which renders preview GIFs.
             </p>
             <p>
               <strong>You can directly send PRs from this website!</strong>
@@ -454,7 +454,7 @@ vec4 transition (vec2 uv) {
         <ConfigurableExample width={imgWidth} height={imgHeight} />
 
         <header id="video">
-          <Logo /> works for Videos
+          <Logo /> work with videos
         </header>
 
         <VideoExample width={Math.min(1024, maxWidth)} />
@@ -468,7 +468,7 @@ vec4 transition (vec2 uv) {
             <a href="https://www.npmjs.com/package/gl-transitions">
               <code>gl-transitions</code>
             </a>{" "}
-            gets auto-published on NPM.
+            is auto-published to npm.
             <ul>
               <li>
                 <code>npm install gl-transitions --save</code>
@@ -483,7 +483,7 @@ vec4 transition (vec2 uv) {
                 </a>
               </li>
               <li>
-                or a JSON:{" "}
+                or as JSON:{" "}
                 <a
                   className="small"
                   href="https://unpkg.com/gl-transitions@1/gl-transitions.json"
@@ -494,7 +494,7 @@ vec4 transition (vec2 uv) {
             </ul>
           </div>
           <div>
-            You can draw GL transitions and in various environments:
+            You can draw GL transitions in various environments:
             <ul>
               <li>
                 <strong>In Vanilla WebGL code,</strong>{" "}
@@ -514,13 +514,13 @@ vec4 transition (vec2 uv) {
                 context.
               </li>
               <li>
-                <strong>In React paradigm,</strong>{" "}
+                <strong>In the React paradigm,</strong>{" "}
                 <a href="https://www.npmjs.com/package/react-gl-transition">
                   <code>react-gl-transition</code>
                 </a>{" "}
                 exposes a {"<GLTransition />"} component to use in a{" "}
-                <a href="https://github.com/gre/gl-react">gl-react</a>
-                's Surface. This is what this app uses heavily.
+                <a href="https://github.com/gre/gl-react">gl-react</a> Surface.
+                This is what this app uses heavily.
               </li>
               <li>
                 <strong>In CLI,</strong>{" "}
@@ -528,27 +528,26 @@ vec4 transition (vec2 uv) {
                   <code>gl-transition-scripts</code>
                 </a>{" "}
                 exposes a <em>gl-transition-render</em> command to render a
-                Transition to an image file. Our bot uses that to render a GIF
-                and put it in the PRs! The CI also validates the transitions
-                that gets committed with the <em>gl-transition-transform</em>{" "}
-                command.
+                transition to an image file. CI uses it to render the preview
+                GIFs in PRs, and validates the transitions that get committed
+                with the <em>gl-transition-transform</em> command.
               </li>
               <li>
-                In a node.js server you can use{" "}
+                On a Node.js server you can use{" "}
                 <a href="https://github.com/stackgl/headless-gl">
                   headless <code>gl</code>
                 </a>{" "}
-                and obviously{" "}
+                with{" "}
                 <a href="https://www.npmjs.com/package/gl-transition">
                   gl-transition
                 </a>{" "}
-                to render a transition on server side. Which is what the{" "}
-                <em>gl-transition-render</em> command is doing.
+                to render transitions server-side — which is exactly what the{" "}
+                <em>gl-transition-render</em> command does.
               </li>
               <li>
                 <a href="https://github.com/gre/gl-transition-libs">
-                  ...more environments and languages to support are welcomed to
-                  contributions.
+                  ...contributions adding support for more environments and
+                  languages are welcome.
                 </a>
               </li>
             </ul>
@@ -556,7 +555,7 @@ vec4 transition (vec2 uv) {
         </section>
 
         <header>
-          That's it folks! Get to your shader code{" "}
+          That's it, folks! Get to your shader code{" "}
           <span role="img" aria-label="">
             ❤️
           </span>
