@@ -16,6 +16,7 @@
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.0"
+    "@changesets/cli": "^2.29.0",
+    "unrun": "^0.3.1"
   }
 }

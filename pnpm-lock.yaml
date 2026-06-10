@@ -11,6 +11,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.0
         version: 2.31.0(@types/node@22.19.20)
+      unrun:
+        specifier: ^0.3.1
+        version: 0.3.1
 
   packages/gl-transition:
     dependencies:
@@ -20,7 +23,7 @@ importers:
     devDependencies:
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(typescript@5.9.3)
+        version: 0.22.2(typescript@5.9.3)(unrun@0.3.1)
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
@@ -66,7 +69,7 @@ importers:
         version: 22.19.20
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(typescript@5.9.3)
+        version: 0.22.2(typescript@5.9.3)(unrun@0.3.1)
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
@@ -97,7 +100,7 @@ importers:
         version: 1.0.14
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(typescript@5.9.3)
+        version: 0.22.2(typescript@5.9.3)(unrun@0.3.1)
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
@@ -118,7 +121,7 @@ importers:
         version: 19.2.7
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(typescript@5.9.3)
+        version: 0.22.2(typescript@5.9.3)(unrun@0.3.1)
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
@@ -130,7 +133,7 @@ importers:
         version: 2.1.1
       tsdown:
         specifier: ^0.22.2
-        version: 0.22.2(typescript@5.9.3)
+        version: 0.22.2(typescript@5.9.3)(unrun@0.3.1)
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
@@ -2256,6 +2259,16 @@ packages:
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
     engines: {node: '>= 4.0.0'}
+
+  unrun@0.3.1:
+    resolution: {integrity: sha512-onIck/oNnCaytwths1ZVp1LK2Gq2hPoyFhiHebObuUXqR3S0uHuLLaBK8K6mRRgV7Ptip8AnNvaUsgzwWwBZuA==}
+    engines: {node: ^22.13.0 || >=24.0.0}
+    hasBin: true
+    peerDependencies:
+      synckit: ^0.11.11
+    peerDependenciesMeta:
+      synckit:
+        optional: true
 
   update-browserslist-db@1.2.3:
     resolution: {integrity: sha512-Js0m9cx+qOgDxo0eMiFGEueWztz+d4+M3rGlmKPT+T4IS/jP4ylw3Nwpu6cpTTP8R1MAC1kF4VbdLt3ARf209w==}
@@ -4408,7 +4421,7 @@ snapshots:
 
   tree-kill@1.2.2: {}
 
-  tsdown@0.22.2(typescript@5.9.3):
+  tsdown@0.22.2(typescript@5.9.3)(unrun@0.3.1):
     dependencies:
       ansis: 4.3.1
       cac: 7.0.0
@@ -4427,6 +4440,7 @@ snapshots:
       unconfig-core: 7.5.0
     optionalDependencies:
       typescript: 5.9.3
+      unrun: 0.3.1
     transitivePeerDependencies:
       - '@ts-macro/tsc'
       - '@typescript/native-preview'
@@ -4467,6 +4481,10 @@ snapshots:
       imurmurhash: 0.1.4
 
   universalify@0.1.2: {}
+
+  unrun@0.3.1:
+    dependencies:
+      rolldown: 1.1.0
 
   update-browserslist-db@1.2.3(browserslist@4.28.2):
     dependencies:
