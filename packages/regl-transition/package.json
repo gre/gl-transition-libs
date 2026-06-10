@@ -1,6 +1,6 @@
 {
   "name": "regl-transition",
-  "version": "1.13.4",
+  "version": "2.0.0",
   "description": "a function to render a GL Transition with a regl context",
   "license": "MIT",
   "type": "module",
