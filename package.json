@@ -18,5 +18,10 @@
   "devDependencies": {
     "@changesets/cli": "^2.29.0",
     "unrun": "^0.3.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "node-gyp": "^11.5.0"
+    }
   }
 }
