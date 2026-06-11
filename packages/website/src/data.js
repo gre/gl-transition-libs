@@ -1,4 +1,4 @@
-import { supplyDefaultSampler2DToTransition } from "./transform";
+import { supplyDefaultSampler2DToTransition } from "./defaultSampler2D";
 export const transitions = (window.GLTransitions || []).map(
   supplyDefaultSampler2DToTransition
 );

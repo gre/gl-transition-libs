@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Suspense, lazy } from "react";
 import {
   Route,
   Routes,
@@ -9,12 +9,15 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
-import Gallery from "./Gallery";
-import Edit from "./Edit";
-import Preview from "./Preview";
-import EditNew from "./EditNew";
-import Intro from "./Intro";
 import NotFound from "./NotFound";
+
+// route-level code splitting: the editor routes carry the GLSL
+// compiler chain that gallery/intro visitors never need
+const Gallery = lazy(() => import("./Gallery"));
+const Edit = lazy(() => import("./Edit"));
+const Preview = lazy(() => import("./Preview"));
+const EditNew = lazy(() => import("./EditNew"));
+const Intro = lazy(() => import("./Intro"));
 import { transitionsByName } from "./data";
 import { githubRepoPath } from "./conf";
 import { FaGithub } from "react-icons/fa";
@@ -89,14 +92,16 @@ class App extends Component {
           </div>
         </header>
         <main>
-          <Routes>
-            <Route path="/" element={<Intro />} />
-            <Route path="/gallery" element={<GalleryRoute />} />
-            <Route path="/editor" element={<EditorRoute />} />
-            <Route path="/editor/:name" element={<EditorRoute />} />
-            <Route path="/transition/:name" element={<PreviewRoute />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<Intro />} />
+              <Route path="/gallery" element={<GalleryRoute />} />
+              <Route path="/editor" element={<EditorRoute />} />
+              <Route path="/editor/:name" element={<EditorRoute />} />
+              <Route path="/transition/:name" element={<PreviewRoute />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     );
