@@ -1,5 +1,13 @@
 # gl-transition-scripts
 
+## 2.0.1
+
+### Patch Changes
+
+- d9dc19e: Replace `get-pixels` with a minimal internal PNG/JPEG loader (pngjs + jpeg-js + native fetch). This removes the deprecated `request` dependency chain and its security advisories (form-data, qs, uuid, tough-cookie). PNG, JPEG, http(s) URLs and data URIs are still supported; GIF input is no longer accepted (it previously decoded to a 4D array that the texture pipeline rejected anyway).
+- Updated dependencies [fa34123]
+  - gl-transition@2.1.0
+
 ## 2.0.0
 
 ### Major Changes

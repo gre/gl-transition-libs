@@ -1,5 +1,11 @@
 # gl-transition
 
+## 2.1.0
+
+### Minor Changes
+
+- fa34123: Add `dist/browser.mjs`, a self-contained ES module build (gl-shader bundled in) importable directly from CDNs like unpkg — enables zero-build-step usage in plain HTML (see example.html).
+
 ## 2.0.0
 
 ### Major Changes
