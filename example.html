@@ -1,0 +1,128 @@
+<!doctype html>
+<!-- GL Transitions slideshow in a single HTML file: no build step, libs from unpkg.com -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GL Transitions – pure HTML slideshow</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: #111;
+        color: #eee;
+        font: 14px/1.4 system-ui, sans-serif;
+      }
+      canvas {
+        width: min(90vw, 900px);
+        aspect-ratio: 3 / 2;
+        border-radius: 4px;
+      }
+      #caption a {
+        color: #f55;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="slideshow" width="1200" height="800"></canvas>
+    <div id="caption">loading…</div>
+
+    <!-- the gl-transitions collection, exposed as window.GLTransitions -->
+    <script src="https://unpkg.com/gl-transitions@1/gl-transitions.js"></script>
+
+    <script type="module">
+      import createTransition from "https://unpkg.com/gl-transition@2/dist/browser.mjs";
+
+      const images = [
+        "https://picsum.photos/seed/gl-1/1200/800",
+        "https://picsum.photos/seed/gl-2/1200/800",
+        "https://picsum.photos/seed/gl-3/1200/800",
+        "https://picsum.photos/seed/gl-4/1200/800",
+      ];
+
+      const HOLD = 2000; // ms each slide stays still
+      const DURATION = 1500; // ms each transition lasts
+
+      const loadImage = (src) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous"; // required to upload to WebGL
+          img.onload = () => resolve(img);
+          img.onerror = () => reject(new Error("could not load " + src));
+          img.src = src;
+        });
+
+      // minimal "gl-texture2d like" object as expected by gl-transition
+      const createTexture = (gl, img) => {
+        const texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+        return {
+          bind(unit) {
+            gl.activeTexture(gl.TEXTURE0 + unit);
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+            return unit;
+          },
+          shape: [img.width, img.height],
+        };
+      };
+
+      const canvas = document.getElementById("slideshow");
+      const caption = document.getElementById("caption");
+      const gl = canvas.getContext("webgl");
+      if (!gl) throw new Error("WebGL is not supported");
+
+      // a fullscreen triangle, bound once; gl-transition reads it as the _p attribute
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array([-1, -1, -1, 4, 4, -1]),
+        gl.STATIC_DRAW
+      );
+
+      // transitions with a sampler2D param need an extra texture: skipped to keep this simple
+      const transitions = window.GLTransitions.filter(
+        (t) => !Object.values(t.paramsTypes).includes("sampler2D")
+      );
+
+      const textures = (await Promise.all(images.map(loadImage))).map((img) =>
+        createTexture(gl, img)
+      );
+
+      let slide = 0;
+      let transition;
+      const nextTransition = () => {
+        if (transition) transition.dispose();
+        const data = transitions[Math.floor(Math.random() * transitions.length)];
+        transition = createTransition(gl, data);
+        caption.innerHTML = `<a href="https://gl-transitions.com/editor/${data.name}" target="_blank">${data.name}</a> by ${data.author}`;
+      };
+      nextTransition();
+
+      let cycleStart = performance.now();
+      const frame = (now) => {
+        const from = textures[slide % textures.length];
+        const to = textures[(slide + 1) % textures.length];
+        const progress = Math.max(0, Math.min(1, (now - cycleStart - HOLD) / DURATION));
+        transition.draw(progress, from, to);
+        if (progress >= 1) {
+          slide++;
+          nextTransition();
+          cycleStart = now;
+        }
+        requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+    </script>
+  </body>
+</html>

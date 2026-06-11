@@ -11,6 +11,7 @@ This repository hosts multiple packages for [gl-transitions](https://github.com/
 - [gl-transition-scripts](packages/gl-transition-scripts): CLI tools (`gl-transition-transform`, `gl-transition-render`) using headless-gl.
 - [website](packages/website): [gl-transitions.com](https://gl-transitions.com) source code. It automatically gets redeployed from the `master` branch via Vercel.
 - [regl-transition-example](packages/regl-transition-example): example for regl-transition.
+- [example.html](example.html): single-file browser slideshow, no build step (libs loaded from unpkg).
 
 ## Development
 
