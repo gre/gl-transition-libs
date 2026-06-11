@@ -6,6 +6,16 @@ The only dependency is [gl-shader](https://www.npmjs.com/package/gl-shader).
 
 The only assumption is that you have used `bindBuffer` with "a-big-triangle" buffer (a triangle that covers the surface) so we internally will do `drawArrays(gl.TRIANGLES, 0, 3)`.
 
+## usage from a CDN (no build tool)
+
+`dist/browser.mjs` is a self-contained ES module (gl-shader bundled in) that can be imported straight from a CDN:
+
+```js
+import createTransition from "https://unpkg.com/gl-transition@2/dist/browser.mjs";
+```
+
+See [example.html](https://github.com/gre/gl-transition-libs/blob/master/example.html) for a complete single-file slideshow.
+
 ## short example
 
 ```js
