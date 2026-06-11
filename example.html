@@ -105,7 +105,12 @@
         if (transition) transition.dispose();
         const data = transitions[Math.floor(Math.random() * transitions.length)];
         transition = createTransition(gl, data);
-        caption.innerHTML = `<a href="https://gl-transitions.com/editor/${data.name}" target="_blank">${data.name}</a> by ${data.author}`;
+        const link = document.createElement("a");
+        link.href = "https://gl-transitions.com/editor/" + data.name;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = data.name;
+        caption.replaceChildren(link, " by " + data.author);
       };
       nextTransition();
 
