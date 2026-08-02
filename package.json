@@ -21,7 +21,12 @@
   },
   "pnpm": {
     "overrides": {
-      "node-gyp": "^11.5.0"
+      "node-gyp": "^11.5.0",
+      "postcss": "^8.5.25",
+      "tar": "^7.5.22",
+      "js-yaml@3": "^3.15.1",
+      "js-yaml@4": "^4.3.1",
+      "brace-expansion@2": "^2.1.4"
     }
   }
 }
