@@ -45,7 +45,7 @@
     "@types/ndarray": "^1.0.14",
     "tsdown": "^0.22.2",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   },
   "repository": {
     "type": "git",
