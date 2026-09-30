@@ -1,5 +1,11 @@
 # gl-transition-utils
 
+## 2.0.1
+
+### Patch Changes
+
+- 690970f: Import `glsl-tokenizer/string.js` and `glsl-parser/direct.js` with explicit extensions so the ESM build resolves in Node.
+
 ## 2.0.0
 
 ### Major Changes
