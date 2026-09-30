@@ -1,4 +1,4 @@
-import tokenize, { type GlslToken } from "glsl-tokenizer/string";
+import tokenize, { type GlslToken } from "glsl-tokenizer/string.js";
 import print from "glsl-token-string";
 
 type Token = Pick<GlslToken, "type" | "data">;

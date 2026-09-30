@@ -1,4 +1,4 @@
-declare module "glsl-tokenizer/string" {
+declare module "glsl-tokenizer/string.js" {
   export interface GlslToken {
     type: string;
     data: string;
@@ -10,12 +10,12 @@ declare module "glsl-tokenizer/string" {
 }
 
 declare module "glsl-token-string" {
-  import type { GlslToken } from "glsl-tokenizer/string";
+  import type { GlslToken } from "glsl-tokenizer/string.js";
   export default function print(tokens: Array<Pick<GlslToken, "type" | "data">>): string;
 }
 
-declare module "glsl-parser/direct" {
-  import type { GlslToken } from "glsl-tokenizer/string";
+declare module "glsl-parser/direct.js" {
+  import type { GlslToken } from "glsl-tokenizer/string.js";
   // glsl-parser AST nodes are untyped; we keep them loose.
   export interface GlslAstNode {
     type: string;

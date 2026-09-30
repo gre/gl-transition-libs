@@ -10,19 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "bezier-easing": "^3.0.0",
+    "bezier-easing": "^3.1.0",
     "bezier-easing-editor": "^1.1.0",
     "buffer": "^6.0.3",
     "gl-react": "^6.0.0",
     "gl-react-dom": "^6.0.0",
     "gl-transition-utils": "workspace:^",
     "glsldoc": "^0.0.4",
-    "highlight.js": "^11.11.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "highlight.js": "^11.12.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "react-gl-transition": "workspace:^",
-    "react-icons": "^5.5.0",
-    "react-router-dom": "^7.18.2"
+    "react-icons": "^5.7.0",
+    "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.5.2",
