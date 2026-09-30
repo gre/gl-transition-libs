@@ -15,7 +15,7 @@ This repository hosts multiple packages for [gl-transitions](https://github.com/
 
 ## Development
 
-Requirements: Node 20 or 22 LTS and [pnpm](https://pnpm.io). [headless-gl](https://github.com/stackgl/headless-gl) currently fails to compile against newer Node headers (e.g. Node 25), so stick to an LTS — a `.prototools` file pins Node 22 for [proto](https://moonrepo.dev/proto) users.
+Requirements: Node 22 (≥ 22.12) or 24 LTS and [pnpm](https://pnpm.io). [headless-gl](https://github.com/stackgl/headless-gl) currently fails to compile against newer Node headers (e.g. Node 25), so stick to an LTS — a `.prototools` file pins Node 22 for [proto](https://moonrepo.dev/proto) users.
 
 ```sh
 pnpm install
