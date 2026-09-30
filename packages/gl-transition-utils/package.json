@@ -39,11 +39,11 @@
     "glsl-parser": "^2.0.1",
     "glsl-token-string": "^1.0.1",
     "glsl-tokenizer": "^2.1.5",
-    "ndarray": "^1.0.19"
+    "ndarray": "^1.1.1"
   },
   "devDependencies": {
-    "@types/ndarray": "^1.0.14",
-    "tsdown": "^0.22.2",
+    "@types/ndarray": "^1.1.0",
+    "tsdown": "^0.23.0",
     "typescript": "^5.8.3",
     "vitest": "^5.0.1"
   },
