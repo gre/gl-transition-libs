@@ -1,5 +1,16 @@
 # gl-transition-scripts
 
+## 3.0.0
+
+### Major Changes
+
+- e2f9ef4: Require Node >= 22.12 (Node 20 is end-of-life).
+
+### Patch Changes
+
+- Updated dependencies [690970f]
+  - gl-transition-utils@2.0.1
+
 ## 2.0.1
 
 ### Patch Changes
