@@ -1,5 +1,5 @@
-import tokenize, { type GlslToken as Token } from "glsl-tokenizer/string";
-import parse, { type GlslAstNode } from "glsl-parser/direct";
+import tokenize, { type GlslToken as Token } from "glsl-tokenizer/string.js";
+import parse, { type GlslAstNode } from "glsl-parser/direct.js";
 import acceptedLicenses from "./acceptedLicenses";
 
 export type UniformDefaultLiteralValue = number | boolean | null;
