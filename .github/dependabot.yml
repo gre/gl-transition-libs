@@ -15,7 +15,7 @@ updates:
         applies-to: security-updates
         patterns: ["*"]
     ignore:
-      # Node 20/22 LTS only (headless-gl)
+      # Node LTS only (headless-gl)
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
 
