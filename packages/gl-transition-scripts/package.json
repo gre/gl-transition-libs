@@ -21,7 +21,7 @@
     "prepack": "pnpm build"
   },
   "dependencies": {
-    "commander": "^14.0.0",
+    "commander": "^15.0.0",
     "gl": "^8.1.6",
     "gl-texture2d": "^2.1.0",
     "gl-transition": "workspace:^",
