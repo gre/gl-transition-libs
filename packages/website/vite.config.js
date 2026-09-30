@@ -8,9 +8,11 @@ export default defineConfig({
     global: "globalThis",
   },
   optimizeDeps: {
-    esbuildOptions: {
-      define: {
-        global: "globalThis",
+    rolldownOptions: {
+      transform: {
+        define: {
+          global: "globalThis",
+        },
       },
     },
   },

@@ -12,7 +12,7 @@ export default defineConfig([
     entry: { browser: "src/index.ts" },
     format: ["esm"],
     dts: false,
-    noExternal: ["gl-shader"],
+    deps: { alwaysBundle: ["gl-shader"] },
     minify: true,
   },
 ]);
