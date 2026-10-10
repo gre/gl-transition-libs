@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/gl": "^6.0.5",
     "@types/ndarray": "^1.1.0",
-    "@types/node": "^22.20.4",
+    "@types/node": "^22.20.5",
     "@types/pngjs": "^6.0.5",
     "tsdown": "^0.23.0",
     "typescript": "^5.8.3"
