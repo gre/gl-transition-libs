@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "bezier-easing": "^3.1.0",
+    "bezier-easing": "^3.2.0",
     "bezier-easing-editor": "^1.1.0",
     "buffer": "^6.0.3",
     "gl-react": "^6.0.0",
@@ -25,7 +25,7 @@
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^6.1.1",
-    "vite": "^8.3.2"
+    "@vitejs/plugin-react": "^6.1.2",
+    "vite": "^8.3.4"
   }
 }
