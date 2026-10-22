@@ -35,7 +35,8 @@
   letter-spacing: -0.02em;
 }
 .Intro h1 {
-  font-size: 76px;
+  font-size: min(72px, calc((100vw - 64px) / 16));
+  white-space: nowrap;
   line-height: 1.02;
   letter-spacing: -0.03em;
 }
@@ -115,7 +116,6 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  max-width: 960px;
 }
 .Intro .lead p {
   font-size: 22px;
@@ -473,6 +473,7 @@
   }
   .Intro h1 {
     font-size: 44px;
+    white-space: normal;
   }
   .Intro h2,
   .Intro .outro h2 {
