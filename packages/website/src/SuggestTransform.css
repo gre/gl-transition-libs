@@ -18,7 +18,9 @@
 }
 
 .SuggestTransform .container {
-  background-color: #333;
+  background-color: var(--bg-band);
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
   width: 90%;
   height: 80%;
   margin: auto;
@@ -49,7 +51,10 @@
   font-size: 1.2em;
   margin: 0.6em;
   padding: 0.2em 1em;
-  border: none;
-  color: #000;
-  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--text);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
 }

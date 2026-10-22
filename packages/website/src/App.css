@@ -5,7 +5,8 @@
 }
 
 .App > header {
-  background: #111;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
   display: flex;
   flex-direction: row;
   height: 40px;
@@ -43,8 +44,8 @@
   color: #fff;
 }
 .App > header > nav > a.active {
-  background: #444;
   color: #fff;
+  box-shadow: inset 0 -2px var(--accent);
 }
 
 .App > header > .external {
@@ -72,7 +73,7 @@
 }
 
 .App > main {
-  background: #333;
+  background: var(--bg);
   flex: 1;
   display: flex;
   flex-direction: column;

@@ -44,10 +44,10 @@ export default class Editor extends Component {
   };
 
   labelStyle = (highlight, hover) => ({
-    color: highlight ? "#fc6" : hover ? "#ccc" : "#fff",
+    color: highlight ? "#fc6" : hover ? "#fff" : "#d6d6da",
     fontSize: "12px",
-    lineHeight: "20px",
-    fontFamily: "Monaco, monospace",
+    lineHeight: "24px",
+    fontFamily: "Monoid, Monaco, monospace",
   });
 
   inputStyle = (focus, hover, { primitiveType }) =>
@@ -55,11 +55,14 @@ export default class Editor extends Component {
       ? {}
       : {
           fontSize: "12px",
-          fontFamily: "Monaco, monospace",
-          color: "#333",
-          lineHeight: "16px",
-          padding: "0 5px",
+          fontFamily: "Monoid, Monaco, monospace",
+          color: "#ececec",
+          background: "#0b0b0d",
+          lineHeight: "22px",
+          padding: "0 6px",
           margin: "0",
+          border: "1px solid " + (focus ? "#fc6" : hover ? "#5a5a62" : "#3a3a40"),
+          borderRadius: "4px",
           outline: "none",
           boxShadow: "none",
         };

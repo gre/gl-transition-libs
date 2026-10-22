@@ -1,15 +1,19 @@
 
 
 a.primary-btn {
-  background: #3C6;
-  color: #000;
-  padding: 0.5em 1em;
-  border-radius: 0.4em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
   white-space: nowrap;
 }
 a.primary-btn:hover {
-  background: #3E8;
-  color: #000;
+  background: #ffe0a0;
+  color: var(--bg);
 }
 
 a.primary-btn.disabled, a.primary-btn.disabled:hover {

@@ -15,9 +15,11 @@
   position: relative;
   z-index: 100;
   width: 376px;
-  margin: 0 auto;
+  flex-shrink: 0;
   padding-left: 10px;
   padding-right: 10px;
+  background: var(--bg-band);
+  border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -45,7 +47,9 @@
 
 .Editor .no-uniforms {
   margin: 0 0 0 100px;
+  padding: 12px 14px;
   text-align: center;
+  border-radius: 0 8px 8px 0;
 }
 
 .Editor  .links {
@@ -61,8 +65,14 @@
 
 .Editor .links a {
   margin: 2px 0;
-  display: inline-block;
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.Editor .links a:hover {
+  color: var(--accent);
 }
 
 .Editor .links  a i {
@@ -83,7 +93,7 @@
 }
 .Editor .tname .license {
   margin-right: 20px;
-  opacity: 0.5;
+  color: var(--faint);
   font-weight: lighter;
   letter-spacing: 0.1em;
 }
@@ -93,19 +103,20 @@
   padding: 0 0.4em;
   font-size: inherit;
   text-align: right;
-  background: transparent;
+  background: var(--bg-code);
   color: #fff;
-  border: 1px solid #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  font-family: inherit;
 }
 .Editor .transition-name:focus {
   outline: none;
-  color: #0F0;
-  border-color: #0F0;
+  border-color: var(--accent);
 }
 .Editor .transition-name.error,
 .Editor .transition-name.error:focus {
-  color: #f00;
-  border-color: #f00;
+  color: #ff8a8a;
+  border-color: #ff6b6b;
 }
 
 .Editor .transition-name-extension {
@@ -115,8 +126,19 @@
 }
 
 
-@media screen and (max-width: 540px) {
-  .Editor .main .glsl-editor {
-    width: 100vw;
+@media screen and (max-width: 760px) {
+  .Editor-body {
+    flex-direction: column;
+  }
+  .Editor .leftpanel {
+    width: 100%;
+    padding-left: max(10px, calc(50% - 188px));
+    padding-right: max(10px, calc(50% - 188px));
+    padding-bottom: 80px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .Editor .main {
+    min-height: 70vh;
   }
 }

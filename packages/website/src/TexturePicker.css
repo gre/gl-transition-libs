@@ -22,7 +22,7 @@
   top: 67px;
   left: -32px;
   border: 16px solid;
-  border-color: transparent white transparent transparent;
+  border-color: transparent var(--bg-band) transparent transparent;
 }
 .texture-picker .picker {
   z-index: 901;
@@ -31,9 +31,10 @@
   top: -72px;
   width: 200px;
   height: 150px;
-  color: #222;
-  background: #fff;
-  border-radius: 4px;
+  color: var(--text);
+  background: var(--bg-band);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
