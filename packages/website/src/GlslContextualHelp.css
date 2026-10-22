@@ -36,6 +36,6 @@
   font-style: italic;
   padding: 0.6em;
   font-size: 0.8em;
-  opacity: 0.7;
-  background: #222;
+  color: var(--muted);
+  background: var(--bg-code);
 }

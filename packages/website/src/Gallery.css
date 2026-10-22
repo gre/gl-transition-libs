@@ -1,83 +1,134 @@
-.gallery .transitions {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 10px 0;
-  margin: 0 auto;
-  max-width: 1280px;
+.gallery {
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+  padding: 40px 16px 64px;
+}
+@media (max-width: 340px) {
+  .gallery {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
-.gallery .transitions > * {
-  margin: 10px;
+.gallery .transitions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 300px);
+  justify-content: center;
+  gap: 48px 24px;
+  margin: 32px auto 56px;
+  max-width: 1296px;
+}
+
+.gallery .vignette canvas {
+  display: block;
+  outline: none;
+  border-radius: 8px;
+}
+.gallery .vignette.hover canvas {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.gallery .vignette footer {
+  bottom: -28px;
+  padding: 0;
+  font-size: 14px;
+  color: var(--faint);
+}
+.gallery .vignette footer strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.gallery .vignette .TransitionAuthorAndName {
+  max-width: 200px;
+  padding: 0;
 }
 .gallery .transitions .vignette footer .dateago {
   position: absolute;
-  right: 4px;
-  bottom: 0px;
-  font-size: 1em;
-  font-style: italic;
-  color: #000;
+  right: 0;
+  bottom: 0;
+  font-size: 13px;
+  color: var(--faint);
 }
 .gallery .vignette .expand {
   position: absolute;
-  top: 0px;
-  right: 0px;
-  padding: 4px;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  padding: 6px;
+  border-radius: 6px;
+  background: rgba(17, 17, 19, 0.6);
+  color: #fff;
+}
+.gallery .vignette .expand:hover {
+  color: var(--accent);
 }
 
 .gallery .search {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  max-width: 400px;
-  margin: 20px auto 0;
-  padding: 0.4em 0.8em;
-  background: #222;
-  border: 1px solid #555;
-  border-radius: 2em;
-  color: #999;
+  gap: 10px;
+  max-width: 480px;
+  margin: 0 auto 20px;
+  padding: 0 16px;
+  min-height: 44px;
+  background: var(--bg-code);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--faint);
 }
 .gallery .search:focus-within {
-  border-color: #fc6;
-  color: #fc6;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .gallery .search input {
   flex: 1;
+  min-width: 0;
   background: transparent;
   border: none;
   outline: none;
   color: #fff;
-  font-size: 1.2em;
+  font: inherit;
+  font-size: 17px;
 }
 
 .gallery .no-results {
   text-align: center;
   padding: 60px 20px;
-  font-size: 1.4em;
-  color: #999;
+  font-size: 19px;
+  color: var(--muted);
 }
 .gallery .no-results a {
-  color: #fc6;
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .gallery .pager {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  gap: 8px;
 }
 .gallery .pager a {
-  color: #999;
-  font-size: 2em;
-  padding: 0.2em 0.6em;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
 }
 .gallery .pager a:hover:not(.active) {
-  color: #bbb;
+  border-color: var(--accent);
 }
 .gallery .pager a.active {
-  color: #fff;
-  font-weight: bold;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
 }

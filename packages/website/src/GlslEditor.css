@@ -3,6 +3,21 @@
   height: 100%;
   flex: 1;
 }
+.glsl-editor.ace_editor {
+  background: var(--bg-code);
+  color: #ececec;
+}
+.glsl-editor.ace_editor .ace_gutter {
+  background: var(--bg);
+  color: #5c5c63;
+}
+.glsl-editor.ace_editor .ace_gutter-active-line,
+.glsl-editor.ace_editor .ace_marker-layer .ace_active-line {
+  background: #17171a;
+}
+.glsl-editor.ace_editor .ace_cursor {
+  color: var(--accent);
+}
 
 .glsl-editor .ace_step.error {
   background: rgba(255, 0, 0, 0.3) !important;

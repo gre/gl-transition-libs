@@ -3,6 +3,10 @@ import { githubRepoFolder, githubRepoPath } from "./conf";
 import { FaGithub } from "react-icons/fa";
 import "./TransitionAuthorAndName.css";
 
+// drops the "<email>" or "(url)" that follows some authors' names
+export const authorDisplayName = (author) =>
+  (author || "").replace(/[<(].*$/, "").trim() || author || "";
+
 export default class TransitionAuthorAndName extends Component {
   shouldComponentUpdate({ transition }) {
     const { author, name } = this.props.transition;
@@ -10,14 +14,8 @@ export default class TransitionAuthorAndName extends Component {
   }
   render() {
     const { withGithubLink, transition } = this.props;
-    let { name, author } = transition;
-    const m = author.match(/^([^<]+).*$/);
-    if (m) {
-      const first = m[1].trim();
-      if (first) {
-        author = first;
-      }
-    }
+    const { name } = transition;
+    const author = authorDisplayName(transition.author);
     if (withGithubLink) {
       const fileHref =
         "https://github.com/" +

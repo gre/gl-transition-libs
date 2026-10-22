@@ -1,8 +1,20 @@
+:root {
+  --bg: #111113;
+  --bg-band: #18181b;
+  --bg-code: #0b0b0d;
+  --line: #26262b;
+  --line-strong: #3a3a40;
+  --text: #d6d6da;
+  --muted: #a9a9b0;
+  --faint: #8c8c93;
+  --accent: #fc6;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: Catamaran, sans-serif;
-  background: #333;
+  background: var(--bg);
   color: #eee;
   font-size: 14px;
 }
@@ -40,9 +52,51 @@ a:active, a:hover {
   color: inherit;
 }
 
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.6em 0.8em;
+  background: var(--bg-code);
+  color: #ececec;
+}
+.hljs-comment {
+  color: var(--faint);
+}
+.hljs-keyword,
+.hljs-type,
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: #8ab4ff;
+}
+.hljs-built_in,
+.hljs-title {
+  color: var(--accent);
+}
+.hljs-string,
+.hljs-regexp {
+  color: #9fdc9f;
+}
+.hljs-number,
+.hljs-literal,
+.hljs-symbol {
+  color: #6ee7c8;
+}
+.hljs-attr,
+.hljs-attribute,
+.hljs-name,
+.hljs-tag,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params,
+.hljs-subst,
+.hljs-bullet,
+.hljs-link {
+  color: #f0a6ca;
+}
+
 blockquote {
-  border-left: 2px solid #fc6;
-  background: #222;
+  border-left: 2px solid var(--accent);
+  background: var(--bg-band);
   color: #fff;
   padding: 10px;
 }

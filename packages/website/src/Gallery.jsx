@@ -166,7 +166,6 @@ export default class Gallery extends Component {
       <ScrollToTop>
         <div className="gallery">
           <SearchInput query={query} navigate={navigate} />
-          <div className="pager">{pagination}</div>
           {transitions.length === 0 ? (
             <div className="no-results">
               No transition matches “{q}”.{" "}
