@@ -9,7 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "gl-transitions": "1",
+    "gl-transitions": "2",
     "regl": "^2.1.1",
     "regl-transition": "workspace:^"
   },

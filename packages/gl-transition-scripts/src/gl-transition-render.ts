@@ -107,9 +107,11 @@ function readTransition(str: string) {
         extraImagesSrc.push(value);
       }
     });
-    if (res.errors.length > 0) {
+    // rendering does not depend on the name rules that gl-transition-transform checks
+    const errors = res.errors.filter((e) => e.code !== "GLT_invalid_filename");
+    if (errors.length > 0) {
       throw new Error(
-        "transition have errors:\n" + res.errors.map((e) => e.message).join("\n")
+        "transition have errors:\n" + errors.map((e) => e.message).join("\n")
       );
     }
     return { params, ...res };

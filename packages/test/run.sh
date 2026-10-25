@@ -10,7 +10,7 @@ RENDER=../gl-transition-scripts/dist/gl-transition-render.mjs
 
 rm -rf tmp test_results.json test_render.png
 mkdir -p tmp
-for t in fade burn cube directionalwipe crosswarp luma displacement; do
+for t in Fade FlashFade Cube DirectionalWipe CrossWarp LumaWipe DisplacementMap; do
   cp "node_modules/gl-transitions/transitions/$t.glsl" tmp/
 done
 
@@ -18,7 +18,7 @@ node "$TRANSFORM" -d tmp -o test_results.json
 test -s test_results.json
 
 node "$RENDER" \
-  -t tmp/fade.glsl \
+  -t tmp/Fade.glsl \
   -i fixtures/1.jpg \
   -i fixtures/2.jpg \
   -w 128 -h 128 -p 0.4 -o test_render.png

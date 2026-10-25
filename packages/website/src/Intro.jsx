@@ -312,7 +312,7 @@ class ConfigurableExample extends PureComponent {
                 width > 0 && (
                   <AnimatedVignette
                     paused={!visible}
-                    transitions={[transitionsByName.doorway]}
+                    transitions={[transitionsByName.Doorway]}
                     transitionsParams={[transitionParams]}
                     easings={[BezierEasing(...easing)]}
                     images={images}
@@ -432,7 +432,7 @@ const platforms = [
     language: "javascript",
     code: `import transitions from "gl-transitions";
 
-const cube = transitions.find((t) => t.name === "cube");
+const cube = transitions.find((t) => t.name === "Cube");
 cube.glsl;      // the GLSL source
 cube.params;    // types, defaults, ranges
 // SkSL, WGSL, Metal and GLSL ES 3.00 files ship alongside`,
@@ -451,7 +451,7 @@ cube.params;    // types, defaults, ranges
     language: "javascript",
     code: `<Canvas style={{ width: 360, height: 240 }}>
   <Transition
-    name="crosswarp"
+    name="CrossWarp"
     from={from}
     to={to}
     progress={progress}
@@ -472,7 +472,7 @@ cube.params;    // types, defaults, ranges
       "npm install gl-transitions @gl-transitions/remotion @remotion/transitions",
     language: "javascript",
     code: `<TransitionSeries.Transition
-  presentation={glTransition({ name: "crosswarp" })}
+  presentation={glTransition({ name: "CrossWarp" })}
   timing={linearTiming({ durationInFrames: 30 })}
 />`,
     blurb:
@@ -485,12 +485,12 @@ cube.params;    // types, defaults, ranges
     docs: repoTree + "swift",
     links: [{ label: "SwiftUI example app", href: repoTree + "examples/swiftui" }],
     install:
-      '.package(url: "https://github.com/gl-transitions/gl-transitions-swift", from: "1.76.1")',
+      '.package(url: "https://github.com/gl-transitions/gl-transitions-swift", from: "2.0.0")',
     installLanguage: "swift",
     language: "swift",
     code: `let composition = try await TransitionComposition.make(
   clips: [AVURLAsset(url: first), AVURLAsset(url: second)],
-  transitions: [TransitionStep(GLTransitions.named("crosswarp")!)]
+  transitions: [TransitionStep(GLTransitions.named("CrossWarp")!)]
 )
 let player = AVPlayer(playerItem: composition.makePlayerItem())`,
     blurb:
@@ -502,10 +502,10 @@ let player = AVPlayer(playerItem: composition.makePlayerItem())`,
     pkg: "com.gl-transitions:gl-transitions",
     docs: repoTree + "android",
     links: [{ label: "Example app", href: repoTree + "examples/android" }],
-    install: 'implementation("com.gl-transitions:gl-transitions:1.76.1")',
+    install: 'implementation("com.gl-transitions:gl-transitions:2.0.0")',
     installLanguage: "kotlin",
     language: "kotlin",
-    code: `val shader = TransitionShader(GLTransitions.named("directionalwarp")!!)
+    code: `val shader = TransitionShader(GLTransitions.named("DirectionalWarp")!!)
 
 // in onDraw, or a Compose drawBehind
 shader.draw(canvas, fromBitmap, toBitmap, progress)`,
@@ -520,7 +520,7 @@ shader.draw(canvas, fromBitmap, toBitmap, progress)`,
     links: [{ label: "fframes example", href: repoTree + "examples/fframes" }],
     install: "cargo add gl-transitions",
     language: "rust",
-    code: `let t = gl_transitions::get("directionalwarp").expect("in the collection");
+    code: `let t = gl_transitions::get("DirectionalWarp").expect("in the collection");
 let mut params = t.default_params();
 params.set("direction", [1.0, 0.0])?;
 let sksl = t.sksl();   // Option<&str>; wgsl() too`,
@@ -779,7 +779,7 @@ vec4 transition (vec2 uv) {
             </span>
             <span>
               For coding agents:{" "}
-              <ExternalLink href="https://cdn.jsdelivr.net/npm/gl-transitions@1/llms.txt">
+              <ExternalLink href="https://cdn.jsdelivr.net/npm/gl-transitions@2/llms.txt">
                 llms.txt
               </ExternalLink>
             </span>
