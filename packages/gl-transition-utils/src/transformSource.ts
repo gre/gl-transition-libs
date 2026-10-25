@@ -628,13 +628,25 @@ export default function transformSource(
         code: "GLT_invalid_filename",
         message: `filename is too long`,
       });
-    } else if (!name.match(/^[a-zA-Z0-9-_]+$/)) {
+    } else if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) {
       errors.push({
         type: "error",
         code: "GLT_invalid_filename",
-        message: `filename can only contains letters, numbers or - and _ characters. Got '${filename}'`,
+        message: `'${name}' must be PascalCase: a capital letter, then letters and digits (e.g. CrossZoom)`,
       });
-    } else if (reservedTransitionNames.includes(name)) {
+    } else if (/[A-Z]{3}/.test(name)) {
+      errors.push({
+        type: "error",
+        code: "GLT_invalid_filename",
+        message: `'${name}' has three capitals in a row: write acronyms as words (HsvFade, not HSVFade)`,
+      });
+    } else if (/transition/i.test(name)) {
+      errors.push({
+        type: "error",
+        code: "GLT_invalid_filename",
+        message: `'${name}' must not contain 'Transition': every entry is one`,
+      });
+    } else if (reservedTransitionNames.includes(name.toLowerCase())) {
       errors.push({
         type: "error",
         code: "GLT_invalid_filename",

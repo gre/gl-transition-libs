@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
 import transformSource from "./transformSource";
 
-test("parse correctly burn.glsl", () => {
+test("parse correctly Burn.glsl", () => {
   const glsl = `
 // author: gre
 // license: MIT
@@ -14,7 +14,7 @@ vec4 transition (vec2 uv) {
   );
 }
   `;
-  expect(transformSource("burn.glsl", glsl)).toMatchSnapshot();
+  expect(transformSource("Burn.glsl", glsl)).toMatchSnapshot();
 });
 
 test("not providing a default creates a warning", () => {
@@ -30,7 +30,7 @@ vec4 transition (vec2 uv) {
   );
 }
   `;
-  const res = transformSource("burn-2.glsl", glsl);
+  const res = transformSource("Burn2.glsl", glsl);
   expect(res.data).toMatchSnapshot();
   expect(res.errors.filter(e => e.type === "error")).toEqual([]);
   expect(res.errors.filter(e => e.type === "warn").length).toBe(1);
@@ -38,7 +38,7 @@ vec4 transition (vec2 uv) {
 
 test("other example", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
   // author: gre
   // License: MIT
@@ -59,7 +59,7 @@ test("other example", () => {
 
 test("must not override existing things", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
 uniform float from; /* = 42. */
 uniform float to; /* = 42. */
@@ -72,7 +72,7 @@ vec4 transition (vec2 uv) {}
 
 test("must define the transition function", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
 
 `
@@ -83,7 +83,7 @@ test("must define the transition function", () => {
 
 test("must define metas", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
     vec4 transition (vec2 uv) {
       return vec4(0.0);
@@ -96,7 +96,7 @@ test("must define metas", () => {
 
 test("simple transition function is fine", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
       // Author: gre
       // License: MIT
@@ -111,7 +111,7 @@ test("simple transition function is fine", () => {
 
 test("must define uv params", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
       // Author: gre
       // License: MIT
@@ -126,7 +126,7 @@ test("must define uv params", () => {
 
 test("first meta comment is taken in priority", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
       // Author: gre
       // License: MIT
@@ -146,7 +146,7 @@ test("first meta comment is taken in priority", () => {
 
 test("renaming param is fine", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
       // Author: gre
       // License: MIT
@@ -161,7 +161,7 @@ test("renaming param is fine", () => {
 
 test("must define the correct signature", () => {
   const res = transformSource(
-    "test.glsl",
+    "Test.glsl",
     `
     // Author: gre
     // License: MIT
@@ -173,7 +173,7 @@ test("must define the correct signature", () => {
 
 test("crazy defaults", () => {
   const res = transformSource(
-    "crazyyyy.glsl",
+    "Crazyyyy.glsl",
     `
  // Author: Gaetan
  // License: LGPL
@@ -196,4 +196,30 @@ test("crazy defaults", () => {
   });
   expect(res.data.author).toEqual("Gaetan");
   expect(res.data.license).toEqual("LGPL");
+});
+
+test("transition names must be PascalCase", () => {
+  const glsl = `
+// Author: gre
+// License: MIT
+vec4 transition (vec2 uv) { return getToColor(uv); }`;
+  const filenameErrors = (filename: string) =>
+    transformSource(filename, glsl).errors.filter(
+      (e) => e.code === "GLT_invalid_filename"
+    );
+  for (const name of ["CrossZoom", "WipeLeft", "HsvFade", "Burn2"]) {
+    expect(filenameErrors(name + ".glsl")).toEqual([]);
+  }
+  for (const name of [
+    "crosszoom",
+    "wipeLeft",
+    "old_tv",
+    "scale-in",
+    "2Fade",
+    "HSVFade",
+    "RotateTransition",
+    "New",
+  ]) {
+    expect(filenameErrors(name + ".glsl").length).toBe(1);
+  }
 });

@@ -9,7 +9,7 @@ exports[`must define metas 1`] = `
       return vec4(0.0);
     }
 ",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {},
   },
   "errors": [
@@ -37,7 +37,7 @@ exports[`must define the correct signature 1`] = `
     // License: MIT
     void transition (vec2 uv) {}",
     "license": "MIT",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {},
   },
   "errors": [
@@ -59,7 +59,7 @@ exports[`must define the transition function 1`] = `
     "glsl": "
 
 ",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {},
   },
   "errors": [
@@ -95,7 +95,7 @@ exports[`must define uv params 1`] = `
       }
   ",
     "license": "MIT",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {},
   },
   "errors": [
@@ -122,7 +122,7 @@ uniform float from; /* = 42. */
 uniform float to; /* = 42. */
 vec4 transition (vec2 uv) {}
 ",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {
       "from": "float",
       "to": "float",
@@ -182,7 +182,7 @@ vec4 transition (vec2 uv) {
 }
   ",
   "license": "MIT",
-  "name": "burn-2",
+  "name": "Burn2",
   "paramsTypes": {
     "color": "vec3",
   },
@@ -216,7 +216,7 @@ exports[`other example 1`] = `
   }
   ",
     "license": "MIT",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {
       "color": "vec3",
       "foo": "float",
@@ -227,7 +227,7 @@ exports[`other example 1`] = `
 }
 `;
 
-exports[`parse correctly burn.glsl 1`] = `
+exports[`parse correctly Burn.glsl 1`] = `
 {
   "data": {
     "author": "gre",
@@ -251,7 +251,7 @@ vec4 transition (vec2 uv) {
 }
   ",
     "license": "MIT",
-    "name": "burn",
+    "name": "Burn",
     "paramsTypes": {
       "color": "vec3",
     },
@@ -273,7 +273,7 @@ exports[`renaming param is fine 1`] = `
       }
   ",
     "license": "MIT",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {},
   },
   "errors": [],
@@ -293,7 +293,7 @@ exports[`simple transition function is fine 1`] = `
       }
   ",
     "license": "MIT",
-    "name": "test",
+    "name": "Test",
     "paramsTypes": {},
   },
   "errors": [],

@@ -101,7 +101,7 @@ const to = createTexture(gl, imageTo);
 to.minFilter = gl.LINEAR;
 to.magFilter = gl.LINEAR;
 
-const transition = createTransition(gl, transitions.find(t => t.name === "cube")); // https://github.com/gl-transitions/gl-transitions/blob/master/transitions/cube.glsl
+const transition = createTransition(gl, transitions.find(t => t.name === "Cube")); // https://github.com/gl-transitions/gl-transitions/blob/master/transitions/Cube.glsl
 
 // animates forever!
 const loop = (t) => {

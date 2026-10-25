@@ -27,11 +27,15 @@ function probablyOldTransitionCode({ errors }) {
 const transformWithoutNameCollision = (filename, glsl) =>
   transform(filename, glsl, ({ data: { name } }) => {
     const errors = [];
-    if (name in transitionsByName) {
+    // names must differ ignoring case (case-insensitive file systems)
+    const existing = Object.keys(transitionsByName).find(
+      (n) => n.toLowerCase() === name.toLowerCase()
+    );
+    if (existing) {
       errors.push({
         type: "warn",
         code: "GLT_invalid_filename",
-        message: "Transition '" + name + "' already exists"
+        message: "Transition '" + existing + "' already exists"
       });
     }
     return errors;
