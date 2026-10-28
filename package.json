@@ -26,7 +26,10 @@
       "tar": "^7.5.22",
       "js-yaml@3": "^3.15.1",
       "js-yaml@4": "^4.3.1",
-      "brace-expansion@2": "^2.1.4"
+      "brace-expansion@2": "^2.1.7",
+      "http-cache-semantics": "^4.3.0",
+      "ip-address": "^10.7.5",
+      "launch-editor": "^2.14.2"
     }
   }
 }
