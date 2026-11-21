@@ -155,8 +155,8 @@ importers:
   packages/regl-transition-example:
     dependencies:
       gl-transitions:
-        specifier: '2'
-        version: 2.0.0
+        specifier: '3'
+        version: 3.3.0
       regl:
         specifier: ^2.1.1
         version: 2.1.1
@@ -174,8 +174,8 @@ importers:
         specifier: workspace:^
         version: link:../gl-transition-scripts
       gl-transitions:
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^3.3.0
+        version: 3.3.0
 
   packages/website:
     dependencies:
@@ -1042,8 +1042,8 @@ packages:
   gl-texture2d@2.1.0:
     resolution: {integrity: sha512-W0tzEjtlGSsCKq5FFwFVhH+fONFUTUeqM4HhA/BleygKaX39IwNTVOiqkwfu9szQZ4dQEq8ZDl7w1ud/eKLaZA==}
 
-  gl-transitions@2.0.0:
-    resolution: {integrity: sha512-VpGHhiWGeiq+/cTHvhqYFtYt5WZF+3wJPupFRtKY8UdZXfLTPoT7PZPVP71mmdjOXbaM+/V2+IokICs1EXjTHQ==}
+  gl-transitions@3.3.0:
+    resolution: {integrity: sha512-bRfjKSbZtT2Ax8h9Evc+HbQszg3KT/w4fa5xlyRiEpxTZ0OaH0Ov9KWC8LUvmtb32rarVabwQLvSQLQGyRwpJA==}
 
   gl@8.1.6:
     resolution: {integrity: sha512-BcvkgW+jWiX2SjTddgq4lOfkFmeiKE/n1N3zFnq/JlSwemIvQvH1rLURz5oMdfp4ZT5bzseuIOE608zQI0DRYA==}
@@ -2582,7 +2582,7 @@ snapshots:
       ndarray-ops: 1.2.2
       typedarray-pool: 1.2.0
 
-  gl-transitions@2.0.0: {}
+  gl-transitions@3.3.0: {}
 
   gl@8.1.6:
     dependencies:

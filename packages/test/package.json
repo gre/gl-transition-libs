@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "gl-transition-scripts": "workspace:^",
-    "gl-transitions": "^2.0.0"
+    "gl-transitions": "^3.3.0"
   }
 }
