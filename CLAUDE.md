@@ -6,4 +6,5 @@ pnpm monorepo for the gl-transitions.com libraries and website.
 - `pnpm install && pnpm build` then `pnpm test` (vitest + CLI smoke test needing headless-gl), `pnpm typecheck`, `pnpm dev` (website).
 - Published packages (`gl-transition`, `regl-transition`, `react-gl-transition`, `gl-transition-utils`, `gl-transition-scripts`): TypeScript, built with tsdown to dual ESM+CJS; exports maps are hand-written and must match dist filenames (`.mjs`/`.cjs`/`.d.mts`/`.d.cts`). regl-transition's CJS is `module.exports = fn` with hand-kept `index.d.cts`.
 - Website (`packages/website`): Vite + React 19 + react-router 7 + gl-react v6, plain `.jsx` (no TS). Deployed by Vercel (gl-transitions.com); `vercel.json` filters the install so headless-gl never compiles there.
+- Open Graph images are never committed: `.github/workflows/og-images.yml` renders them into the `og-images` GitHub release, which the website build downloads.
 - Releases via Changesets (`pnpm changeset`); majors documented in `.changeset/`.

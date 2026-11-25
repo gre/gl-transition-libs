@@ -50,7 +50,10 @@
   font-size: 13px;
   color: var(--faint);
 }
-.gallery .vignette .expand {
+.gallery-vignette {
+  position: relative;
+}
+.gallery-vignette .edit {
   position: absolute;
   top: 6px;
   right: 6px;
@@ -60,7 +63,7 @@
   background: rgba(17, 17, 19, 0.6);
   color: #fff;
 }
-.gallery .vignette .expand:hover {
+.gallery-vignette .edit:hover {
   color: var(--accent);
 }
 

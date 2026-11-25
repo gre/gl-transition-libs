@@ -122,6 +122,24 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@22.20.5)(vite@8.3.8(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
 
+  packages/og-images:
+    dependencies:
+      gl:
+        specifier: ^8.1.6
+        version: 8.1.6
+      gl-transition:
+        specifier: workspace:^
+        version: link:../gl-transition
+      gl-transitions:
+        specifier: ^3.4.0
+        version: 3.4.0
+      jpeg-js:
+        specifier: ^0.4.4
+        version: 0.4.4
+      pngjs:
+        specifier: ^7.0.0
+        version: 7.0.0
+
   packages/react-gl-transition:
     devDependencies:
       '@types/react':
@@ -222,6 +240,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.3.0
         version: 6.3.0(vite@8.3.8(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1))
+      gl-transitions:
+        specifier: ^3.4.0
+        version: 3.4.0
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@22.20.5)(jiti@2.7.0)(yaml@2.9.1)
@@ -1052,6 +1073,9 @@ packages:
 
   gl-transitions@3.3.0:
     resolution: {integrity: sha512-bRfjKSbZtT2Ax8h9Evc+HbQszg3KT/w4fa5xlyRiEpxTZ0OaH0Ov9KWC8LUvmtb32rarVabwQLvSQLQGyRwpJA==}
+
+  gl-transitions@3.4.0:
+    resolution: {integrity: sha512-9GhjuzxVBN+1aR0wZTgw/v1yu5s7HuToW3EQvtn46V8VUNtS9Gk0j5W3Bu5S+qMTLoL4zMo54jYGoGQt4PnOfg==}
 
   gl@8.1.6:
     resolution: {integrity: sha512-BcvkgW+jWiX2SjTddgq4lOfkFmeiKE/n1N3zFnq/JlSwemIvQvH1rLURz5oMdfp4ZT5bzseuIOE608zQI0DRYA==}
@@ -2600,6 +2624,8 @@ snapshots:
       typedarray-pool: 1.2.0
 
   gl-transitions@3.3.0: {}
+
+  gl-transitions@3.4.0: {}
 
   gl@8.1.6:
     dependencies:

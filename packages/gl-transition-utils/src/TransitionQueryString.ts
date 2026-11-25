@@ -11,6 +11,14 @@ function parseValue(s: string): number | boolean | string {
   else if (s === "false") return false;
   else return s; // it's probably just a URL! for sampler2D
 }
+// malformed escapes are kept as is instead of throwing
+function decode(s: string): string {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+}
 function parse(str: string): Params {
   const query: Params = {};
   str.split("&").forEach((kv) => {
@@ -18,14 +26,14 @@ function parse(str: string): Params {
     // split on the first "=" only: values can contain "=" (e.g. signed URLs)
     const i = kv.indexOf("=");
     if (i <= 0 || i === kv.length - 1) return;
-    const key = decodeURIComponent(kv.slice(0, i));
+    const key = decode(kv.slice(0, i));
     const rawVal = kv.slice(i + 1);
     // comma-split before decoding so encoded commas inside values don't split
     const splitByComma = rawVal.split(",");
     query[key] =
       splitByComma.length > 1
-        ? splitByComma.map((s) => parseValue(decodeURIComponent(s)))
-        : parseValue(decodeURIComponent(rawVal));
+        ? splitByComma.map((s) => parseValue(decode(s)))
+        : parseValue(decode(rawVal));
   });
   return query;
 }

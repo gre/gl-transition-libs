@@ -1,22 +1,163 @@
 .Preview {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  max-width: 832px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+  color: var(--text);
 }
 
 .Preview header {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  width: 512px;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.Preview header .tname {
+  min-width: 0;
+  font-size: 1.6em;
+}
+.Preview header .TransitionAuthorAndName {
+  max-width: 100%;
+  padding: 0 0.2em 0 0;
+}
+.Preview header .TransitionAuthorAndName strong {
+  color: #fff;
+}
+.Preview header .TransitionAuthorAndName em {
+  color: var(--muted);
 }
 
-.Preview footer {
-  padding: 1em 0;
+.Preview .open-editor {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.Preview .open-editor:hover {
+  background: #ffe0a0;
+  color: var(--bg);
+}
+
+.Preview .player {
+  width: 100%;
+}
+.Preview .player canvas {
+  display: block;
+  border-radius: 8px;
+  outline: none;
+}
+
+.Preview .info {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.Preview .info a {
+  color: var(--accent);
+}
+.Preview .info a:hover {
+  text-decoration: underline;
+}
+.Preview .description {
+  margin: 0 0 8px;
+  font-size: 19px;
+  color: #fff;
+}
+.Preview .info .meta,
+.Preview .tags {
+  margin: 0 0 8px;
+  color: var(--faint);
+}
+
+.Preview section {
+  margin-top: 32px;
+}
+.Preview section h3 {
+  margin-bottom: 12px;
+  color: #fff;
+}
+.Preview code {
+  font-size: 13px;
+}
+
+.Preview .params {
+  margin: 0;
+}
+.Preview .params > div {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.Preview .params dt .name {
+  color: #fff;
+}
+.Preview .params dt .type {
+  color: var(--faint);
+}
+.Preview .params dd {
+  margin: 4px 0 0;
+}
+.Preview .params dd .meta {
+  color: var(--faint);
+}
+.Preview .params dd p {
+  margin: 4px 0 0;
+}
+.Preview .params .color {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.Preview .params .swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid var(--line-strong);
+}
+
+.Preview pre {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  background: var(--bg-code);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: #ececec;
+}
+
+.Preview .prevnext {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 512px;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+}
+.Preview .prevnext a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 44px;
+  color: var(--text);
+}
+.Preview .prevnext a svg {
+  flex-shrink: 0;
+}
+.Preview .prevnext a span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.Preview .prevnext a:hover {
+  color: var(--accent);
 }

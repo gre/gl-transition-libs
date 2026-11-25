@@ -16,7 +16,12 @@ export function defaultSampler2DParamsForType(types) {
 }
 
 export function supplyDefaultSampler2DToTransition(transition) {
-  const sampler2DParams = defaultSampler2DParamsForType(transition.paramsTypes);
+  // gl-transitions lists its sampler2D uniforms in `textures`, not paramsTypes
+  const types = { ...transition.paramsTypes };
+  (transition.textures || []).forEach(name => {
+    types[name] = "sampler2D";
+  });
+  const sampler2DParams = defaultSampler2DParamsForType(types);
   if (!sampler2DParams) return transition;
   return {
     ...transition,

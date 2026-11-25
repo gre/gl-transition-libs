@@ -33,3 +33,11 @@ test("round-trips values containing = & and ,", () => {
 test("ignores empty or valueless entries", () => {
   expect(TransitionQueryString.parse("&a=&=b&c=1")).toEqual({ c: 1 });
 });
+
+test("keeps malformed percent escapes as is", () => {
+  expect(TransitionQueryString.parse("a=100%&b=%E0%A4&c=1")).toEqual({
+    a: "100%",
+    b: "%E0%A4",
+    c: 1,
+  });
+});
