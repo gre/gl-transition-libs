@@ -1,5 +1,11 @@
 # gl-transition-utils
 
+## 3.0.1
+
+### Patch Changes
+
+- 9afa9de: `TransitionQueryString.parse` keeps malformed percent escapes as is instead of throwing a `URIError`.
+
 ## 3.0.0
 
 ### Major Changes
