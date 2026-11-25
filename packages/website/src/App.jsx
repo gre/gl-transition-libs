@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import NotFound from "./NotFound";
+import PageMeta from "./PageMeta";
 
 // route-level code splitting: the editor routes carry the GLSL
 // compiler chain that gallery/intro visitors never need
@@ -56,6 +57,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <PageMeta />
         <header>
           <Link to="/">
             <h1 className="logo">

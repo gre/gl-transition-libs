@@ -5,5 +5,5 @@
   "access": "public",
   "baseBranch": "master",
   "updateInternalDependencies": "patch",
-  "ignore": ["website", "gl-transition-test", "regl-transition-example"]
+  "ignore": ["website", "gl-transition-test", "regl-transition-example", "og-images"]
 }

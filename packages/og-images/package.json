@@ -1,0 +1,17 @@
+{
+  "name": "og-images",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Renders the Open Graph images of gl-transitions.com (needs headless-gl)",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "gl": "^8.1.6",
+    "gl-transition": "workspace:^",
+    "gl-transitions": "^3.4.0",
+    "jpeg-js": "^0.4.4",
+    "pngjs": "^7.0.0"
+  }
+}

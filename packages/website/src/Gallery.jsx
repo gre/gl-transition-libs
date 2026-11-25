@@ -8,7 +8,7 @@ import Vignette from "./Vignette";
 import dateAgo from "./dateAgo";
 import ScrollToTop from "./ScrollToTop";
 import TransitionAuthorAndName from "./TransitionAuthorAndName";
-import { FaExpand, FaSearch } from "react-icons/fa";
+import { FaEdit, FaSearch } from "react-icons/fa";
 import "./Gallery.css";
 import { fromImage, toImage } from "./galleryImages";
 
@@ -17,15 +17,10 @@ const footerForOrder = (getDate) =>
     render() {
       const { transition } = this.props;
       return (
-        <div>
-          <Link className="expand" to={"/transition/" + transition.name}>
-            <FaExpand />
-          </Link>
-          <footer>
-            <TransitionAuthorAndName transition={transition} />
-            <span className="dateago">{dateAgo(getDate(transition))}</span>
-          </footer>
-        </div>
+        <footer>
+          <TransitionAuthorAndName transition={transition} />
+          <span className="dateago">{dateAgo(getDate(transition))}</span>
+        </footer>
       );
     }
   };
@@ -36,16 +31,25 @@ class GalleryVignette extends PureComponent {
   render() {
     const { transition, order } = this.props;
     return (
-      <Link to={"/editor/" + transition.name}>
-        <Vignette
-          transition={transition}
-          from={fromImage}
-          to={toImage}
-          width={300}
-          height={200}
-          Footer={order === "updated" ? UpdatedFooter : CreatedFooter}
-        />
-      </Link>
+      <div className="gallery-vignette">
+        <Link to={"/transition/" + transition.name}>
+          <Vignette
+            transition={transition}
+            from={fromImage}
+            to={toImage}
+            width={300}
+            height={200}
+            Footer={order === "updated" ? UpdatedFooter : CreatedFooter}
+          />
+        </Link>
+        <Link
+          className="edit"
+          to={"/editor/" + transition.name}
+          title={"Edit " + transition.name}
+        >
+          <FaEdit />
+        </Link>
+      </div>
     );
   }
 }
@@ -112,7 +116,7 @@ class SearchInput extends PureComponent {
         <FaSearch />
         <input
           type="search"
-          placeholder="Search by name or author…"
+          placeholder="Search by name, author or tag…"
           value={this.state.value}
           onChange={this.onChange}
           onKeyDown={this.onKeyDown}
@@ -135,7 +139,8 @@ function searchTransitions(transitions, q) {
   return transitions.filter(
     t =>
       t.name.toLowerCase().includes(s) ||
-      (t.author || "").toLowerCase().includes(s)
+      (t.author || "").toLowerCase().includes(s) ||
+      (t.tags || []).some(tag => tag.toLowerCase().includes(s))
   );
 }
 

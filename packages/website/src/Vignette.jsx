@@ -58,7 +58,9 @@ export default class Vignette extends Component {
     this._setProgress = glt && glt.setProgress;
   };
 
-  _cachedProgress = defaultProgress;
+  getRestProgress = () => this.props.transition.preview ?? defaultProgress;
+
+  _cachedProgress = this.getRestProgress();
   getProgress = () => this._cachedProgress;
   setProgress = (value, forceRendering = false) => {
     if (this._cachedProgress === value && !forceRendering) return;
@@ -90,7 +92,7 @@ export default class Vignette extends Component {
     });
     const { onHoverOut } = this.props;
     if (!onHoverOut || onHoverOut() !== false) {
-      this.setProgress(defaultProgress);
+      this.setProgress(this.getRestProgress());
     }
   };
   render() {

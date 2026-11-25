@@ -6,3 +6,4 @@ npm-debug.log
 .DS_Store
 .env
 npm-debug.log*
+packages/website/public/og/

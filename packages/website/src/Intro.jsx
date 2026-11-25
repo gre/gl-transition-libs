@@ -24,17 +24,8 @@ import cut3mp4 from "./videos/sintel/cut3.mp4";
 import cut1webm from "./videos/sintel/cut1.webm";
 import cut2webm from "./videos/sintel/cut2.webm";
 import cut3webm from "./videos/sintel/cut3.webm";
-import img1 from "./images/1024x768/a1mV1egnQwOqxZZZvhVo_street.jpg";
-import img2 from "./images/1024x768/barley.jpg";
-import img3 from "./images/1024x768/bigbuckbunny_snapshot1.jpg";
-import img4 from "./images/1024x768/hBd6EPoQT2C8VQYv65ys_White_Sands.jpg";
-import img5 from "./images/1024x768/ic1dX3kBQjGNaPQb8Xel_1920x1280.jpg";
-import img6 from "./images/1024x768/ikZyw45kT4m16vHkHe7u_9647713235_29ce0305d2_o.jpg";
-import img7 from "./images/1024x768/lUUnN7VGSoWZ3noefeH7_Baker_Beach-12.jpg";
-import img8 from "./images/1024x768/pHyYeNZMRFOIRpYeW7X3_manacloseup.jpg";
-import img9 from "./images/1024x768/wdXqHcTwSTmLuKOGz92L_Landscape.jpg";
-
-const images = [img1, img2, img3, img4, img5, img6, img7, img8, img9];
+import { images } from "./sampleImages";
+import useWidth from "./useWidth";
 
 const allImagesToPreload = images.concat([
   defaultSampler2D,
@@ -77,7 +68,7 @@ class VignetteFooter extends PureComponent {
   render() {
     const { transition } = this.props;
     return (
-      <Link to={`/editor/${transition.name}`}>
+      <Link to={`/transition/${transition.name}`}>
         <footer>
           <TransitionAuthorAndName transition={transition} />
         </footer>
@@ -115,20 +106,6 @@ function TrackVisibility({ children, className }) {
       {children(visible)}
     </div>
   );
-}
-
-// vignettes draw at a fixed pixel size, so their container is measured
-function useWidth() {
-  const ref = useRef(null);
-  const [width, setWidth] = useState(0);
-  useEffect(() => {
-    const observer = new ResizeObserver(entries => {
-      setWidth(Math.floor(entries[0].contentRect.width));
-    });
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-  return [ref, width];
 }
 
 function Measure({ className, children }) {
@@ -642,6 +619,11 @@ function Platforms() {
 }
 
 export default class Intro extends Component {
+  componentDidMount() {
+    const id = window.location.hash.slice(1);
+    const el = id && document.getElementById(id);
+    if (el) el.scrollIntoView();
+  }
   render() {
     return (
       <div className="Intro">
@@ -779,7 +761,7 @@ vec4 transition (vec2 uv) {
             </span>
             <span>
               For coding agents:{" "}
-              <ExternalLink href="https://cdn.jsdelivr.net/npm/gl-transitions@2/llms.txt">
+              <ExternalLink href="https://cdn.jsdelivr.net/npm/gl-transitions@3/llms.txt">
                 llms.txt
               </ExternalLink>
             </span>
